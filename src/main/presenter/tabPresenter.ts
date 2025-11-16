@@ -189,17 +189,17 @@ export class TabPresenter implements ITabPresenter {
     return tabId
   }
   /**
- * 自定义导航栏行为
- * @param tabId 标签页ID
- * @param url 要导航的URL
- * @returns 成功返回true，否则false
- */
+   * 自定义导航栏行为
+   * @param tabId 标签页ID
+   * @param url 要导航的URL
+   * @returns 成功返回true，否则false
+   */
   /**
- * 自定义导航栏行为（支持 navigate、reload、goBack、goForward）
- * @param tabId 要操作的标签页ID
- * @param action 操作类型
- * @param args 可选参数，例如 navigate 需要 url
- */
+   * 自定义导航栏行为（支持 navigate、reload、goBack、goForward）
+   * @param tabId 要操作的标签页ID
+   * @param action 操作类型
+   * @param args 可选参数，例如 navigate 需要 url
+   */
   async actionTab(
     tabId: number,
     action: 'navigate' | 'reload' | 'goBack' | 'goForward',
@@ -273,7 +273,6 @@ export class TabPresenter implements ITabPresenter {
       return false
     }
   }
-
 
   /**
    * 销毁标签页
@@ -393,7 +392,7 @@ export class TabPresenter implements ITabPresenter {
 
     const activeState = this.tabState.get(tabId)
     if (activeState) {
-        window.webContents.send(TAB_EVENTS.CURRENT_ACTIVE_TAB_UPDATED, activeState)
+      window.webContents.send(TAB_EVENTS.CURRENT_ACTIVE_TAB_UPDATED, activeState)
     }
 
     // 通知渲染进程更新标签列表
@@ -625,7 +624,7 @@ export class TabPresenter implements ITabPresenter {
           })
 
           if (state.isActive) {
-              window.webContents.send(TAB_EVENTS.CURRENT_ACTIVE_TAB_UPDATED, state)
+            window.webContents.send(TAB_EVENTS.CURRENT_ACTIVE_TAB_UPDATED, state)
           }
         }
         this.notifyWindowTabsUpdate(windowId).catch(console.error) // Call async function, handle potential rejection
@@ -719,7 +718,7 @@ export class TabPresenter implements ITabPresenter {
     // 这里需要根据实际窗口结构实现
     window.contentView.removeChildView(view)
   }
-  
+
   /**
    * 将视图带到前面（激活）
    */
@@ -741,10 +740,11 @@ export class TabPresenter implements ITabPresenter {
 
     // 设置视图位置大小（留出顶部标签栏空间）
     const TAB_BAR_HEIGHT = 76 // 标签栏高度，需要根据实际UI调整
+    const MENU_WIDTH = 64 // 菜单栏宽度，需要根据实际UI调整
     view.setBounds({
-      x: 0,
+      x: MENU_WIDTH,
       y: TAB_BAR_HEIGHT,
-      width: width,
+      width: width - MENU_WIDTH,
       height: height - TAB_BAR_HEIGHT
     })
   }
