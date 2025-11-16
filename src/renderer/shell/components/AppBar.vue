@@ -5,6 +5,7 @@
       !isFullscreened && isMacOS ? '' : ' rounded-t-none',
       isMacOS ? 'bg-window-background' : 'bg-window-background/10'
     ]"
+    style="background: #E5F8F7;"
     :dir="langStore.dir"
   >
     <div class="absolute bottom-0 left-0 w-full h-[1px] bg-border z-10"></div>

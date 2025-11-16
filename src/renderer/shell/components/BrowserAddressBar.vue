@@ -43,7 +43,9 @@
       v-model="url"
       @keyup.enter="navigateToUrl"
       type="text"
-      class="flex-1 h-7 bg-muted rounded-md px-3 text-sm text-foreground/80 outline-none"
+      spellcheck="false"
+      autocomplete="off"
+      class="flex-1 h-6 bg-muted rounded-xl px-3 text-sm text-foreground/80 outline-none"
     />
   </div>
 </template>
