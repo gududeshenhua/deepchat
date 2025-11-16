@@ -652,7 +652,7 @@ export class WindowPresenter implements IWindowPresenter {
             shellWindowState.width,
             shellWindowState.y,
             shellWindowState.height
-          )
+          ).y
 
     const shellWindow = new BrowserWindow({
       width: shellWindowState.width,
