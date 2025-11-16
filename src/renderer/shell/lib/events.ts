@@ -18,3 +18,7 @@ export const WINDOW_EVENTS = {
   FIRST_CONTENT_LOADED: 'window:first-content-loaded', // 新增：首次内容加载完成事件
   WINDOW_RESTORED: 'window:restored'
 }
+
+export const TAB_EVENTS = {
+  CURRENT_ACTIVE_TAB_UPDATED: 'tab:current-active-tab-updated'
+}

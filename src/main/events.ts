@@ -100,6 +100,8 @@ export const WINDOW_EVENTS = {
   WINDOW_RESTORED: 'window:restored'
 }
 
+
+
 // ollama 相关事件
 export const OLLAMA_EVENTS = {
   PULL_MODEL_PROGRESS: 'ollama:pull-model-progress'
@@ -178,7 +180,8 @@ export const TAB_EVENTS = {
   VISIBILITY_CHANGED: 'tab:visibility-changed', // 标签页可见性变化
   RENDERER_TAB_READY: 'tab:renderer-ready', // 渲染进程标签页就绪
   RENDERER_TAB_ACTIVATED: 'tab:renderer-activated', // 渲染进程标签页激活
-  CLOSED: 'tab:closed' // 标签页被关闭事件
+  CLOSED: 'tab:closed', // 标签页被关闭事件
+  CURRENT_ACTIVE_TAB_UPDATED: 'tab:current-active-tab-updated' // 当前活动标签页更新事件
 }
 
 // 托盘相关事件

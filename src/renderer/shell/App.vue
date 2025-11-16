@@ -1,6 +1,7 @@
 <template>
   <div class="w-screen h-screen" :class="isWinMacOS ? '' : 'bg-background'">
     <AppBar />
+    <BrowserAddressBar />
     <main class="content-container">
       <!-- WebContentsView will be rendered here by the main process -->
     </main>
@@ -9,6 +10,8 @@
 
 <script setup lang="ts">
 import AppBar from './components/AppBar.vue'
+import BrowserAddressBar from './components/BrowserAddressBar.vue'
+
 import { useDeviceVersion } from '@/composables/useDeviceVersion'
 
 // Detect platform to apply proper styling

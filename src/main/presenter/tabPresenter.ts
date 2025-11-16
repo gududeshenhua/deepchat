@@ -188,6 +188,92 @@ export class TabPresenter implements ITabPresenter {
 
     return tabId
   }
+  /**
+ * 自定义导航栏行为
+ * @param tabId 标签页ID
+ * @param url 要导航的URL
+ * @returns 成功返回true，否则false
+ */
+  /**
+ * 自定义导航栏行为（支持 navigate、reload、goBack、goForward）
+ * @param tabId 要操作的标签页ID
+ * @param action 操作类型
+ * @param args 可选参数，例如 navigate 需要 url
+ */
+  async actionTab(
+    tabId: number,
+    action: 'navigate' | 'reload' | 'goBack' | 'goForward',
+    args?: { url?: string }
+  ): Promise<boolean> {
+    const view = this.tabs.get(tabId)
+    if (!view || view.webContents.isDestroyed()) {
+      console.warn(`actionTab: Tab ${tabId} not found or destroyed`)
+      return false
+    }
+
+    const state = this.tabState.get(tabId)
+    if (!state) {
+      console.warn(`actionTab: Tab ${tabId} state not found`)
+      return false
+    }
+
+    const windowId = this.tabWindowMap.get(tabId)
+    if (!windowId) return false
+
+    const window = BrowserWindow.fromId(windowId)
+    if (!window) return false
+
+    try {
+      switch (action) {
+        case 'navigate':
+          if (!args?.url) {
+            console.warn('actionTab: navigate requires args.url')
+            return false
+          }
+          state.url = args.url
+          if (args.url.startsWith('local://')) {
+            const viewType = args.url.replace('local://', '')
+            if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+              await view.webContents.loadURL(`${process.env['ELECTRON_RENDERER_URL']}#/${viewType}`)
+            } else {
+              await view.webContents.loadFile(join(__dirname, '../renderer/index.html'), {
+                hash: `/${viewType}`
+              })
+            }
+          } else {
+            await view.webContents.loadURL(args.url)
+          }
+          break
+
+        case 'reload':
+          view.webContents.reloadIgnoringCache()
+          break
+
+        case 'goBack':
+          if (view.webContents.canGoBack()) {
+            view.webContents.goBack()
+          }
+          break
+
+        case 'goForward':
+          if (view.webContents.canGoForward()) {
+            view.webContents.goForward()
+          }
+          break
+      }
+
+      // 如果是活动标签页，立即同步前端
+      if (state.isActive) {
+        window.webContents.send('CURRENT_ACTIVE_TAB_UPDATED', state)
+      }
+
+      return true
+    } catch (error) {
+      console.error(`actionTab: Failed to perform ${action} on tab ${tabId}`, error)
+      return false
+    }
+  }
+
 
   /**
    * 销毁标签页
@@ -304,6 +390,11 @@ export class TabPresenter implements ITabPresenter {
 
     // 确保活动视图可见并位于最前
     this.bringViewToFront(window, view)
+
+    const activeState = this.tabState.get(tabId)
+    if (activeState) {
+        window.webContents.send(TAB_EVENTS.CURRENT_ACTIVE_TAB_UPDATED, activeState)
+    }
 
     // 通知渲染进程更新标签列表
     await this.notifyWindowTabsUpdate(windowId)
@@ -532,6 +623,10 @@ export class TabPresenter implements ITabPresenter {
             title: state.title,
             windowId
           })
+
+          if (state.isActive) {
+              window.webContents.send(TAB_EVENTS.CURRENT_ACTIVE_TAB_UPDATED, state)
+          }
         }
         this.notifyWindowTabsUpdate(windowId).catch(console.error) // Call async function, handle potential rejection
       }
@@ -584,6 +679,10 @@ export class TabPresenter implements ITabPresenter {
               title: state.title,
               windowId
             })
+
+            if (state.isActive) {
+              window.webContents.send(TAB_EVENTS.CURRENT_ACTIVE_TAB_UPDATED, state)
+            }
           }
           this.notifyWindowTabsUpdate(windowId).catch(console.error) // Call async function, handle potential rejection
         }
@@ -620,7 +719,7 @@ export class TabPresenter implements ITabPresenter {
     // 这里需要根据实际窗口结构实现
     window.contentView.removeChildView(view)
   }
-
+  
   /**
    * 将视图带到前面（激活）
    */
@@ -641,7 +740,7 @@ export class TabPresenter implements ITabPresenter {
     const { width, height } = window.getContentBounds()
 
     // 设置视图位置大小（留出顶部标签栏空间）
-    const TAB_BAR_HEIGHT = 36 // 标签栏高度，需要根据实际UI调整
+    const TAB_BAR_HEIGHT = 76 // 标签栏高度，需要根据实际UI调整
     view.setBounds({
       x: 0,
       y: TAB_BAR_HEIGHT,

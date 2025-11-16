@@ -73,7 +73,7 @@
         <Icon icon="lucide:plus" class="w-4 h-4" />
       </Button>
       <div class="flex-1"></div>
-
+<!-- {{ tabStore.currentTabId }} -->
       <Button
         size="icon"
         class="window-no-drag-region shrink-0 w-10 bg-transparent shadow-none rounded-none hover:bg-card/80 text-xs font-medium text-foreground flex items-center justify-center transition-all duration-200 group border-l"

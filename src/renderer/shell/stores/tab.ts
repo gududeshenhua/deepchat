@@ -43,6 +43,10 @@ export const useTabStore = defineStore('tab', () => {
     return newTab
   }
 
+  const actionTab = async (tabId: number, action: 'navigate' | 'reload' | 'goBack' | 'goForward', args?: { url?: string }) => {
+    await tabPresenter.actionTab(tabId, action, args)
+  }
+
   const removeTab = async (id: number) => {
     await tabPresenter.closeTab(tabs.value.find((tab) => tab.id === id)?.id ?? 0)
     tabs.value = tabs.value.filter((tab) => tab.id !== id)
@@ -140,6 +144,7 @@ export const useTabStore = defineStore('tab', () => {
     currentTabId,
     addTab,
     removeTab,
+    actionTab,
     setCurrentTabId,
     reorderTabs
   }
