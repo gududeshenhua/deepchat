@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试页面 - 页面消息功能</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            background: #007acc;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #005a9e;
+        }
+        .message-log {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #007acc;
+            background: white;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .nav-buttons button {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>页面消息功能测试</h1>
+        
+        <div class="nav-buttons">
+            <button onclick="goToPage('test1.html')">前往测试页面1</button>
+            <button onclick="goToPage('test2.html')">前往测试页面2</button>
+            <button onclick="goToPage('test3.html')">刷新当前页面</button>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="sendNewPageMessage()">发送新建页面消息</button>
+            <button onclick="sendClosePageMessage()">发送关闭页面消息</button>
+            <button onclick="sendChangePageMessage()">发送切换页面消息</button>
+            <button onclick="sendReloadMessage()">发送刷新消息</button>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="sendGoBackMessage()">发送后退消息</button>
+            <button onclick="sendGoForwardMessage()">发送前进消息</button>
+            <button onclick="sendGoHomeMessage()">发送主页消息</button>
+            <button onclick="sendLoadURLMessage()">发送加载URL消息</button>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="sendSetupMessage()">发送设置消息</button>
+            <button onclick="clearLog()">清空日志</button>
+        </div>
+        
+        <h3>消息日志:</h3>
+        <div class="message-log" id="messageLog">
+            <div class="log-entry">页面加载完成，可以开始测试页面消息功能</div>
+        </div>
+    </div>
+
+    <script>
+        let messageCount = 0;
+        
+        function logMessage(message) {
+            const logElement = document.getElementById('messageLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            logElement.appendChild(logEntry);
+            logElement.scrollTop = logElement.scrollHeight;
+            messageCount++;
+        }
+        
+        function clearLog() {
+            const logElement = document.getElementById('messageLog');
+            logElement.innerHTML = '<div class="log-entry">日志已清空</div>';
+            messageCount = 0;
+        }
+        
+        function sendPageMessage(args) {
+            logMessage(`发送消息: ${JSON.stringify(args)}`);
+            
+            // 尝试使用 window.myAPI.browser.sendPageMessage
+            if (window.myAPI && window.myAPI.browser && window.myAPI.browser.sendPageMessage) {
+                window.myAPI.browser.sendPageMessage(args);
+                logMessage('通过 myAPI.browser.sendPageMessage 发送成功');
+            } else {
+                // 备用方案：通过控制台消息发送
+                const messageEvent = new CustomEvent('PAGE_MESSAGE', {
+                    detail: { message: JSON.stringify(args) }
+                });
+                window.dispatchEvent(messageEvent);
+                
+                // 同时也在控制台输出
+                console.log('PAGE_MESSAGE:' + JSON.stringify(args));
+                logMessage('通过控制台消息发送');
+            }
+        }
+        
+        function sendNewPageMessage() {
+            const newPageId = 'new-page-' + Date.now();
+            sendPageMessage({
+                type: 'newPage',
+                id: newPageId,
+                url: 'local://page/test1.html'
+            });
+        }
+        
+        function sendClosePageMessage() {
+            sendPageMessage({
+                type: 'closePage',
+                id: 'current-page-id' // 在实际应用中应该获取当前页面ID
+            });
+        }
+        
+        function sendChangePageMessage() {
+            sendPageMessage({
+                type: 'changePage',
+                id: 'target-page-id' // 在实际应用中应该指定目标页面ID
+            });
+        }
+        
+        function sendReloadMessage() {
+            sendPageMessage({
+                type: 'reload'
+            });
+        }
+        
+        function sendGoBackMessage() {
+            sendPageMessage({
+                type: 'goBack'
+            });
+        }
+        
+        function sendGoForwardMessage() {
+            sendPageMessage({
+                type: 'goForward'
+            });
+        }
+        
+        function sendGoHomeMessage() {
+            sendPageMessage({
+                type: 'goHome'
+            });
+        }
+        
+        function sendLoadURLMessage() {
+            sendPageMessage({
+                type: 'loadURL',
+                pageId: 'current-page-id',
+                url: 'local://page/test2.html'
+            });
+        }
+        
+        function sendSetupMessage() {
+            sendPageMessage({
+                type: 'setup',
+                url: 'local://page/setup.html'
+            });
+        }
+        
+        function goToPage(pageName) {
+            // 直接导航到指定页面
+            if (window.location.protocol === 'file:') {
+                window.location.href = pageName;
+            } else {
+                // 在local://协议下使用页面消息
+                sendPageMessage({
+                    type: 'loadURL',
+                    url: 'local://page/' + pageName
+                });
+            }
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            logMessage('页面初始化完成');
+            
+            // 监听页面消息
+            window.addEventListener('message', function(event) {
+                if (event.data && event.data.type === 'PAGE_MESSAGE') {
+                    logMessage(`收到页面消息: ${JSON.stringify(event.data)}`);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

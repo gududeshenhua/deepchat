@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浏览器工具栏</title>
+    <style>
+       * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #e9fafa;
+            height: 48px;
+            overflow: hidden;
+            border-bottom: 1px solid #d0e0e0;
+        }
+
+        .toolbar-container {
+            display: flex;
+            align-items: center;
+            /* justify-content: space-between; */
+            height: 48px;
+            padding: 0 12px;
+            background: #e9fafa;
+            gap: 8px;
+        }
+
+        .navigation-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .nav-button {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .nav-button:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .url-bar {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            max-width: 600px;
+        }
+
+        .url-input {
+            flex: 1;
+            height: 30px;
+            padding: 0 12px;
+            border: 1px solid #ccc;
+            border-radius: 15px;
+            font-size: 13px;
+            outline: none;
+            background: white;
+            color: #333;
+        }
+
+        .url-input:focus {
+            border-color: #4cb6b6;
+            box-shadow: 0 0 0 2px rgba(76, 182, 182, 0.2);
+        }
+
+        .go-button {
+            height: 30px;
+            padding: 0 14px;
+            background: #4cb6b6;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+
+        .go-button:hover {
+            background: #42a5a5;
+        }
+        .toolbar-box{
+          display: flex;
+          flex-direction: column;
+          /* justify-content: center; */
+          /* align-items: center; */
+        }
+        .tabs-container {
+            /* flex: 1; */
+            display: flex;
+            gap: 5px;
+            overflow-x: auto;
+            height: 36px;
+            align-items: center;
+        }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            height: 28px;
+            padding: 0 10px;
+            background: white;
+            border: 1px solid #d0e0e0;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            min-width: 80px;
+            max-width: 200px;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .tab.active {
+            background: #4cb6b6;
+            border-color: #4cb6b6;
+            color: white;
+        }
+
+        .tab:hover {
+            background: #f3f3f3;
+        }
+
+        .tab.active:hover {
+            background: #42a5a5;
+        }
+
+        .tab-close {
+            margin-left: 6px;
+            width: 14px;
+            height: 14px;
+            border: none;
+            background: transparent;
+            color: inherit;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .new-tab-button {
+            width: 28px;
+            height: 28px;
+            background: #4cb6b6;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .new-tab-button:hover {
+            background: #42a5a5;
+        }
+
+        .status-bar {
+            font-size: 12px;
+            color: #666;
+            padding-left: 10px;
+            min-width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar-box">
+        <div style="display: flex;align-items: center;">
+          <div class="tabs-container" id="tabsContainer">
+              <!-- 标签页将在这里动态生成 -->
+          </div>
+          <button class="new-tab-button" id="newTabBtn">+</button>
+        </div>
+        <div class="toolbar-container">
+          <div class="navigation-controls">
+              <button class="nav-button" id="backBtn" disabled>←</button>
+              <button class="nav-button" id="forwardBtn" disabled>→</button>
+              <button class="nav-button" id="reloadBtn">↻</button>
+              <button class="nav-button" id="homeBtn">🏠</button>
+          </div>
+          
+          <div class="url-bar">
+              <input type="text" class="url-input" id="urlInput" placeholder="输入网址或搜索内容">
+              <button class="go-button" id="goBtn">前往</button>
+          </div>
+          
+          
+          
+         
+          
+          <!-- <div class="status-bar" id="statusBar">
+              就绪
+          </div> -->
+        </div>
+    </div>
+
+    <script>
+        class ToolbarManager {
+            constructor() {
+                this.currentUrl = '';
+                this.tabs = [];
+                this.activeTabId = null;
+                this.setupEventListeners();
+                this.setupMessageHandlers();
+                this.initializeToolbar();
+            }
+
+            setupEventListeners() {
+                // 导航按钮事件
+                document.getElementById('backBtn').addEventListener('click', () => this.navigate('back'));
+                document.getElementById('forwardBtn').addEventListener('click', () => this.navigate('forward'));
+                document.getElementById('reloadBtn').addEventListener('click', () => this.navigate('refresh'));
+                document.getElementById('homeBtn').addEventListener('click', () => this.navigate('home'));
+                
+                // URL输入事件
+                document.getElementById('urlInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.navigateToUrl();
+                    }
+                });
+                document.getElementById('goBtn').addEventListener('click', () => this.navigateToUrl());
+                
+                // 新建标签页按钮
+                document.getElementById('newTabBtn').addEventListener('click', () => this.createNewTab());
+            }
+
+            setupMessageHandlers() {
+        // 监听来自主进程的消息
+           if (window.myAPI && window.myAPI.browser) {
+                  window.myAPI.browser.onToolbarUpdate((data) => {
+                      console.log('通过preload.js收到工具栏更新消息');
+                      this.handleToolbarUpdate(data);
+                  });
+              } else {
+                  console.error('window.myAPI.browser 不存在，preload.js可能未正确加载');
+              }
+          }
+
+            initializeToolbar() {
+                // 初始化工具栏，不需要发送消息
+                console.log('工具栏初始化完成');
+            }
+
+            handleToolbarUpdate(data) {
+                console.log('前端收到工具栏更新消息');
+                console.log(data);
+                
+                if (data.tabs) {
+                    this.updateTabs(data.tabs);
+                }
+                // if (data.status) {
+                //     this.updateStatus(data.status);
+                // }
+                if (data.url) {
+                    this.updateUrl(data.url);
+                }
+                if (data.canGoBack !== undefined) {
+                    document.getElementById('backBtn').disabled = !data.canGoBack;
+                }
+                if (data.canGoForward !== undefined) {
+                    document.getElementById('forwardBtn').disabled = !data.canGoForward;
+                }
+            }
+
+            updateTabs(tabsData) {
+                this.tabs = tabsData;
+                const tabsContainer = document.getElementById('tabsContainer');
+                tabsContainer.innerHTML = '';
+
+                tabsData.forEach(tab => {
+                    const tabElement = document.createElement('div');
+                    tabElement.className = `tab ${tab.active ? 'active' : ''}`;
+                    tabElement.setAttribute('data-tab-id', tab.id);
+                    
+                    tabElement.innerHTML = `
+                        <span class="tab-title">${tab.title || '新标签页'}</span>
+                        <button class="tab-close" onclick="toolbarManager.closeTab('${tab.id}')">×</button>
+                    `;
+                    
+                    tabElement.addEventListener('click', (e) => {
+                        if (!e.target.classList.contains('tab-close')) {
+                            this.switchToTab(tab.id);
+                        }
+                    });
+                    
+                    tabsContainer.appendChild(tabElement);
+                });
+            }
+
+            // updateStatus(status) {
+            //     document.getElementById('statusBar').textContent = status;
+            // }
+
+            updateUrl(url) {
+                this.currentUrl = url;
+                const urlInput = document.getElementById('urlInput');
+                if (urlInput.value !== url) {
+                    urlInput.value = url;
+                }
+            }
+
+            navigate(action) {
+                if (window.myAPI && window.myAPI.browser) {
+                    switch (action) {
+                        case 'back':
+                            window.myAPI.browser.goBack();
+                            break;
+                        case 'forward':
+                            window.myAPI.browser.goForward();
+                            break;
+                        case 'refresh':
+                            window.myAPI.browser.reload();
+                            break;
+                        case 'home':
+                            window.myAPI.browser.goHome();
+                            break;
+                    }
+                }
+            }
+
+            navigateToUrl() {
+                const url = document.getElementById('urlInput').value.trim();
+                if (url && window.myAPI && window.myAPI.browser) {
+                    window.myAPI.browser.navigate(url);
+                }
+            }
+
+            createNewTab() {
+                if (window.myAPI && window.myAPI.browser) {
+                    window.myAPI.browser.newTab();
+                }
+            }
+
+            closeTab(tabId) {
+                if (window.myAPI && window.myAPI.browser) {
+                    window.myAPI.browser.closeTab(tabId);
+                }
+            }
+
+            switchToTab(tabId) {
+                if (window.myAPI && window.myAPI.browser) {
+                    window.myAPI.browser.switchTab(tabId);
+                }
+            }
+        }
+
+        // 初始化工具栏管理器
+        const toolbarManager = new ToolbarManager();
+    </script>
+</body>
+</html>

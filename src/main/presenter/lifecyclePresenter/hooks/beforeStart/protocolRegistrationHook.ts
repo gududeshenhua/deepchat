@@ -3,12 +3,13 @@
  * Registers deepcdn and imgcache protocols
  */
 
-import { protocol, app } from 'electron'
+import { protocol, app,net } from 'electron'
 import { LifecycleHook, LifecycleContext } from '@shared/presenter'
 import path from 'path'
 import fs from 'fs'
 import { is } from '@electron-toolkit/utils'
 import { LifecyclePhase } from '@shared/lifecycle'
+const url = require('url')
 
 export const protocolRegistrationHook: LifecycleHook = {
   name: 'protocol-registration',
@@ -129,5 +130,44 @@ export const protocolRegistrationHook: LifecycleHook = {
     })
 
     console.log('protocolRegistrationHook: Application protocols registered successfully')
+
+    
+      // Register 'local' protocol
+      protocol.handle('local', async (request) => {
+        try {
+          const filePath = request.url
+            .replace(/^local:\/\//, '')  // 去掉协议头
+            .split(/[?#]/)[0]            // 去掉 ? 或 # 参数
+            .replace(/^\/+/, '')         // 去掉开头多余斜杠
+            .replace(/\/+$/, '')
+
+          let basePath = app.getAppPath()
+          let absolutePath = path.join(basePath, filePath)
+
+          // fallback to external app path
+          if (!fs.existsSync(absolutePath)) {
+            const externalPath = path.join(process.resourcesPath, 'app', filePath)
+            if (fs.existsSync(externalPath)) absolutePath = externalPath
+          }
+
+          // 404 fallback
+          if (!fs.existsSync(absolutePath)) {
+            const notFoundPath = path.join(basePath, 'page/404.html')
+            if (fs.existsSync(notFoundPath)) {
+              return await net.fetch(url.pathToFileURL(notFoundPath).toString())
+            } else {
+              return new Response('404 Page Not Found', { status: 404 })
+            }
+          }
+
+          const fileUrl = url.pathToFileURL(absolutePath).toString()
+          return await net.fetch(fileUrl)
+        } catch (err) {
+          console.error('Error in local protocol:', err)
+          return new Response('Internal Server Error', { status: 500 })
+        }
+      })
+
+    
   }
 }

@@ -126,7 +126,7 @@ export class TabPresenter implements ITabPresenter {
     view.setBackgroundColor('#00ffffff')
 
     // 加载内容
-    if (url.startsWith('local://')) {
+    if (url.startsWith('local://chat') || url.startsWith('local://playground')) {
       const viewType = url.replace('local://', '')
       if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
         view.webContents.loadURL(`${process.env['ELECTRON_RENDERER_URL']}#/${viewType}`)
@@ -231,7 +231,7 @@ export class TabPresenter implements ITabPresenter {
             return false
           }
           state.url = args.url
-          if (args.url.startsWith('local://')) {
+          if (args.url.startsWith('local://chat') || args.url.startsWith('local://playground')) {
             const viewType = args.url.replace('local://', '')
             if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
               await view.webContents.loadURL(`${process.env['ELECTRON_RENDERER_URL']}#/${viewType}`)

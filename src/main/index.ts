@@ -1,4 +1,4 @@
-import { app, dialog } from 'electron'
+import { app, dialog,protocol } from 'electron'
 import { LifecycleManager, registerCoreHooks } from './presenter/lifecyclePresenter'
 import { getInstance, Presenter } from './presenter'
 import { electronApp } from '@electron-toolkit/utils'
@@ -23,7 +23,18 @@ if (process.platform === 'darwin') {
 // Initialize lifecycle manager and register core hooks
 const lifecycleManager = new LifecycleManager()
 registerCoreHooks(lifecycleManager)
-
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'local',
+    privileges: {
+      standard: true,
+      secure: true,
+      supportFetchAPI: true,
+      bypassCSP: true,
+      stream: true,
+    },
+  },
+])
 // Initialize presenter after ready
 let presenter: Presenter
 // Start the lifecycle management system instead of using app.whenReady()
