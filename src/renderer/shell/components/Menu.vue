@@ -15,7 +15,7 @@
         <div
           v-for="item in menus"
           :key="item.label"
-          @click="navigateToUrl(item.url)"
+          @click="navigateToUrl(item)"
           class="w-full h-14 cursor-pointer flex flex-col items-center justify-center rounded-xl transition-all"
           :class="active === item.label
             ? 'bg-white shadow-sm'
@@ -55,8 +55,10 @@ const menus = [
 
 const active = ref("首页");
 
-const navigateToUrl = (url) => {
-  tabStore.actionTab(currentTabId.value, 'navigate', { url: url })
+const navigateToUrl = (item) => {
+  active.value = item.label;
+  // debugger
+  tabStore.actionTab(currentTabId.value, 'navigate', { url: item.url })
   // 这里可以做真正的跳转逻辑
 };
 </script>
