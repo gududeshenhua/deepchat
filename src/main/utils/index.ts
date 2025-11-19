@@ -5,7 +5,7 @@ export function handleShowHiddenWindow(mustShow: boolean) {
   if (allWindows.length === 0) {
     presenter.windowPresenter.createShellWindow({
       initialTab: {
-        url: 'local://chat'
+        url: 'home://chat'
       }
     })
   } else {
@@ -25,7 +25,7 @@ export function handleShowHiddenWindow(mustShow: boolean) {
       // 如果目标窗口已销毁，创建新窗口
       presenter.windowPresenter.createShellWindow({
         initialTab: {
-          url: 'local://chat'
+          url: 'home://chat'
         }
       })
     }

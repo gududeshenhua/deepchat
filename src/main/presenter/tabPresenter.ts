@@ -126,8 +126,8 @@ export class TabPresenter implements ITabPresenter {
     view.setBackgroundColor('#00ffffff')
 
     // 加载内容
-    if (url.startsWith('local://chat') || url.startsWith('local://playground')) {
-      const viewType = url.replace('local://', '')
+    if (url.startsWith('home://chat') || url.startsWith('home://playground')) {
+      const viewType = url.replace('home://', '')
       if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
         view.webContents.loadURL(`${process.env['ELECTRON_RENDERER_URL']}#/${viewType}`)
       } else {
@@ -149,6 +149,7 @@ export class TabPresenter implements ITabPresenter {
     this.tabState.set(tabId, {
       id: tabId,
       title: url,
+      originUrl: url,
       isActive: options.active ?? true,
       url: url,
       closable: true,
@@ -230,9 +231,10 @@ export class TabPresenter implements ITabPresenter {
             console.warn('actionTab: navigate requires args.url')
             return false
           }
+          state.originUrl = args.url
           state.url = args.url
-          if (args.url.startsWith('local://chat') || args.url.startsWith('local://playground')) {
-            const viewType = args.url.replace('local://', '')
+          if (args.url.startsWith('home://chat') || args.url.startsWith('home://playground')) {
+            const viewType = args.url.replace('home://', '')
             if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
               await view.webContents.loadURL(`${process.env['ELECTRON_RENDERER_URL']}#/${viewType}`)
             } else {
@@ -667,6 +669,8 @@ export class TabPresenter implements ITabPresenter {
     webContents.on('did-navigate', (_event, url) => {
       const state = this.tabState.get(tabId)
       if (state) {
+        // console.log('-----------did-navigate----------')
+        // console.log(url)
         state.url = url
         // 如果没有标题，使用URL作为标题
         if (!state.title || state.title === 'Untitled') {
@@ -1033,7 +1037,7 @@ export class TabPresenter implements ITabPresenter {
   async resetTabToBlank(tabId: number): Promise<void> {
     const view = this.tabs.get(tabId)
     if (view && !view.webContents.isDestroyed()) {
-      const url = 'local://chat'
+      const url = 'home://chat'
       if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
         view.webContents.loadURL(`${process.env['ELECTRON_RENDERER_URL']}#/chat`)
       } else {

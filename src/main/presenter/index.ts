@@ -244,8 +244,8 @@ ipcMain.handle(
       const webContentsId = event.sender.id
       const tabId = presenter.tabPresenter.getTabIdByWebContentsId(webContentsId)
       const windowId = presenter.tabPresenter.getWindowIdByWebContentsId(webContentsId)
-      console.log('-------')
-      console.log(name, method, payloads)
+      // console.log('-------')
+      // console.log(name,method,payloads)
       const context: IPCCallContext = {
         tabId,
         windowId,

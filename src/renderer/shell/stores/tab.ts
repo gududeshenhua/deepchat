@@ -12,7 +12,7 @@ export const useTabStore = defineStore('tab', () => {
 
   const addTab = async (tab: { name: string; icon: string; viewType: string }) => {
     if (tab.viewType !== 'playground') {
-      const existing = tabs.value.find((t) => t.url === `local://${tab.viewType}`)
+      const existing = tabs.value.find((t) => t.url === `home://${tab.viewType}`)
       if (existing) {
         setCurrentTabId(existing.id)
         return existing
@@ -20,7 +20,7 @@ export const useTabStore = defineStore('tab', () => {
     }
 
     const windowId = window.api.getWindowId()
-    const viewId = await tabPresenter.createTab(windowId ?? 1, `local://${tab.viewType}`)
+    const viewId = await tabPresenter.createTab(windowId ?? 1, `home://${tab.viewType}`)
 
     let position = 0
     for (const tab of tabs.value) {
@@ -36,7 +36,7 @@ export const useTabStore = defineStore('tab', () => {
       isActive: true,
       position: position + 1,
       closable: true,
-      url: `local://${tab.viewType}`
+      url: `home://${tab.viewType}`
     }
     tabs.value.push(newTab)
     setCurrentTabId(newTab.id)

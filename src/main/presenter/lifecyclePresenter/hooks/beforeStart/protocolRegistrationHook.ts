@@ -11,6 +11,56 @@ import { is } from '@electron-toolkit/utils'
 import { LifecyclePhase } from '@shared/lifecycle'
 const url = require('url')
 
+
+/**
+ * 注册自定义协议
+ * @param {string} protocolName - 协议名，例如 'localhome'
+ * @param {object} options - 可选参数
+ *        options.basePath - 基础路径，默认为 app.getAppPath()
+ *        options.notFoundPage - 404 页面相对路径，默认 'page/404.html'
+ */
+function registerCustomProtocol(protocolName, options:any = {}) {
+  const basePath = options.basePath || app.getAppPath();
+  const notFoundPage = options.notFoundPage || 'page/404.html';
+
+  protocol.handle(protocolName, async (request) => {
+    try {
+      // 提取路径
+      let filePath = request.url
+        .replace(new RegExp(`^${protocolName}:\\/\\/`), '') // 去掉协议头
+        .split(/[?#]/)[0]                                   // 去掉 ? 和 # 参数
+        .replace(/^\/+/, '')                                // 去掉开头多余斜杠
+        .replace(/\/+$/, '');                               // 去掉结尾多余斜杠
+
+      let absolutePath = path.join(basePath, filePath);
+
+      // fallback to resources/app
+      if (!fs.existsSync(absolutePath)) {
+        const externalPath = path.join(process.resourcesPath, 'app', filePath);
+        if (fs.existsSync(externalPath)) absolutePath = externalPath;
+      }
+
+      // 404 fallback
+      if (!fs.existsSync(absolutePath)) {
+        const notFoundPath = path.join(basePath, notFoundPage);
+        if (fs.existsSync(notFoundPath)) {
+          return await net.fetch(url.pathToFileURL(notFoundPath).toString());
+        } else {
+          return new Response('404 Page Not Found', { status: 404 });
+        }
+      }
+
+      // 返回文件
+      const fileUrl = url.pathToFileURL(absolutePath).toString();
+      return await net.fetch(fileUrl);
+    } catch (err) {
+      console.error(`Error in ${protocolName} protocol:`, err);
+      return new Response('Internal Server Error', { status: 500 });
+    }
+  });
+}
+
+
 export const protocolRegistrationHook: LifecycleHook = {
   name: 'protocol-registration',
   phase: LifecyclePhase.BEFORE_START,
@@ -133,41 +183,43 @@ export const protocolRegistrationHook: LifecycleHook = {
 
     
       // Register 'local' protocol
-      protocol.handle('local', async (request) => {
-        try {
-          const filePath = request.url
-            .replace(/^local:\/\//, '')  // 去掉协议头
-            .split(/[?#]/)[0]            // 去掉 ? 或 # 参数
-            .replace(/^\/+/, '')         // 去掉开头多余斜杠
-            .replace(/\/+$/, '')
+      // protocol.handle('local', async (request) => {
+      //   try {
+      //     const filePath = request.url
+      //       .replace(/^local:\/\//, '')  // 去掉协议头
+      //       .split(/[?#]/)[0]            // 去掉 ? 或 # 参数
+      //       .replace(/^\/+/, '')         // 去掉开头多余斜杠
+      //       .replace(/\/+$/, '')
 
-          let basePath = app.getAppPath()
-          let absolutePath = path.join(basePath, filePath)
+      //     let basePath = app.getAppPath()
+      //     let absolutePath = path.join(basePath, filePath)
 
-          // fallback to external app path
-          if (!fs.existsSync(absolutePath)) {
-            const externalPath = path.join(process.resourcesPath, 'app', filePath)
-            if (fs.existsSync(externalPath)) absolutePath = externalPath
-          }
+      //     // fallback to external app path
+      //     if (!fs.existsSync(absolutePath)) {
+      //       const externalPath = path.join(process.resourcesPath, 'app', filePath)
+      //       if (fs.existsSync(externalPath)) absolutePath = externalPath
+      //     }
 
-          // 404 fallback
-          if (!fs.existsSync(absolutePath)) {
-            const notFoundPath = path.join(basePath, 'page/404.html')
-            if (fs.existsSync(notFoundPath)) {
-              return await net.fetch(url.pathToFileURL(notFoundPath).toString())
-            } else {
-              return new Response('404 Page Not Found', { status: 404 })
-            }
-          }
+      //     // 404 fallback
+      //     if (!fs.existsSync(absolutePath)) {
+      //       const notFoundPath = path.join(basePath, 'page/404.html')
+      //       if (fs.existsSync(notFoundPath)) {
+      //         return await net.fetch(url.pathToFileURL(notFoundPath).toString())
+      //       } else {
+      //         return new Response('404 Page Not Found', { status: 404 })
+      //       }
+      //     }
 
-          const fileUrl = url.pathToFileURL(absolutePath).toString()
-          return await net.fetch(fileUrl)
-        } catch (err) {
-          console.error('Error in local protocol:', err)
-          return new Response('Internal Server Error', { status: 500 })
-        }
-      })
-
-    
+      //     const fileUrl = url.pathToFileURL(absolutePath).toString()
+      //     return await net.fetch(fileUrl)
+      //   } catch (err) {
+      //     console.error('Error in local protocol:', err)
+      //     return new Response('Internal Server Error', { status: 500 })
+      //   }
+      // })
+    //加载本地文件
+    registerCustomProtocol('local')
+    //加载框架自带spa 
+    registerCustomProtocol('home')
   }
 }

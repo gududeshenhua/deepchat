@@ -69,7 +69,7 @@ export class WindowPresenter implements IWindowPresenter {
     // Listen for shortcut event: create new window
     eventBus.on(SHORTCUT_EVENTS.CREATE_NEW_WINDOW, () => {
       console.log('Creating new shell window via shortcut.')
-      this.createShellWindow({ initialTab: { url: 'local://chat' } })
+      this.createShellWindow({ initialTab: { url: 'home://chat' } })
     })
 
     // Listen for shortcut event: create new tab
@@ -77,7 +77,7 @@ export class WindowPresenter implements IWindowPresenter {
       console.log(`Creating new tab via shortcut for window ${windowId}.`)
       const window = this.windows.get(windowId)
       if (window && !window.isDestroyed()) {
-        await (presenter.tabPresenter as TabPresenter).createTab(windowId, 'local://chat', {
+        await (presenter.tabPresenter as TabPresenter).createTab(windowId, 'home://chat', {
           active: true
         })
       } else {

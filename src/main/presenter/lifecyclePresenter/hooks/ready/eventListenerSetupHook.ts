@@ -38,7 +38,7 @@ export const eventListenerSetupHook: LifecycleHook = {
       if (allWindows.length === 0) {
         presenter.windowPresenter.createShellWindow({
           initialTab: {
-            url: 'local://chat'
+            url: 'home://chat'
           }
         })
       } else {
@@ -53,7 +53,7 @@ export const eventListenerSetupHook: LifecycleHook = {
           )
           presenter.windowPresenter.createShellWindow({
             // If target window is destroyed, create new window
-            initialTab: { url: 'local://chat' }
+            initialTab: { url: 'home://chat' }
           })
         }
       }

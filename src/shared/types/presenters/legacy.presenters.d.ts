@@ -162,6 +162,7 @@ export interface ProviderModelConfigs {
 export interface TabData {
   id: number
   title: string
+  originUrl: string
   isActive: boolean
   position: number
   closable: boolean

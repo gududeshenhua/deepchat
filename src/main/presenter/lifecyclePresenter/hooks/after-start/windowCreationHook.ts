@@ -26,7 +26,7 @@ export const windowCreationHook: LifecycleHook = {
       try {
         const windowId = await presenter.windowPresenter.createShellWindow({
           initialTab: {
-            url: 'local://chat'
+            url: 'home://chat'
           }
         })
         if (windowId) {

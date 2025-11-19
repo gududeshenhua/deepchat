@@ -239,7 +239,7 @@ export class DeeplinkPresenter implements IDeeplinkPresenter {
       const tabsData = await tabPresenter.getWindowTabsData(windowId)
       const chatTab = tabsData.find(
         (tab) =>
-          tab.url === 'local://chat' || tab.url.includes('#/chat') || tab.url.endsWith('/chat')
+          tab.url === 'home://chat' || tab.url.includes('#/chat') || tab.url.endsWith('/chat')
       )
       if (chatTab) {
         if (!chatTab.isActive) {
@@ -247,7 +247,7 @@ export class DeeplinkPresenter implements IDeeplinkPresenter {
           await new Promise((resolve) => setTimeout(resolve, 100))
         }
       } else {
-        const newTabId = await tabPresenter.createTab(windowId, 'local://chat', { active: true })
+        const newTabId = await tabPresenter.createTab(windowId, 'home://chat', { active: true })
         if (newTabId) {
           console.log(`[Deeplink] Waiting for tab ${newTabId} renderer to be ready`)
           await this.waitForTabReady(newTabId)

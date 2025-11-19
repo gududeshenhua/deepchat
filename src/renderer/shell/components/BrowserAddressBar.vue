@@ -82,7 +82,7 @@ const refresh = () => {
 };
 
 const goHome = () => {
-  url.value = "local://chat";
+  url.value = "home://chat";
   navigateToUrl();
 };
 
@@ -95,7 +95,7 @@ const navigateToUrl = () => {
 onMounted(()=>{
   ipcRenderer.on(TAB_EVENTS.CURRENT_ACTIVE_TAB_UPDATED, (event, tab) => {
     // debugger;
-    url.value = tab.url
+    url.value = tab.originUrl
   })
 })
 </script>

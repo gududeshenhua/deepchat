@@ -17,7 +17,7 @@
           :key="item.label"
           @click="navigateToUrl(item)"
           class="w-full h-14 cursor-pointer flex flex-col items-center justify-center rounded-xl transition-all"
-          :class="active === item.label
+          :class="active === item.url
             ? 'bg-white shadow-sm'
             : 'hover:bg-white/60'"
         >
@@ -27,7 +27,7 @@
           />
           <span
             class="text-xs mt-1"
-            :class="active === item.label ? 'text-[#00a8a8]' : 'text-[#4a7977]'"
+            :class="active === item.url ? 'text-[#00a8a8]' : 'text-[#4a7977]'"
           >
             {{ item.label }}
           </span>
@@ -38,14 +38,16 @@
 </template>
 <script setup >
 import { Icon } from "@iconify/vue";
-import { ref,computed } from "vue";
+import { ref,computed,onMounted } from "vue";
 import { useTabStore } from '@shell/stores/tab'
+const { ipcRenderer } = window.electron
+import { TAB_EVENTS } from '../lib/events'
 
 const tabStore = useTabStore()
 const currentTabId = computed(() => tabStore.currentTabId)
 
 const menus = [
-  { label: "首页", icon: "mdi:home-outline" , url: "local://chat" },
+  { label: "首页", icon: "mdi:home-outline" , url: "home://chat" },
   { label: "应用", icon: "mdi:view-grid-outline" , url: "local://page/test1.html" },
   { label: "数据", icon: "mdi:chart-bar" ,url: "local://page/test2.html" },
   { label: "工具", icon: "mdi:briefcase-outline",url: "local://page/test3.html"  },
@@ -56,11 +58,19 @@ const menus = [
 const active = ref("首页");
 
 const navigateToUrl = (item) => {
-  active.value = item.label;
+  active.value = item.url;
   // debugger
+  // window.location.href = item.url
   tabStore.actionTab(currentTabId.value, 'navigate', { url: item.url })
   // 这里可以做真正的跳转逻辑
 };
+
+onMounted(()=>{
+  ipcRenderer.on(TAB_EVENTS.CURRENT_ACTIVE_TAB_UPDATED, (event, tab) => {
+    // debugger;
+    active.value = tab.originUrl
+  })
+})
 </script>
 
 
