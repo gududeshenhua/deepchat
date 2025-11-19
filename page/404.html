@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>页面未找到 - 404</title>
+    <script src="./common/persenterFactory.js" ></script>
+    <script src="./common/tab.js"></script>
     <style>
         * {
             margin: 0;
@@ -13,12 +15,12 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            /* color: white; */
         }
         
         .error-container {
@@ -72,13 +74,13 @@
         }
         
         .btn-primary {
-            background: #fff;
+            /* background: #fff; */
             color: #667eea;
         }
         
         .btn-secondary {
             background: transparent;
-            color: white;
+            /* color: white; */
             border: 2px solid rgba(255, 255, 255, 0.5);
         }
         
@@ -128,24 +130,21 @@
     </div>
 
     <script>
+        // const tabs = window.TabManager.getTabs();
+        // const currentTab = window.TabManager.getCurrentTabId();
+
+       
         function goBack() {
             // 使用与工具栏相同的方法
-            if (window.myAPI && window.myAPI.browser) {
-                window.myAPI.browser.goBack();
-            } else {
-                // 如果preload.js未加载，使用控制台消息
-                console.log('PAGE_MESSAGE:{"type":"goBack"}');
-            }
+            // console.log(currentTab)
+            // debugger
+            window.TabManager.actionTab('goBack');
+            
         }
         
         function goHome() {
-            // 通过控制台消息与主进程通信
-            if (window.myAPI && window.myAPI.browser) {
-                window.myAPI.browser.goHome();
-            } else {
-                // 如果preload.js未加载，使用控制台消息
-                console.log('PAGE_MESSAGE:{"type":"goHome"}');
-            }
+          //  console.log(currentTab)
+           window.TabManager.actionTab('navigate',{url:"local://chat"});
         }
         
         // 页面加载完成后显示动画
