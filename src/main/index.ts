@@ -47,6 +47,13 @@ protocol.registerSchemesAsPrivileged([
     },
   },
 ])
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'json', privileges: { standard: true,
+      secure: true,
+      supportFetchAPI: true,
+      bypassCSP: true,
+      stream: true, } }
+]);
 // Initialize presenter after ready
 let presenter: Presenter
 // Start the lifecycle management system instead of using app.whenReady()

@@ -22,9 +22,10 @@ const url = require('url')
 function registerCustomProtocol(protocolName, options:any = {}) {
   const basePath = options.basePath || app.getAppPath();
   const notFoundPage = options.notFoundPage || 'page/404.html';
-
+  
   protocol.handle(protocolName, async (request) => {
     try {
+      // console.log('registerCustomProtocol', request.url)
       // 提取路径
       let filePath = request.url
         .replace(new RegExp(`^${protocolName}:\\/\\/`), '') // 去掉协议头
@@ -221,5 +222,27 @@ export const protocolRegistrationHook: LifecycleHook = {
     registerCustomProtocol('local')
     //加载框架自带spa 
     registerCustomProtocol('home')
+
+    protocol.registerBufferProtocol('json', (request, callback) => {
+      console.log('request', request)
+      const filePath = path.join(app.getAppPath(), request.url.replace('json://', ''));
+      console.log('filePath', filePath)
+      if (!fs.existsSync(filePath)) {
+        callback({
+          statusCode: 404,
+          headers: { 'Content-Type': 'text/plain' },
+          data: Buffer.from('Not Found')
+        });
+        return;
+      }
+
+      const data = fs.readFileSync(filePath);
+      let mime = 'text/plain';
+      if (filePath.endsWith('.js')) mime = 'application/javascript';
+      if (filePath.endsWith('.json')) mime = 'application/json';
+
+      callback({ statusCode: 200, headers: { 'Content-Type': mime }, data });
+    });
+   
   }
 }

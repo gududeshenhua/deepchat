@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "title": "Home",
+    "icon": "home-icon.png",
+    "isActive": true,
+    "position": 0,
+    "closable": false,
+    "url": "https://example.com/home",
+    "originUrl": "https://example.com/home"
+  },
+  {
+    "id": 2,
+    "title": "About",
+    "icon": "about-icon.png",
+    "isActive": false,
+    "position": 1,
+    "closable": true,
+    "url": "https://example.com/about",
+    "originUrl": "https://example.com/about"
+  },
+  {
+    "id": 3,
+    "title": "Contact",
+    "icon": "contact-icon.png",
+    "isActive": false,
+    "position": 2,
+    "closable": true,
+    "url": "https://example.com/contact",
+    "originUrl": "https://example.com/contact"
+  }
+]

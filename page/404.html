@@ -159,6 +159,22 @@
                 container.style.transform = 'translateY(0)';
             }, 100);
         });
+
+        
+        fetch('json://page/test.json')
+  .then(res => {
+    if (!res.ok) throw new Error('网络错误: ' + res.status);
+    return res.json();  // JSON 数据
+  })
+  .then(data => {
+    console.log('返回数据:', data);
+    alert(JSON.stringify(data));  // 弹出数据
+  })
+  .catch(err => {
+    console.error('请求失败:', err);
+    alert('请求失败: ' + err.message);
+  });
+
     </script>
 </body>
 </html>
