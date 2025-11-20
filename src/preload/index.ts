@@ -59,6 +59,7 @@ if (process.contextIsolated) {
   window.api = api
 }
 window.addEventListener('DOMContentLoaded', () => {
+  // console.log('Preload: DOMContentLoaded',window.location.href)
   cachedWebContentsId = ipcRenderer.sendSync('get-web-contents-id')
   cachedWindowId = ipcRenderer.sendSync('get-window-id')
   console.log(

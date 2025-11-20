@@ -17,6 +17,15 @@ const router = createRouter({
       }
     },
     {
+      path: '/script',
+      name: 'script',
+      component: () => import('@/views/Script.vue'),
+      meta: {
+        titleKey: 'routes.script',
+        icon: 'lucide:message-square'
+      }
+    },
+    {
       path: '/welcome',
       name: 'welcome',
       component: () => import('@/views/WelcomeView.vue'),

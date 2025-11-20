@@ -1,6 +1,7 @@
 {
   "chat": "Chat",
   "welcome": "Welcome",
+  "script": "Script",
   "playground": "Playground",
   "settings": "Settings",
   "settings-common": "Common Settings",
@@ -12,5 +13,6 @@
   "settings-display": "Display",
   "settings-knowledge-base": "Knowledge Base",
   "settings-prompt": "Prompts",
-  "settings-mcp-market": "MCP Market"
+  "settings-mcp-market": "MCP Market",
+  "not-found": "Not Found"
 }
