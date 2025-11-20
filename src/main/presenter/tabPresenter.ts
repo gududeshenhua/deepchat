@@ -3,7 +3,8 @@ import { eventBus } from '@/eventbus'
 import { WINDOW_EVENTS, CONFIG_EVENTS, SYSTEM_EVENTS, TAB_EVENTS } from '@/events'
 import { is } from '@electron-toolkit/utils'
 import { ITabPresenter, TabCreateOptions, IWindowPresenter, TabData } from '@shared/presenter'
-import { BrowserWindow, WebContentsView, shell, nativeImage } from 'electron'
+// shell
+import { BrowserWindow, WebContentsView, nativeImage } from 'electron'
 import { join } from 'path'
 import contextMenu from '@/contextMenuHelper'
 import { getContextMenuLabels } from '@shared/i18n'
@@ -255,6 +256,8 @@ export class TabPresenter implements ITabPresenter {
           if (view.webContents.canGoBack()) {
             view.webContents.goBack()
           }
+          // console.log('goBack')
+          // console.log(view.webContents)
           break
 
         case 'goForward':
@@ -607,7 +610,9 @@ export class TabPresenter implements ITabPresenter {
     // 处理外部链接
     webContents.setWindowOpenHandler(({ url }) => {
       // 使用系统默认浏览器打开链接
-      shell.openExternal(url)
+      // shell.openExternal(url)
+      // 在当前窗口加载URL
+      webContents.loadURL(url)
       return { action: 'deny' }
     })
 

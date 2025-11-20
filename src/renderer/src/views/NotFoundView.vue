@@ -1,13 +1,27 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>页面未找到 - 404</title>
-    <script src="local://page/common/persenterFactory.js" ></script>
-    <script src="local://page/common/tab.js"></script>
-    <style>
-        * {
+<template>
+   <div class="error-container">
+        <div class="emoji animation">😕</div>
+        <div class="error-code">404</div>
+        <h1 class="error-title">页面未找到</h1>
+        <p class="error-message">
+            抱歉，您访问的页面不存在或已被移动。<br>
+            请检查URL是否正确，或返回首页继续浏览。
+        </p>
+        <!-- <div class="action-buttons">
+            <button class="btn btn-primary" onclick="goBack()">返回上一页</button>
+            <button class="btn btn-secondary" onclick="goHome()">返回首页</button>
+        </div> -->
+    </div>
+</template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style scoped>
+ * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -25,6 +39,7 @@
         
         .error-container {
             text-align: center;
+            margin:auto;
             padding: 40px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 20px;
@@ -112,69 +127,4 @@
             margin-bottom: 20px;
             display: block;
         }
-    </style>
-</head>
-<body>
-    <div class="error-container">
-        <div class="emoji animation">😕</div>
-        <div class="error-code">404</div>
-        <h1 class="error-title">页面未找到</h1>
-        <p class="error-message">
-            抱歉，您访问的页面不存在或已被移动。<br>
-            请检查URL是否正确，或返回首页继续浏览。
-        </p>
-        <div class="action-buttons">
-            <button class="btn btn-primary" onclick="goBack()">返回上一页</button>
-            <button class="btn btn-secondary" onclick="goHome()">返回首页</button>
-        </div>
-    </div>
-
-    <script>
-        // const tabs = window.TabManager.getTabs();
-        // const currentTab = window.TabManager.getCurrentTabId();
-
-       
-        function goBack() {
-            // 使用与工具栏相同的方法
-            // console.log(currentTab)
-            // debugger
-            window.TabManager.actionTab('goBack');
-            
-        }
-        
-        function goHome() {
-          //  console.log(currentTab)
-           window.TabManager.actionTab('navigate',{url:"local://chat"});
-        }
-        
-        // 页面加载完成后显示动画
-        window.addEventListener('load', function() {
-            const container = document.querySelector('.error-container');
-            container.style.opacity = '0';
-            container.style.transform = 'translateY(30px)';
-            
-            setTimeout(() => {
-                container.style.transition = 'all 0.8s ease';
-                container.style.opacity = '1';
-                container.style.transform = 'translateY(0)';
-            }, 100);
-        });
-
-        
-  //       fetch('json://page/test.json')
-  // .then(res => {
-  //   if (!res.ok) throw new Error('网络错误: ' + res.status);
-  //   return res.json();  // JSON 数据
-  // })
-  // .then(data => {
-  //   console.log('返回数据:', data);
-  //   alert(JSON.stringify(data));  // 弹出数据
-  // })
-  // .catch(err => {
-  //   console.error('请求失败:', err);
-  //   alert('请求失败: ' + err.message);
-  // });
-
-    </script>
-</body>
-</html>
+</style>

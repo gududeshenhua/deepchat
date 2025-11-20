@@ -264,7 +264,11 @@ onMounted(() => {
   watch(
     () => activeTab.value,
     (newVal) => {
-      router.push({ name: newVal })
+      try {
+        router.push({ name: newVal })
+      }catch (error) {
+        // router.push({ name: 'not-found' })
+      }
     }
   )
 
