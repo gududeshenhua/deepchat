@@ -10,7 +10,7 @@
     </div>
 
     <!-- 菜单滚动区 -->
-    <div class="flex-1 overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400">
+    <div class="flex-1 overflow-y-auto scroll-thin-custom">
       <nav class="flex flex-col items-center space-y-3 px-2">
         <div
           v-for="item in menus"
@@ -53,6 +53,7 @@ const menus = [
   { label: "工具", icon: "mdi:briefcase-outline",url: "local://page/test3.html"  },
   { label: "消息", icon: "mdi:message-processing-outline",url: "local://page/test1.html"  },
   { label: "设置", icon: "mdi:cog-outline",url: "local://page/test2.html" },
+  { label: "脚本", icon: "mdi:script-text-outline", url: "home://script" }
 ];
 
 const active = ref("首页");
@@ -75,4 +76,21 @@ onMounted(()=>{
 
 
 <style scoped>
+.scroll-thin-custom::-webkit-scrollbar {
+  width: 4px; /* 改成你想要的宽度，比默认 thin 更细 */
+}
+
+.scroll-thin-custom::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 9999px;
+}
+
+.scroll-thin-custom::-webkit-scrollbar-thumb:hover {
+  background-color: #aaa;
+}
+
+.scroll-thin-custom::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 </style>

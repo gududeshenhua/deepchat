@@ -127,7 +127,7 @@ export class TabPresenter implements ITabPresenter {
     view.setBackgroundColor('#00ffffff')
 
     // 加载内容
-    if (url.startsWith('home://chat') || url.startsWith('home://playground')) {
+    if (url.startsWith('home://')) {
       const viewType = url.replace('home://', '')
       if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
         view.webContents.loadURL(`${process.env['ELECTRON_RENDERER_URL']}#/${viewType}`)
@@ -234,7 +234,7 @@ export class TabPresenter implements ITabPresenter {
           }
           state.originUrl = args.url
           state.url = args.url
-          if (args.url.startsWith('home://chat') || args.url.startsWith('home://playground')) {
+          if (args.url.startsWith('home://')) {
             const viewType = args.url.replace('home://', '')
             if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
               await view.webContents.loadURL(`${process.env['ELECTRON_RENDERER_URL']}#/${viewType}`)
@@ -676,6 +676,9 @@ export class TabPresenter implements ITabPresenter {
       if (state) {
         // console.log('-----------did-navigate----------')
         // console.log(url)
+        if (state.originUrl && !state.originUrl.startsWith('home://')) {
+          state.originUrl = url
+        }
         state.url = url
         // 如果没有标题，使用URL作为标题
         if (!state.title || state.title === 'Untitled') {
