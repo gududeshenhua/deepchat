@@ -370,6 +370,7 @@ export interface IPresenter {
   oauthPresenter: IOAuthPresenter
   dialogPresenter: IDialogPresenter
   knowledgePresenter: IKnowledgePresenter
+  scriptPresenter: IScriptPresenter
   init(): void
   destroy(): void
 }
@@ -1907,6 +1908,12 @@ export interface LifecycleState {
   isShuttingDown: boolean
 }
 
+export interface ScriptItem {
+  name: string
+  enabled: boolean
+  match: string[]
+  entry: string
+}
 /**
  * LifecycleManager interface defining the core lifecycle management API
  */
@@ -1929,6 +1936,18 @@ export interface ISplashWindowManager {
   updateProgress(phase: LifecyclePhase, progress: number): void
   close(): Promise<void>
   isVisible(): boolean
+}
+
+export interface IScriptPresenter {
+  /** 读取 scripts.json */
+  load(): void
+  /** 保存 scripts.json */
+  save(): void
+  /** 获取所有脚本 */
+  getAllScripts(): ScriptItem[]
+  updateScript(updated: ScriptItem): void
+  uploadScript(item: ScriptItem, content: string): void
+  deleteScript(item: ScriptItem): void
 }
 
 export interface LifecycleEventStats {

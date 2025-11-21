@@ -22,7 +22,8 @@ import {
   ITabPresenter,
   IThreadPresenter,
   IUpgradePresenter,
-  IWindowPresenter
+  IWindowPresenter,
+  IScriptPresenter
 } from '@shared/presenter'
 import { eventBus } from '@/eventbus'
 import { LLMProviderPresenter } from './llmProviderPresenter'
@@ -40,6 +41,7 @@ import { OAuthPresenter } from './oauthPresenter'
 import { FloatingButtonPresenter } from './floatingButtonPresenter'
 import { CONFIG_EVENTS, WINDOW_EVENTS } from '@/events'
 import { KnowledgePresenter } from './knowledgePresenter'
+import { ScriptPresenter } from './scriptPresenter'
 
 // IPC调用上下文接口
 interface IPCCallContext {
@@ -80,6 +82,7 @@ export class Presenter implements IPresenter {
   // llamaCppPresenter: LlamaCppPresenter // 保留原始注释
   dialogPresenter: IDialogPresenter
   lifecycleManager: ILifecycleManager
+  scriptPresenter: IScriptPresenter
 
   private constructor(lifecycleManager: ILifecycleManager) {
     // Store lifecycle manager reference for component access
@@ -110,6 +113,7 @@ export class Presenter implements IPresenter {
     this.trayPresenter = new TrayPresenter()
     this.floatingButtonPresenter = new FloatingButtonPresenter(this.configPresenter)
     this.dialogPresenter = new DialogPresenter()
+    this.scriptPresenter = new ScriptPresenter()
 
     // Define dbDir for knowledge presenter
     const dbDir = path.join(app.getPath('userData'), 'app_db')

@@ -14,7 +14,7 @@ export const databaseInitHook: LifecycleHook = {
   critical: true,
   async execute(context: LifecycleContext): Promise<void> {
     console.log('databaseInitHook: DatabaseInitHook: Starting database initialization')
-
+    // console.log(`-----------------------------------Database path:`)
     try {
       // Create database initializer
       const dbInitializer = new DatabaseInitializer()

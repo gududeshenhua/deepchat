@@ -8,7 +8,7 @@ import {
   shell
 } from 'electron'
 import { exposeElectronAPI } from '@electron-toolkit/preload'
-
+import { ScriptInjector } from './script-injector'
 // Cache variables
 let cachedWindowId: number | undefined = undefined
 let cachedWebContentsId: number | undefined = undefined
@@ -44,6 +44,7 @@ const api = {
   }
 }
 exposeElectronAPI()
+const scriptInjector = new ScriptInjector()
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
@@ -58,7 +59,7 @@ if (process.contextIsolated) {
   // @ts-ignore (define in dts)
   window.api = api
 }
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
   // console.log('Preload: DOMContentLoaded',window.location.href)
   cachedWebContentsId = ipcRenderer.sendSync('get-web-contents-id')
   cachedWindowId = ipcRenderer.sendSync('get-window-id')
@@ -68,6 +69,8 @@ window.addEventListener('DOMContentLoaded', () => {
     'WindowId:',
     cachedWindowId
   )
+  // await scriptInjector.loadScriptsFromMain()
+  // scriptInjector.injectScripts()
   webFrame.setVisualZoomLevelLimits(1, 1) // Disable trackpad zooming
   webFrame.setZoomFactor(1)
 })

@@ -33,7 +33,7 @@ export class DatabaseInitializer implements IDatabaseInitializer {
   async initialize(): Promise<SQLitePresenter> {
     try {
       console.log('DatabaseInitializer: Starting database initialization')
-
+      console.log(`-----------------------------------Database path: ${this.dbPath}`)
       // Create SQLitePresenter instance
       this.database = new SQLitePresenter(this.dbPath, this.password)
 

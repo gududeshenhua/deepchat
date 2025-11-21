@@ -54,7 +54,7 @@ const menus = [
   { label: "消息", icon: "mdi:message-processing-outline",url: "local://page/test1.html"  },
   { label: "设置", icon: "mdi:cog-outline",url: "local://page/test2.html" },
   { label: "脚本", icon: "mdi:script-text-outline", url: "home://script" }
-];
+]; 
 
 const active = ref("首页");
 
