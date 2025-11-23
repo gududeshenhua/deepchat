@@ -9,7 +9,7 @@ export class ScriptInjector {
   private sandboxes: Record<string, any> = {}
 
   constructor() {
-    this.listenHotReload()
+    // this.listenHotReload()
   }
 
   async loadScriptsFromMain() {

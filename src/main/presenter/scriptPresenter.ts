@@ -4,6 +4,7 @@ import fs from 'fs'
 import path from 'path'
 import { IScriptPresenter } from '@shared/presenter'
 import { eventBus, SendTarget } from '@/eventbus'
+import { is } from '@electron-toolkit/utils'
 
 export interface ScriptItem {
   name: string
@@ -18,8 +19,12 @@ export class ScriptPresenter implements IScriptPresenter {
   private scriptList: ScriptItem[] = []
 
   constructor() {
-    this.configPath = path.join(app.getAppPath(), 'resources', 'script', 'config.json')
-    this.scriptsDirPath = path.join(app.getAppPath(), 'resources', 'script')
+    this.configPath = is.dev
+      ? path.join(app.getAppPath(), 'resources', 'script', 'config.json')
+      : path.join(process.resourcesPath, 'app.asar.unpacked', 'resources', 'script', 'config.json')
+    this.scriptsDirPath = is.dev
+      ? path.join(app.getAppPath(), 'resources', 'script')
+      : path.join(process.resourcesPath, 'app.asar.unpacked', 'resources', 'script')
     this.load()
   }
 

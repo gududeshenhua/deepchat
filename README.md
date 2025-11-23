@@ -340,3 +340,7 @@ This project is built with the help of these awesome libraries:
 
 [LICENSE](./LICENSE)
 
+TODO:
+# 刷新的时候加一个遮罩，不要黑屏
+# 添加一个loading动画
+# script目录打包出来要可读
