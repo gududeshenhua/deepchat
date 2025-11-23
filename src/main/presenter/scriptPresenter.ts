@@ -56,7 +56,9 @@ export class ScriptPresenter implements IScriptPresenter {
       this.save()
     }
 
-    eventBus.sendToRenderer('scripts:reload-now', SendTarget.ALL_WINDOWS, { reload: true })
+    eventBus.sendToRenderer('scripts:reload-now', SendTarget.ALL_WINDOWS, {
+      reload: updated.enabled ? false : true
+    })
   }
 
   /** ✨ 新增脚本 */
