@@ -1,8 +1,8 @@
 <template>
-  <div class="p-6">
+  <div class="p-6 w-full overflow-y-auto">
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold">所有脚本扩展</h2>
+      <!-- <h2 class="text-2xl font-bold">所有脚本扩展</h2> -->
 
       <Button @click="openUpload">
         <Icon icon="material-symbols:add" class="w-5 h-5 mr-1" />
