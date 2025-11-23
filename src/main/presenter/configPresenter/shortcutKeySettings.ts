@@ -17,7 +17,8 @@ export const rendererShortcutKey = {
   DeleteConversation: `${CommandKey}+D`,
   SwitchNextTab: `${CommandKey}+Tab`,
   SwitchPrevTab: `${CommandKey}+${ShiftKey}+Tab`,
-  SwtichToLastTab: `${CommandKey}+9`
+  SwtichToLastTab: `${CommandKey}+9`,
+  ToggleDevTools: `${CommandKey}+F12`
 }
 
 // System-level shortcut keys
@@ -29,6 +30,7 @@ export const systemShortcutKey = {
 export const defaultShortcutKey = {
   ...rendererShortcutKey,
   ...systemShortcutKey
+  // ToggleDevTools: 'F12'
 }
 
 export type ShortcutKey = keyof typeof defaultShortcutKey

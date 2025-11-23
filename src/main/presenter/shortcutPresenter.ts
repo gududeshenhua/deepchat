@@ -190,6 +190,25 @@ export class ShortcutPresenter implements IShortcutPresenter {
       })
     }
 
+    // F12 打开当前标签页的开发者工具
+    if (this.shortcutKeys.ToggleDevTools) {
+      globalShortcut.register(this.shortcutKeys.ToggleDevTools, async () => {
+        const focusedWindow = presenter.windowPresenter.getFocusedWindow()
+        if (focusedWindow?.isFocused()) {
+          // 获取当前窗口的活动标签页ID
+          const activeTabId = await presenter.tabPresenter.getActiveTabId(focusedWindow.id)
+          if (activeTabId) {
+            // 获取标签页视图
+            const tabView = await presenter.tabPresenter.getTab(activeTabId)
+            if (tabView) {
+              // 打开开发者工具
+              tabView.webContents.openDevTools({ mode: 'detach' })
+            }
+          }
+        }
+      })
+    }
+
     this.showHideWindow()
 
     this.isActive = true
@@ -274,6 +293,11 @@ export class ShortcutPresenter implements IShortcutPresenter {
   unregisterShortcuts(): void {
     console.log('unreg shortcuts')
     globalShortcut.unregisterAll()
+
+    // Unregister F12 shortcut explicitly
+    if (this.shortcutKeys.ToggleDevTools) {
+      globalShortcut.unregister(this.shortcutKeys.ToggleDevTools)
+    }
 
     this.showHideWindow()
     this.isActive = false
