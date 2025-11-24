@@ -216,6 +216,7 @@ export interface IWindowPresenter {
 }
 
 export interface ITabPresenter {
+  refreshInjectorScriptsTabs(windowId: number): void
   createTab(windowId: number, url: string, options?: TabCreateOptions): Promise<number | null>
   actionTab(tabId: number, action: string, ...args: unknown[]): Promise<boolean>
   closeTab(tabId: number): Promise<boolean>
@@ -1948,6 +1949,7 @@ export interface IScriptPresenter {
   updateScript(updated: ScriptItem): void
   uploadScript(item: ScriptItem, content: string): void
   deleteScript(item: ScriptItem): void
+  matchUrl(url: string, patterns: string[]): boolean
 }
 
 export interface LifecycleEventStats {

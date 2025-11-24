@@ -93,8 +93,9 @@ export class Presenter implements IPresenter {
     this.sqlitePresenter = context.database as ISQLitePresenter
 
     // 初始化各个 Presenter 实例及其依赖
+    this.scriptPresenter = new ScriptPresenter()
     this.windowPresenter = new WindowPresenter(this.configPresenter)
-    this.tabPresenter = new TabPresenter(this.windowPresenter)
+    this.tabPresenter = new TabPresenter(this.windowPresenter, this.scriptPresenter)
     this.llmproviderPresenter = new LLMProviderPresenter(this.configPresenter)
     this.devicePresenter = new DevicePresenter()
     this.threadPresenter = new ThreadPresenter(
@@ -113,7 +114,6 @@ export class Presenter implements IPresenter {
     this.trayPresenter = new TrayPresenter()
     this.floatingButtonPresenter = new FloatingButtonPresenter(this.configPresenter)
     this.dialogPresenter = new DialogPresenter()
-    this.scriptPresenter = new ScriptPresenter()
 
     // Define dbDir for knowledge presenter
     const dbDir = path.join(app.getPath('userData'), 'app_db')

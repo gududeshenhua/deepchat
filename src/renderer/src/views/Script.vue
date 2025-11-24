@@ -149,6 +149,7 @@ onMounted(async () => {
 const update = async (item) => {
   await scriptStore.updateScript(item)
   scripts.value = await scriptStore.getAllScripts() // 刷新
+  scriptStore.refreshWindowTabsScript()
 }
 const refresh = async () => {
    scripts.value = await scriptStore.getAllScripts()

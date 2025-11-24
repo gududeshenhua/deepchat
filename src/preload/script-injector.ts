@@ -1,13 +1,13 @@
 import { ScriptItem } from '@shared/types'
 import { ipcRenderer } from 'electron'
 import path from 'path'
-
+import { matchUrlWithExclude } from '@shared/utils'
 export class ScriptInjector {
   private scriptList: ScriptItem[] = []
   private scriptsPath = ''
   // private iframeMap: Record<string, HTMLIFrameElement> = {} // 存储每个脚本的 iframe
   private sandboxes: Record<string, any> = {}
-
+  private originUrl: string = ''
   constructor() {
     // this.listenHotReload()
   }
@@ -20,9 +20,19 @@ export class ScriptInjector {
       'getScriptPath'
     )
   }
+  getOriginUrlFromArguments() {
+    const args = process.argv
+    for (const arg of args) {
+      if (arg.startsWith('--originUrl=')) {
+        return decodeURIComponent(arg.replace('--originUrl=', ''))
+      }
+    }
+    return null
+  }
 
   matchUrl(url: string, patterns: string[]) {
-    return patterns.some((p) => new RegExp('^' + p.replace(/\*/g, '.*') + '$').test(url))
+    return matchUrlWithExclude(url, patterns)
+    // return patterns.some((p) => new RegExp('^' + p.replace(/\*/g, '.*') + '$').test(url))
   }
 
   /** 卸载单个脚本 */
@@ -32,7 +42,11 @@ export class ScriptInjector {
 
   /** 注入单个脚本 */
   private injectScript(script: ScriptItem) {
-    const url = window.location.href
+    const url = this.getOriginUrlFromArguments() || this.originUrl || window.location.href
+    console.log('Url', url)
+    // const url = this.getOriginUrlFromArguments()
+    // debugger;
+    if (!url) return
     if (!script.enabled) {
       this.unloadScript(script.name)
       return
@@ -61,14 +75,20 @@ export class ScriptInjector {
 
   /** 监听热加载 */
   listenHotReload() {
-    ipcRenderer.on('scripts:reload-now', async (_, options: { reload?: boolean }) => {
-      console.log('[ScriptInjector] 🔥 热加载触发')
-      if (options && options.reload) {
-        location.reload()
+    ipcRenderer.on(
+      'scripts:reload-now',
+      async (_, options: { reload?: boolean; originUrl?: string }) => {
+        console.log('[ScriptInjector] 🔥 热加载触发')
+        if (options && options.originUrl) {
+          this.originUrl = options.originUrl
+        }
+        // if (options && options.reload) {
+        //   location.reload()
+        // }
+        // 不再 location.reload()，直接卸载禁用脚本
+        await this.loadScriptsFromMain()
+        this.injectScripts()
       }
-      // 不再 location.reload()，直接卸载禁用脚本
-      await this.loadScriptsFromMain()
-      this.injectScripts()
-    })
+    )
   }
 }

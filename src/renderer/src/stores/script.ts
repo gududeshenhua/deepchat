@@ -5,6 +5,7 @@ import type { ScriptItem } from '@shared/presenter'
 
 export const useScriptStore = defineStore('script', () => {
   const scriptPresenter = usePresenter('scriptPresenter')
+  const tabPresenter = usePresenter('tabPresenter')
   const scriptList = ref<ScriptItem[]>([])
 
   /** 获取全部脚本 */
@@ -32,11 +33,17 @@ export const useScriptStore = defineStore('script', () => {
     return await getAllScripts()
   }
 
+  const refreshWindowTabsScript = async () => {
+    const windowId = window.api.getWindowId()
+    tabPresenter.refreshInjectorScriptsTabs(windowId ?? 1)
+  }
+
   return {
     scriptList,
     getAllScripts,
     uploadScript,
     updateScript,
-    deleteScript
+    deleteScript,
+    refreshWindowTabsScript
   }
 })

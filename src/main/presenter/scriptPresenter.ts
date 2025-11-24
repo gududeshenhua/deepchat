@@ -5,7 +5,7 @@ import path from 'path'
 import { IScriptPresenter } from '@shared/presenter'
 import { eventBus, SendTarget } from '@/eventbus'
 import { is } from '@electron-toolkit/utils'
-
+import { matchUrlWithExclude } from '@shared/utils'
 export interface ScriptItem {
   name: string
   enabled: boolean
@@ -52,6 +52,24 @@ export class ScriptPresenter implements IScriptPresenter {
 
   getScriptPath() {
     return this.scriptsDirPath
+  }
+
+  /**
+   * 检查URL是否匹配给定的模式列表
+   */
+  matchUrl(url: string, patterns: string[]): boolean {
+    return matchUrlWithExclude(url, patterns)
+    // return patterns.some(pattern => {
+    //   try {
+    //     // 将通配符模式转换为正则表达式
+    //     const regexPattern = '^' + pattern.replace(/\*/g, '.*') + '$'
+    //     const regex = new RegExp(regexPattern)
+    //     return regex.test(url)
+    //   } catch (error) {
+    //     console.error(`[ScriptInjector] URL匹配模式解析错误: ${pattern}`, error)
+    //     return false
+    //   }
+    // })
   }
 
   updateScript(updated: ScriptItem) {

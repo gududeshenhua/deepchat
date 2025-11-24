@@ -2,7 +2,13 @@
 import { eventBus, SendTarget } from '@/eventbus'
 import { WINDOW_EVENTS, CONFIG_EVENTS, SYSTEM_EVENTS, TAB_EVENTS } from '@/events'
 import { is } from '@electron-toolkit/utils'
-import { ITabPresenter, TabCreateOptions, IWindowPresenter, TabData } from '@shared/presenter'
+import {
+  ITabPresenter,
+  TabCreateOptions,
+  IWindowPresenter,
+  IScriptPresenter,
+  TabData
+} from '@shared/presenter'
 // shell
 import { BrowserWindow, WebContentsView, nativeImage } from 'electron'
 import { join } from 'path'
@@ -34,8 +40,10 @@ export class TabPresenter implements ITabPresenter {
 
   private windowPresenter: IWindowPresenter // 窗口管理器实例
 
-  constructor(windowPresenter: IWindowPresenter) {
+  private scriptPresenter: IScriptPresenter
+  constructor(windowPresenter: IWindowPresenter, scriptPresenter: IScriptPresenter) {
     this.windowPresenter = windowPresenter // 注入窗口管理器
+    this.scriptPresenter = scriptPresenter
     this.initBusHandlers()
   }
   private onWindowSizeChange(windowId: number) {
@@ -103,6 +111,58 @@ export class TabPresenter implements ITabPresenter {
   }
 
   /**
+   * 把当前窗口下的匹配到脚本的所有标签页进行一次刷新
+   */
+  refreshInjectorScriptsTabs(windowId: number) {
+    // 获取窗口中的所有标签页
+    const tabIds = this.windowTabs.get(windowId) || []
+
+    // 获取所有禁用的脚本
+    const scripts = this.scriptPresenter.getAllScripts().filter((script) => !script.enabled)
+
+    if (scripts.length === 0) {
+      console.log(`[TabPresenter] 窗口 ${windowId} 中没有启用的脚本，跳过刷新`)
+      return
+    }
+
+    console.log(
+      `[TabPresenter] 开始刷新窗口 ${windowId} 中匹配脚本的标签页，共 ${tabIds.length} 个标签页，${scripts.length} 个启用脚本`
+    )
+
+    let matchedCount = 0
+
+    // 遍历窗口中的每个标签页
+    for (const tabId of tabIds) {
+      const view = this.tabs.get(tabId)
+      const state = this.tabState.get(tabId)
+      if (!view || view.webContents.isDestroyed()) {
+        continue
+      }
+
+      // 获取标签页的当前URL
+      const currentUrl = state?.originUrl || view.webContents.getURL()
+      // 检查是否有脚本匹配当前URL
+      const matchedScripts = scripts.filter((script) =>
+        this.scriptPresenter.matchUrl(currentUrl, script.match)
+      )
+
+      if (matchedScripts.length > 0) {
+        console.log(
+          `[TabPresenter] 标签页 ${tabId} (${currentUrl}) 匹配 ${matchedScripts.length} 个脚本，发送重载指令`
+        )
+
+        // 发送脚本重载指令到该标签页
+        view.webContents.reloadIgnoringCache()
+        matchedCount++
+      }
+    }
+
+    console.log(
+      `[TabPresenter] 刷新完成，窗口 ${windowId} 中共有 ${matchedCount} 个标签页匹配脚本并已发送重载指令`
+    )
+  }
+
+  /**
    * 创建新标签页并添加到指定窗口
    */
   async createTab(
@@ -120,6 +180,9 @@ export class TabPresenter implements ITabPresenter {
         preload: join(__dirname, '../preload/index.mjs'),
         sandbox: false,
         devTools: is.dev
+        // additionalArguments: [
+        //   `--originUrl=${encodeURIComponent(url)}`
+        // ]
       }
     })
 
@@ -278,6 +341,10 @@ export class TabPresenter implements ITabPresenter {
       return false
     }
   }
+
+  /**
+   * 重新刷新匹配的标签页
+   */
 
   /**
    * 销毁标签页
@@ -698,7 +765,9 @@ export class TabPresenter implements ITabPresenter {
           this.notifyWindowTabsUpdate(windowId).catch(console.error) // Call async function, handle potential rejection
         }
 
-        eventBus.sendToRenderer('scripts:reload-now', SendTarget.ALL_WINDOWS)
+        eventBus.sendToRenderer('scripts:reload-now', SendTarget.ALL_WINDOWS, {
+          originUrl: state.originUrl
+        })
       }
     })
   }
