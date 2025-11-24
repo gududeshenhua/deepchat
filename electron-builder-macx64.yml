@@ -29,6 +29,9 @@ extraResources:
   - from: ./runtime/
     to: app.asar.unpacked/runtime
     filter: ['**/*']
+  - from: ./resources/script/
+    to: app.asar.unpacked/resources/script
+    filter: ['**/*']
 afterSign: scripts/notarize.js
 afterPack: scripts/afterPack.js
 electronLanguages:

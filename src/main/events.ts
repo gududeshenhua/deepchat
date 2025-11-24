@@ -100,8 +100,6 @@ export const WINDOW_EVENTS = {
   WINDOW_RESTORED: 'window:restored'
 }
 
-
-
 // ollama 相关事件
 export const OLLAMA_EVENTS = {
   PULL_MODEL_PROGRESS: 'ollama:pull-model-progress'
@@ -169,7 +167,8 @@ export const SHORTCUT_EVENTS = {
   SWITCH_TO_NEXT_TAB: 'shortcut:switch-to-next-tab',
   SWITCH_TO_PREVIOUS_TAB: 'shortcut:switch-to-previous-tab',
   SWITCH_TO_SPECIFIC_TAB: 'shortcut:switch-to-specific-tab',
-  SWITCH_TO_LAST_TAB: 'shortcut:switch-to-last-tab'
+  SWITCH_TO_LAST_TAB: 'shortcut:switch-to-last-tab',
+  OPEN_DEVTOOLS: 'shortcut:open-devtools'
 }
 
 // 标签页相关事件

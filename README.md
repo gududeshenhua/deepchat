@@ -340,3 +340,9 @@ This project is built with the help of these awesome libraries:
 
 [LICENSE](./LICENSE)
 
+TODO:
+# 刷新的时候加一个遮罩，不要黑屏
+# 添加一个loading动画
+# script目录打包出来要可读
+# 上传脚本页排版弄好一点
+# 打包后怎么打开页面F12

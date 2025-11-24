@@ -1,10 +1,1 @@
-[
-  {
-    "name": "导出新闻",
-    "enabled": false,
-    "match": [
-      "https://www.baidu.com/*"
-    ],
-    "entry": "export-news/index.js"
-  }
-]
+[]
