@@ -59,17 +59,6 @@ export class ScriptPresenter implements IScriptPresenter {
    */
   matchUrl(url: string, patterns: string[]): boolean {
     return matchUrlWithExclude(url, patterns)
-    // return patterns.some(pattern => {
-    //   try {
-    //     // 将通配符模式转换为正则表达式
-    //     const regexPattern = '^' + pattern.replace(/\*/g, '.*') + '$'
-    //     const regex = new RegExp(regexPattern)
-    //     return regex.test(url)
-    //   } catch (error) {
-    //     console.error(`[ScriptInjector] URL匹配模式解析错误: ${pattern}`, error)
-    //     return false
-    //   }
-    // })
   }
 
   updateScript(updated: ScriptItem) {
@@ -87,23 +76,29 @@ export class ScriptPresenter implements IScriptPresenter {
   /** ✨ 新增脚本 */
   uploadScript(item: ScriptItem, content: string) {
     try {
+      // 1. 检查脚本名称是否已存在
+      const existingScript = this.scriptList.find((script) => script.name === item.name)
+      if (existingScript) {
+        throw new Error(`脚本名称 "${item.name}" 已存在，请使用不同的名称`)
+      }
+
       const dirPath = path.join(this.scriptsDirPath, item.name)
       const scriptFilePath = path.join(dirPath, `index.js`)
 
-      // 1. 确保目录存在
+      // 2. 确保目录存在
       if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath, { recursive: true })
       }
 
-      // 2. 写入脚本文件
+      // 3. 写入脚本文件
       fs.writeFileSync(scriptFilePath, content, 'utf-8')
 
-      // 3. 写入 config.json
+      // 4. 写入 config.json
       this.scriptList.push(item)
       this.save()
       eventBus.sendToRenderer('scripts:reload-now', SendTarget.ALL_WINDOWS)
       console.log('[ScriptPresenter] 上传脚本成功:', item.name)
-      // return true
+      // return {success: true}
     } catch (err) {
       console.error('[ScriptPresenter] 上传脚本失败:', err)
       throw err

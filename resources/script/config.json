@@ -1,9 +1,10 @@
 [
   {
     "name": "export-news",
-    "enabled": false,
+    "enabled": true,
     "match": [
-      "https://www.baidu.com/*"
+      "https://www.baidu.com/123",
+      "https://www.baidu.com/123"
     ],
     "entry": "export-news/index.js"
   }

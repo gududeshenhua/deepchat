@@ -4,7 +4,7 @@
     <div class="flex justify-between items-center mb-6">
       <!-- <h2 class="text-2xl font-bold">所有脚本扩展</h2> -->
 
-      <Button @click="openUpload">
+      <Button variant="default" @click="openUpload">
         <Icon icon="material-symbols:add" class="w-5 h-5 mr-1" />
         上传脚本
       </Button>
@@ -19,60 +19,141 @@
     </div>
 
     <!-- Script List -->
-    <draggable
-      v-if="Array.isArray(scripts)"
-      v-model="scripts"
-      item-key="name"
-      handle=".drag-handle"
-      animation="200"
-    >
-      <template #item="{ element: s }">
-        <div
-          class="mb-4 p-4 border rounded-xl shadow-sm bg-white flex justify-between items-center"
-        >
-          <!-- Left side -->
-          <div class="flex items-center space-x-3">
-            <div class="drag-handle cursor-grab text-gray-400">
-              <Icon icon="material-symbols:drag-indicator" class="w-6 h-6" />
+    <div >
+      <draggable
+        v-if="Array.isArray(scripts)"
+        v-model="scripts"
+        item-key="name"
+        handle=".drag-handle"
+        animation="200"
+        class="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-2 gap-4 max-w-[800px] mx-auto"
+      >
+        <template #item="{ element: s }">
+          <div
+            class="p-4 border rounded-xl shadow-sm bg-white"
+          >
+            <!-- Header with drag handle and script name -->
+            <div class="flex justify-between items-center mb-3">
+              <div class="flex items-center space-x-2">
+                <div class="drag-handle cursor-grab text-gray-400">
+                  <Icon icon="material-symbols:drag-indicator" class="w-5 h-5" />
+                </div>
+                <div class="font-semibold text-base">{{ s.name }}</div>
+              </div>
+              
+              <!-- Enable switch -->
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  v-model="s.enabled"
+                  @change="update(s)"
+                  class="sr-only peer"
+                />
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
             </div>
 
-            <div>
-              <div class="font-semibold text-base">{{ s.name }}</div>
-              <div class="text-xs text-gray-500">{{ s.match.join(", ") }}</div>
-
-              <!-- Entry -->
-              <div class="text-[11px] text-gray-400 mt-1">
-                {{ s.entry }}
+            <!-- Script details -->
+            <div class="space-y-2">
+              <div class="text-xs text-gray-500">
+                <span class="font-medium">匹配规则：</span>{{ s.match.join(", ") }}
+              </div>
+              
+              <div class="text-xs text-gray-500">
+                <span class="font-medium">入口文件：</span>{{ s.entry }}
               </div>
             </div>
+
+            <!-- Action buttons -->
+            <div class="flex justify-end space-x-2 mt-3">
+              <!-- Edit -->
+              <Button variant="outline" size="sm" @click="editMatch(s)">
+                <Icon icon="material-symbols:edit" class="w-4 h-4 mr-1" />
+                编辑
+              </Button>
+              
+              <!-- Details -->
+              <!-- <Button variant="secondary" size="sm" @click="showDetail(s)">
+                <Icon icon="material-symbols:info-outline" class="w-4 h-4 mr-1" />
+                详情
+              </Button> -->
+
+              <!-- Delete -->
+              <Button variant="destructive" size="sm" @click="remove(s)">
+                <Icon icon="material-symbols:delete-outline" class="w-4 h-4" />
+              </Button>
+            </div>
           </div>
-
-          <!-- Right side -->
-          <div class="flex items-center space-x-3">
-            <!-- Enable switch -->
-            <label class="flex items-center space-x-2 cursor-pointer">
-              <input
-                type="checkbox"
-                v-model="s.enabled"
-                @change="update(s)"
-              />
-              <span class="text-sm">启用</span>
-            </label>
-
-            <!-- Details -->
-            <Button variant="secondary" @click="showDetail(s)">
-              <Icon icon="material-symbols:info-outline" class="w-4 h-4" />
-              详情
-            </Button>
-
-            <!-- Delete -->
-            <Button variant="destructive" @click="remove(s)">
-              <Icon icon="material-symbols:delete-outline" class="w-4 h-4" />
-            </Button>
+        </template>
+      </draggable>
+    </div>
+    
+    <!-- 匹配规则编辑对话框 -->
+    <Dialog :open="showMatchDialog" @update:open="showMatchDialog = $event">
+      <DialogContent class="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>编辑匹配规则</DialogTitle>
+          <DialogDescription>
+            为脚本 "{{ scriptToEdit?.name }}" 设置匹配规则，每行一个规则
+            //*.example.com/*<br>
+            *://github.com/*
+          </DialogDescription>
+        </DialogHeader>
+        <div class="grid gap-4 py-4">
+          <div class="grid grid-cols-4 items-center gap-4">
+            <Label for="match-rules" class="text-right">匹配规则</Label>
+            <Textarea
+              id="match-rules"
+              v-model="matchRulesText"
+              class="col-span-3"
+              placeholder="例如：
+*://*.example.com/*
+*://github.com/*
+*://*.google.com/*"
+              rows="6"
+            />
           </div>
         </div>
-      </template>
-    </draggable>
+        <DialogFooter>
+          <Button variant="outline" @click="cancelEditMatch">取消</Button>
+          <Button @click="saveMatchRules">保存</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+    
+    <!-- 上传脚本匹配规则对话框 -->
+    <Dialog :open="showUploadMatchDialog" @update:open="showUploadMatchDialog = $event">
+      <DialogContent class="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>设置匹配规则</DialogTitle>
+          <DialogDescription>
+            为脚本 "{{ uploadScriptName }}" 设置匹配规则，每行一个规则（可选）
+            //*.example.com/*<br>
+            *://github.com/*
+          </DialogDescription>
+        </DialogHeader>
+        <div class="grid gap-4 py-4">
+          <div class="grid grid-cols-4 items-center gap-4">
+            <Label for="upload-match-rules" class="text-right">匹配规则</Label>
+            <Textarea
+              id="upload-match-rules"
+              v-model="uploadMatchRulesText"
+              class="col-span-3"
+              placeholder="例如：
+                *://*.example.com/*
+                *://github.com/*
+                *://*.google.com/*
+                留空则使用默认规则：*://*/*"
+              rows="6"
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" @click="skipMatchRules">跳过</Button>
+          <Button @click="confirmUploadWithMatchRules">确认</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
     
     <!-- 脚本详情抽屉 -->
     <Sheet :open="showDetailSheet" @update:open="showDetailSheet = $event">
@@ -110,6 +191,8 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue"
 import { Button } from "@shadcn/components/ui/button"
+import { toast } from '@/components/use-toast'
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -127,6 +210,16 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@shadcn/components/ui/sheet'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@shadcn/components/ui/dialog'
+import { Label } from '@shadcn/components/ui/label'
+import { Textarea } from '@shadcn/components/ui/textarea'
 import { Icon } from "@iconify/vue"
 import draggable from "vuedraggable"
 import { useScriptStore } from "@/stores/script"
@@ -138,8 +231,16 @@ const fileInput = ref<any>(null)
 
 const showDetailSheet = ref(false)
 const showDeleteDialog = ref(false)
+const showMatchDialog = ref(false)
+const showUploadMatchDialog = ref(false)
 const currentScriptDetail = ref('')
 const scriptToDelete = ref<any>(null)
+const scriptToEdit = ref<any>(null)
+const matchRulesText = ref('')
+const uploadScriptName = ref('')
+const uploadMatchRulesText = ref('')
+const uploadScriptData = ref<any>(null)
+
 // 读取全部脚本
 onMounted(async () => {
  refresh()
@@ -151,6 +252,7 @@ const update = async (item) => {
   scripts.value = await scriptStore.getAllScripts() // 刷新
   scriptStore.refreshWindowTabsScript()
 }
+
 const refresh = async () => {
    scripts.value = await scriptStore.getAllScripts()
 }
@@ -161,27 +263,142 @@ const openUpload = () => fileInput.value.click()
 const onFileSelected = async (e) => {
   const file = e.target.files[0]
   if (!file) return
-  // debugger
+  
   const jsText = await file.text()
   const baseName = file.name.replace(/\.js$/i, "")
 
+  // 保存上传的脚本数据
+  uploadScriptData.value = {
+    jsText,
+    baseName,
+    fileName: file.name
+  }
+  uploadScriptName.value = file.name.replace(".js", "")
+  uploadMatchRulesText.value = ''
+  
+  // 显示匹配规则输入对话框
+  showUploadMatchDialog.value = true
+  
+  // 重置文件输入
+  e.target.value = ''
+}
+
+// 确认上传脚本并设置匹配规则
+const confirmUploadWithMatchRules = async () => {
+  if (!uploadScriptData.value) return
+  
+  const { jsText, baseName, fileName } = uploadScriptData.value
+  
+  // 解析匹配规则
+  let matchRules = ["*://*/*"] // 默认规则
+  if (uploadMatchRulesText.value.trim()) {
+    matchRules = uploadMatchRulesText.value
+      .split('\n')
+      .map(rule => rule.trim())
+      .filter(rule => rule.length > 0)
+  }
+
   const scriptItem = {
-    name: file.name.replace(".js", ""),
+    name: fileName.replace(".js", ""),
     enabled: true,
-    match: ["*://*/*"],
+    match: matchRules,
     entry: `${baseName}/index.js`,
   }
 
-  await scriptStore.uploadScript(scriptItem, jsText)
-
+  let res:any = await scriptStore.uploadScript(scriptItem, jsText)
+  if(res&&res.error){
+    toast({
+      title: "提示",
+      description: res.error,
+      variant: 'destructive',
+      duration: 3000
+    })
+  }
   scripts.value = await scriptStore.getAllScripts() // 刷新
+  
+  // 关闭对话框
+  showUploadMatchDialog.value = false
+  uploadScriptData.value = null
+}
+
+// 跳过匹配规则设置
+const skipMatchRules = async () => {
+  if (!uploadScriptData.value) return
+  
+  const { jsText, baseName, fileName } = uploadScriptData.value
+  
+  const scriptItem = {
+    name: fileName.replace(".js", ""),
+    enabled: true,
+    match: ["*://*/*"], // 使用默认规则
+    entry: `${baseName}/index.js`,
+  }
+
+  let res:any = await scriptStore.uploadScript(scriptItem, jsText)
+  if(res&&res.error){
+    toast({
+      title: "提示",
+      description: res.error,
+      variant: 'destructive',
+      duration: 3000
+    })
+  }
+  scripts.value = await scriptStore.getAllScripts() // 刷新
+  
+  // 关闭对话框
+  showUploadMatchDialog.value = false
+  uploadScriptData.value = null
+}
+
+// 编辑匹配规则
+const editMatch = (script: any) => {
+  scriptToEdit.value = script
+  matchRulesText.value = script.match.join('\n')
+  showMatchDialog.value = true
+}
+
+// 保存匹配规则
+const saveMatchRules = async () => {
+  if (!scriptToEdit.value) return
+  
+  // 解析匹配规则
+  const matchRules = matchRulesText.value
+    .split('\n')
+    .map(rule => rule.trim())
+    .filter(rule => rule.length > 0)
+  
+  if (matchRules.length === 0) {
+    matchRules.push("*://*/*") // 确保至少有一个规则
+  }
+
+  // 更新脚本的匹配规则
+  const updatedScript = {
+    ...scriptToEdit.value,
+    match: matchRules
+  }
+
+  await scriptStore.updateScript(updatedScript)
+  scripts.value = await scriptStore.getAllScripts() // 刷新
+  scriptStore.refreshWindowTabsScript()
+  
+  // 关闭对话框
+  showMatchDialog.value = false
+  scriptToEdit.value = null
+  matchRulesText.value = ''
+}
+
+// 取消编辑匹配规则
+const cancelEditMatch = () => {
+  showMatchDialog.value = false
+  scriptToEdit.value = null
+  matchRulesText.value = ''
 }
 
 // 查看详情
-const showDetail = (script: any) => {
-  currentScriptDetail.value = script.content
-  showDetailSheet.value = true
-}
+// const showDetail = (script: any) => {
+//   currentScriptDetail.value = script.content
+//   showDetailSheet.value = true
+// }
 
 // 删除
 const remove = async (script: any) => {

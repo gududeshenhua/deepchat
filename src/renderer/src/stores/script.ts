@@ -17,8 +17,9 @@ export const useScriptStore = defineStore('script', () => {
 
   /** 新增脚本（写入目录 + 更新config.json） */
   const uploadScript = async (item: ScriptItem, content: string) => {
-    await scriptPresenter.uploadScript(item, content)
-    return await getAllScripts()
+    // debugger
+    let res = await scriptPresenter.uploadScript(item, content)
+    return res
   }
 
   /** 更新脚本（启用/禁用） */
