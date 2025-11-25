@@ -81,7 +81,8 @@ export class ScriptInjector {
     ipcRenderer.on(
       'scripts:reload-now',
       async (_, options: { reload?: boolean; originUrl?: string; tabId?: string }) => {
-        // console.log(this.api.getWebContentsId(),options.tabId)
+        console.log(options)
+        console.log(this.api.getWebContentsId())
         if (options && options?.tabId && this.api.getWebContentsId() !== options.tabId) return
         console.log('[ScriptInjector] 🔥 热加载触发')
         if (options && options.originUrl) {
