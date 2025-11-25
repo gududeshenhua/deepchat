@@ -52,7 +52,7 @@ const menus = [
   { label: "数据", icon: "mdi:chart-bar" ,url: "local://page/test2.html" },
   { label: "工具", icon: "mdi:briefcase-outline",url: "local://page/test3.html"  },
   { label: "消息", icon: "mdi:message-processing-outline",url: "local://page/test1.html"  },
-  { label: "设置", icon: "mdi:cog-outline",url: "local://page/test2.html" },
+  { label: "设置", icon: "mdi:cog-outline",url: "home://setup" },
   { label: "脚本", icon: "mdi:script-text-outline", url: "home://script" }
 ]; 
 
@@ -69,6 +69,7 @@ const navigateToUrl = (item) => {
 onMounted(()=>{
   ipcRenderer.on(TAB_EVENTS.CURRENT_ACTIVE_TAB_UPDATED, (event, tab) => {
     // debugger;
+     console.log("currentMunu", tab);
     active.value = tab.originUrl
   })
 })

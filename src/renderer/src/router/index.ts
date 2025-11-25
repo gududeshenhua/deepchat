@@ -26,6 +26,15 @@ const router = createRouter({
       }
     },
     {
+      path: '/setup',
+      name: 'setup',
+      component: () => import('@/views/SetUp.vue'),
+      meta: {
+        titleKey: 'routes.welcome',
+        icon: 'lucide:message-square'
+      }
+    },
+    {
       path: '/welcome',
       name: 'welcome',
       component: () => import('@/views/WelcomeView.vue'),

@@ -332,7 +332,7 @@ export class TabPresenter implements ITabPresenter {
 
       // 如果是活动标签页，立即同步前端
       if (state.isActive) {
-        window.webContents.send('CURRENT_ACTIVE_TAB_UPDATED', state)
+        window.webContents.send(TAB_EVENTS.CURRENT_ACTIVE_TAB_UPDATED, state)
       }
 
       return true
