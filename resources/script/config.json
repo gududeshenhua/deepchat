@@ -3,9 +3,16 @@
     "name": "export-news",
     "enabled": true,
     "match": [
-      "https://www.baidu.com/123",
       "https://www.baidu.com/123"
     ],
     "entry": "export-news/index.js"
+  },
+  {
+    "name": "export-news2 - 副本",
+    "enabled": true,
+    "match": [
+      "local://page/test2.html"
+    ],
+    "entry": "export-news2 - 副本/index.js"
   }
 ]

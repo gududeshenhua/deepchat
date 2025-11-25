@@ -117,8 +117,8 @@ export class TabPresenter implements ITabPresenter {
     // 获取窗口中的所有标签页
     const tabIds = this.windowTabs.get(windowId) || []
 
-    // 获取所有禁用的脚本
-    const scripts = this.scriptPresenter.getAllScripts().filter((script) => !script.enabled)
+    // 获取所有启用的脚本
+    const scripts = this.scriptPresenter.getAllScripts()
 
     if (scripts.length === 0) {
       console.log(`[TabPresenter] 窗口 ${windowId} 中没有启用的脚本，跳过刷新`)
@@ -145,7 +145,7 @@ export class TabPresenter implements ITabPresenter {
       const matchedScripts = scripts.filter((script) =>
         this.scriptPresenter.matchUrl(currentUrl, script.match)
       )
-
+      // console.log('-------------------',matchedScripts.length)
       if (matchedScripts.length > 0) {
         console.log(
           `[TabPresenter] 标签页 ${tabId} (${currentUrl}) 匹配 ${matchedScripts.length} 个脚本，发送重载指令`
@@ -766,7 +766,8 @@ export class TabPresenter implements ITabPresenter {
         }
 
         eventBus.sendToRenderer('scripts:reload-now', SendTarget.ALL_WINDOWS, {
-          originUrl: state.originUrl
+          originUrl: state.originUrl,
+          tabId
         })
       }
     })

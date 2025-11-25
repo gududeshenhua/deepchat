@@ -3,7 +3,7 @@ import { app } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import { IScriptPresenter } from '@shared/presenter'
-import { eventBus, SendTarget } from '@/eventbus'
+// import { eventBus, SendTarget } from '@/eventbus'
 import { is } from '@electron-toolkit/utils'
 import { matchUrlWithExclude } from '@shared/utils'
 export interface ScriptItem {
@@ -68,9 +68,9 @@ export class ScriptPresenter implements IScriptPresenter {
       this.save()
     }
 
-    eventBus.sendToRenderer('scripts:reload-now', SendTarget.ALL_WINDOWS, {
-      reload: updated.enabled ? false : true
-    })
+    // eventBus.sendToRenderer('scripts:reload-now', SendTarget.ALL_WINDOWS, {
+    //   reload: updated.enabled ? false : true
+    // })
   }
 
   /** ✨ 新增脚本 */
@@ -96,7 +96,7 @@ export class ScriptPresenter implements IScriptPresenter {
       // 4. 写入 config.json
       this.scriptList.push(item)
       this.save()
-      eventBus.sendToRenderer('scripts:reload-now', SendTarget.ALL_WINDOWS)
+      // eventBus.sendToRenderer('scripts:reload-now', SendTarget.ALL_WINDOWS)
       console.log('[ScriptPresenter] 上传脚本成功:', item.name)
       // return {success: true}
     } catch (err) {
@@ -118,7 +118,7 @@ export class ScriptPresenter implements IScriptPresenter {
       // 2. 从列表移除
       this.scriptList = this.scriptList.filter((s) => s.name !== item.name)
       this.save()
-      eventBus.sendToRenderer('scripts:reload-now', SendTarget.ALL_WINDOWS, { reload: true })
+      // eventBus.sendToRenderer('scripts:reload-now', SendTarget.ALL_WINDOWS)
       console.log('[ScriptPresenter] 删除脚本成功:', item.name)
       // return true
     } catch (err) {

@@ -8,7 +8,9 @@ export class ScriptInjector {
   // private iframeMap: Record<string, HTMLIFrameElement> = {} // 存储每个脚本的 iframe
   private sandboxes: Record<string, any> = {}
   private originUrl: string = ''
-  constructor() {
+  private api: any
+  constructor(api: any) {
+    this.api = api
     // this.listenHotReload()
   }
 
@@ -43,7 +45,8 @@ export class ScriptInjector {
   /** 注入单个脚本 */
   private injectScript(script: ScriptItem) {
     const url = this.getOriginUrlFromArguments() || this.originUrl || window.location.href
-    console.log('Url', url)
+    console.log('originUrl', url)
+    console.log('Url', window.location.href)
     // const url = this.getOriginUrlFromArguments()
     // debugger;
     if (!url) return
@@ -77,7 +80,9 @@ export class ScriptInjector {
   listenHotReload() {
     ipcRenderer.on(
       'scripts:reload-now',
-      async (_, options: { reload?: boolean; originUrl?: string }) => {
+      async (_, options: { reload?: boolean; originUrl?: string; tabId?: string }) => {
+        // console.log(this.api.getWebContentsId(),options.tabId)
+        if (this.api.getWebContentsId() !== options.tabId) return
         console.log('[ScriptInjector] 🔥 热加载触发')
         if (options && options.originUrl) {
           this.originUrl = options.originUrl

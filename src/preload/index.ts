@@ -44,7 +44,7 @@ const api = {
   }
 }
 exposeElectronAPI()
-const scriptInjector = new ScriptInjector()
+const scriptInjector = new ScriptInjector(api)
 scriptInjector.listenHotReload()
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise

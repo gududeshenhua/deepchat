@@ -248,6 +248,7 @@ onMounted(async () => {
 
 // 更新单个项目
 const update = async (item) => {
+  // debugger
   await scriptStore.updateScript(item)
   scripts.value = await scriptStore.getAllScripts() // 刷新
   scriptStore.refreshWindowTabsScript()
@@ -315,7 +316,7 @@ const confirmUploadWithMatchRules = async () => {
     })
   }
   scripts.value = await scriptStore.getAllScripts() // 刷新
-  
+  scriptStore.refreshWindowTabsScript()
   // 关闭对话框
   showUploadMatchDialog.value = false
   uploadScriptData.value = null
@@ -411,6 +412,7 @@ const confirmDelete = async () => {
 
   try {
     await scriptStore.deleteScript(scriptToDelete.value)
+    scriptStore.refreshWindowTabsScript()
     await refresh()
     showDeleteDialog.value = false
     scriptToDelete.value = null
