@@ -113,17 +113,17 @@ export class TabPresenter implements ITabPresenter {
   /**
    * 把当前窗口下的匹配到脚本的所有标签页进行一次刷新
    */
-  refreshInjectorScriptsTabs(windowId: number) {
+  refreshInjectorScriptsTabs(windowId: number, refreshAll?: boolean) {
     // 获取窗口中的所有标签页
     const tabIds = this.windowTabs.get(windowId) || []
 
     // 获取所有启用的脚本
     const scripts = this.scriptPresenter.getAllScripts()
 
-    if (scripts.length === 0) {
-      console.log(`[TabPresenter] 窗口 ${windowId} 中没有启用的脚本，跳过刷新`)
-      return
-    }
+    // if (scripts.length === 0) {
+    //   console.log(`[TabPresenter] 窗口 ${windowId} 中没有启用的脚本，跳过刷新`)
+    //   return
+    // }
 
     console.log(
       `[TabPresenter] 开始刷新窗口 ${windowId} 中匹配脚本的标签页，共 ${tabIds.length} 个标签页，${scripts.length} 个启用脚本`
@@ -145,8 +145,8 @@ export class TabPresenter implements ITabPresenter {
       const matchedScripts = scripts.filter((script) =>
         this.scriptPresenter.matchUrl(currentUrl, script.match)
       )
-      // console.log('-------------------',matchedScripts.length)
-      if (matchedScripts.length > 0) {
+      console.log('-------------------', matchedScripts.length, currentUrl, refreshAll)
+      if (refreshAll || matchedScripts.length > 0) {
         console.log(
           `[TabPresenter] 标签页 ${tabId} (${currentUrl}) 匹配 ${matchedScripts.length} 个脚本，发送重载指令`
         )

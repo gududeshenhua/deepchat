@@ -412,7 +412,7 @@ const confirmDelete = async () => {
 
   try {
     await scriptStore.deleteScript(scriptToDelete.value)
-    scriptStore.refreshWindowTabsScript()
+    scriptStore.refreshWindowTabsScript(true)
     await refresh()
     showDeleteDialog.value = false
     scriptToDelete.value = null

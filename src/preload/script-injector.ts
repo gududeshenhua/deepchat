@@ -82,7 +82,7 @@ export class ScriptInjector {
       'scripts:reload-now',
       async (_, options: { reload?: boolean; originUrl?: string; tabId?: string }) => {
         // console.log(this.api.getWebContentsId(),options.tabId)
-        if (this.api.getWebContentsId() !== options.tabId) return
+        if (options && options?.tabId && this.api.getWebContentsId() !== options.tabId) return
         console.log('[ScriptInjector] 🔥 热加载触发')
         if (options && options.originUrl) {
           this.originUrl = options.originUrl

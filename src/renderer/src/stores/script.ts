@@ -34,9 +34,9 @@ export const useScriptStore = defineStore('script', () => {
     return await getAllScripts()
   }
 
-  const refreshWindowTabsScript = async () => {
+  const refreshWindowTabsScript = async (refreshAll?: boolean) => {
     const windowId = window.api.getWindowId()
-    tabPresenter.refreshInjectorScriptsTabs(windowId ?? 1)
+    tabPresenter.refreshInjectorScriptsTabs(windowId ?? 1, refreshAll ? true : false)
   }
 
   return {
