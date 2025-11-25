@@ -345,7 +345,7 @@ const skipMatchRules = async () => {
     })
   }
   scripts.value = await scriptStore.getAllScripts() // 刷新
-  
+  scriptStore.refreshWindowTabsScript()
   // 关闭对话框
   showUploadMatchDialog.value = false
   uploadScriptData.value = null
