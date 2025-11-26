@@ -179,7 +179,8 @@ export class TabPresenter implements ITabPresenter {
       webPreferences: {
         preload: join(__dirname, '../preload/index.mjs'),
         sandbox: false,
-        devTools: is.dev
+        // devTools: is.dev
+        devTools: true
         // additionalArguments: [
         //   `--originUrl=${encodeURIComponent(url)}`
         // ]

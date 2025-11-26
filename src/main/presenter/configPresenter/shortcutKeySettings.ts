@@ -18,7 +18,7 @@ export const rendererShortcutKey = {
   SwitchNextTab: `${CommandKey}+Tab`,
   SwitchPrevTab: `${CommandKey}+${ShiftKey}+Tab`,
   SwtichToLastTab: `${CommandKey}+9`,
-  ToggleDevTools: `${CommandKey}+F12`
+  ToggleDevTools: `${CommandKey}+K`
 }
 
 // System-level shortcut keys

@@ -372,6 +372,7 @@ export interface IPresenter {
   dialogPresenter: IDialogPresenter
   knowledgePresenter: IKnowledgePresenter
   scriptPresenter: IScriptPresenter
+  setupPresenter: ISetupPresenter
   init(): void
   destroy(): void
 }
@@ -1950,6 +1951,31 @@ export interface IScriptPresenter {
   uploadScript(item: ScriptItem, content: string): void
   deleteScript(item: ScriptItem): void
   matchUrl(url: string, patterns: string[]): boolean
+}
+
+export interface ISetupPresenter {
+  /** 选择下载目录 */
+  selectDownloadDirectory(): Promise<string | null>
+  /** Get value by custom key */
+  getValue<T>(key: string): T | undefined
+  /** Set value with custom key */
+  setValue<T>(key: string, value: T): void
+  /** Delete value by custom key */
+  deleteValue(key: string): void
+  /** Check if key exists */
+  hasKey(key: string): boolean
+  /** Get all keys in the store */
+  getAllKeys(): string[]
+  /** Get all key-value pairs */
+  getAllValues(): Record<string, unknown>
+  /** Clear all data in the store */
+  clearAll(): void
+  /** Get the global setup data (read-only) */
+  getGlobalSetupData(): Readonly<Record<string, unknown>>
+  /** Get store size (number of keys) */
+  getSize(): number
+  /** Get store file path */
+  getStorePath(): string
 }
 
 export interface LifecycleEventStats {

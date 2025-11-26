@@ -346,3 +346,15 @@ TODO:
 # script目录打包出来要可读
 # 上传脚本页排版弄好一点
 # 打包后怎么打开页面F12
+index.html里面的/static 之类的会从根目录开始解析
+但 local://page/admin 是无 host 协议
+
+Chrome 解释它为：
+
+scheme: local
+host: "page"
+path: /admin/index.html
+
+host: "page" page就是根目录
+
+所以spa 打包base要配置对应的目录，这里是/admin
