@@ -58,7 +58,7 @@ export const useSetupStore = defineStore('setup', () => {
   const setValue = async <T>(key: string, value: T): Promise<void> => {
     try {
       await setupP.setValue(key, value)
-      debugger
+      // debugger
       // 更新本地数据
       setupData.value = { ...setupData.value, [key]: value }
     } catch (error) {
