@@ -24,7 +24,8 @@ import {
   IUpgradePresenter,
   IWindowPresenter,
   IScriptPresenter,
-  ISetupPresenter
+  ISetupPresenter,
+  ICustomSQLitePresenter
 } from '@shared/presenter'
 import { eventBus } from '@/eventbus'
 import { LLMProviderPresenter } from './llmProviderPresenter'
@@ -44,6 +45,7 @@ import { CONFIG_EVENTS, WINDOW_EVENTS } from '@/events'
 import { KnowledgePresenter } from './knowledgePresenter'
 import { ScriptPresenter } from './scriptPresenter'
 import { SetupPresenter } from './setupPresenter'
+import { CustomSqlitePresenter } from './customSqlitePresenter'
 // IPC调用上下文接口
 interface IPCCallContext {
   tabId?: number
@@ -85,6 +87,7 @@ export class Presenter implements IPresenter {
   lifecycleManager: ILifecycleManager
   scriptPresenter: IScriptPresenter
   setupPresenter: ISetupPresenter
+  customSqlitePresenter: ICustomSQLitePresenter
 
   private constructor(lifecycleManager: ILifecycleManager) {
     // Store lifecycle manager reference for component access
@@ -117,6 +120,7 @@ export class Presenter implements IPresenter {
     this.floatingButtonPresenter = new FloatingButtonPresenter(this.configPresenter)
     this.dialogPresenter = new DialogPresenter()
     this.setupPresenter = new SetupPresenter()
+    this.customSqlitePresenter = new CustomSqlitePresenter()
 
     // Define dbDir for knowledge presenter
     const dbDir = path.join(app.getPath('userData'), 'app_db')

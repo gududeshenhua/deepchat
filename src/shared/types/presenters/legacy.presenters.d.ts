@@ -277,6 +277,17 @@ export interface IShortcutPresenter {
   destroy(): void
 }
 
+/**
+ * 自定义SQLite Presenter接口
+ * 用于处理自定义数据库操作
+ */
+export interface ICustomSQLitePresenter {
+  /**
+   * 关闭数据库连接
+   */
+  close(): void
+}
+
 export interface ISQLitePresenter {
   close(): void
   createConversation(title: string, settings?: Partial<CONVERSATION_SETTINGS>): Promise<string>
