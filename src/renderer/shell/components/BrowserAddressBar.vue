@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full h-8 bg-card flex items-center gap-1 px-2 border border-border rounded-lg"
+    class="w-full h-8 bg-card flex items-center gap-1 px-2 border border-border"
   >
     <!-- Back -->
     <Button

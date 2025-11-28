@@ -824,7 +824,7 @@ export class TabPresenter implements ITabPresenter {
     const { width, height } = window.getContentBounds()
 
     // 设置视图位置大小（留出顶部标签栏空间）
-    const TAB_BAR_HEIGHT = 76 // 标签栏高度，需要根据实际UI调整
+    const TAB_BAR_HEIGHT = 72 // 标签栏高度，需要根据实际UI调整
     const MENU_WIDTH = 64 // 菜单栏宽度，需要根据实际UI调整
     view.setBounds({
       x: MENU_WIDTH,

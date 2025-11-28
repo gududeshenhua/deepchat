@@ -7,6 +7,7 @@
     <div class="flex-1 flex flex-col">
       <AppBar />
       <BrowserAddressBar />
+      <div class="w-full bg-card h-1" />
       <main class="content-container">
         <!-- WebContentsView will be rendered here by the main process -->
       </main>
