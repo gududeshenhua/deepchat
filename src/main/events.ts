@@ -206,6 +206,16 @@ export const FLOATING_BUTTON_EVENTS = {
   DRAG_END: 'floating-button:drag-end' // 悬浮按钮结束拖拽
 }
 
+// 隐藏WebContents相关事件
+export const HIDDEN_WEB_CONTENTS_EVENTS = {
+  CREATED: 'hidden-web-contents:created', // 隐藏WebContents创建完成
+  CLOSED: 'hidden-web-contents:closed', // 隐藏WebContents已关闭
+  TITLE_UPDATED: 'hidden-web-contents:title-updated', // 隐藏WebContents标题更新
+  VISIBILITY_CHANGED: 'hidden-web-contents:visibility-changed', // 隐藏WebContents可见性改变
+  LOADED: 'hidden-web-contents:loaded', // 隐藏WebContents加载完成
+  DESTROYED: 'hidden-web-contents:destroyed' // 隐藏WebContents被销毁
+}
+
 // Dialog related events
 export const DIALOG_EVENTS = {
   REQUEST: 'dialog:request', // Main -> Renderer: Request to show dialog

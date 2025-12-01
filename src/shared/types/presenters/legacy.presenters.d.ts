@@ -259,6 +259,55 @@ export interface ITabPresenter {
   destroy(): Promise<void>
 }
 
+/**
+ * 隐藏WebContents选项接口
+ */
+export interface HiddenWebContentsOptions {
+  url: string
+  webPreferences?: Electron.WebPreferences
+  visible?: boolean
+}
+
+/**
+ * 隐藏WebContents数据接口
+ */
+export interface HiddenWebContentsData {
+  id: number
+  url: string
+  title: string
+  isVisible: boolean
+  createdAt: number
+}
+
+/**
+ * 隐藏WebContents Presenter接口
+ * 用于管理隐藏的WebContentsView实例
+ */
+export interface IHiddenWebContentsPresenter {
+  createHiddenWebContents(options: HiddenWebContentsOptions): Promise<number>
+  closeHiddenWebContents(id: number): Promise<boolean>
+  getHiddenWebContents(id: number): WebContentsView | undefined
+  getHiddenWebContentsData(id: number): HiddenWebContentsData | undefined
+  getAllHiddenWebContents(): Map<number, WebContentsView>
+  getAllHiddenWebContentsData(): HiddenWebContentsData[]
+  sleep(time: number): Promise<number>
+  executeJavaScript(id: number, script: string): Promise<any>
+  waitForElement(id: number, selector: string, timeout?: number): Promise<boolean>
+  hasElement(id: number, selector: string): Promise<boolean>
+  getInputValue(id: number, selector: string): Promise<string>
+  setInputValue(id: number, selector: string, value: string): Promise<boolean>
+  setCheckboxValue(id: number, selector: string, value?: boolean): Promise<boolean>
+  clickElement(id: number, selector: string): Promise<boolean>
+  clickElementByText(id: number, selector: string, text: string): Promise<boolean>
+  clickElementByTextAndInterval(
+    id: number,
+    selector: string,
+    text: string,
+    time: number
+  ): Promise<void>
+  submitForm(id: number, selector: string): Promise<boolean>
+}
+
 export interface TabCreateOptions {
   active?: boolean
   position?: number
