@@ -22,6 +22,21 @@
     }
 
     /**
+     * 修改表结构
+     * @param {string} tableName - 表名
+     * @param {string} schema - 新的表结构定义
+     */
+    async modifyTable(tableName, schema) {
+      try {
+        await this.sqlitePresenter.modifyTable(tableName, schema)
+        console.log(`Table ${tableName} modified successfully`)
+      } catch (error) {
+        console.error(`Failed to modify table ${tableName}:`, error)
+        throw error
+      }
+    }
+
+    /**
      * 插入数据
      * @param {string} tableName - 表名
      * @param {Object} data - 要插入的数据对象
