@@ -3,6 +3,7 @@
     "**/node_modules",
     "**/dist",
     "**/out",
+    "**/page",
     ".gitignore",
     ".github",
     ".cursor",
