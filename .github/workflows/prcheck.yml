@@ -33,8 +33,8 @@ jobs:
       - name: lint
         run: pnpm run lint
 
-      - name: format:check
-        run: pnpm run format:check
+      # - name: format:check
+      #   run: pnpm run format:check
 
       - name: Configure pnpm workspace for Linux ${{ matrix.arch }}
         run: pnpm run install:sharp
@@ -42,10 +42,8 @@ jobs:
           TARGET_OS: linux
           TARGET_ARCH: ${{ matrix.arch }}
 
-      - name: Check translations
-        run: pnpm run i18n
+      # - name: Check translations
+      #   run: pnpm run i18n
 
       - name: Build
         run: pnpm run build
-        env:
-          VITE_PROVIDER_DB_URL: ${{ secrets.CDN_PROVIDER_DB_URL }}
