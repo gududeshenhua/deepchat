@@ -117,7 +117,6 @@
     <div class="test-section">
       <h3>4. 高级功能测试</h3>
       <button onclick="testAdvancedFeatures()">测试高级功能</button>
-      <button onclick="testAllMethods()">测试所有方法</button>
       <div id="advancedStatus"></div>
       <div id="advancedLog" class="log"></div>
     </div>
@@ -419,54 +418,6 @@
       }
     }
 
-    // 6. 测试所有方法
-    async function testAllMethods() {
-      const logId = 'advancedLog';
-      const statusId = 'advancedStatus';
-      
-      try {
-        updateStatus(statusId, '开始全面测试所有方法...', 'info');
-        logToElement(logId, '=== 开始全面测试所有方法 ===');
-
-        // 创建WebContents
-        const id = await HiddenWebContentsManager.createHiddenWebContents({
-          url: 'https://www.baidu.com',
-          visible: false
-        });
-        logToElement(logId, `创建WebContents，ID: ${id}`);
-
-        await HiddenWebContentsManager.sleep(3000);
-
-        // 测试所有DOM操作方法
-        const testMethods = [
-          { name: 'waitForElement', fn: () => HiddenWebContentsManager.waitForElement(id, 'body', 5000) },
-          { name: 'hasElement', fn: () => HiddenWebContentsManager.hasElement(id, 'body') },
-          { name: 'executeJavaScript', fn: () => HiddenWebContentsManager.executeJavaScript(id, 'return document.title') },
-          { name: 'setInputValue', fn: () => HiddenWebContentsManager.setInputValue(id, '#kw', '全面测试') },
-          { name: 'getInputValue', fn: () => HiddenWebContentsManager.getInputValue(id, '#kw') },
-          { name: 'clickElement', fn: () => HiddenWebContentsManager.clickElement(id, '#su') },
-          { name: 'sleep', fn: () => HiddenWebContentsManager.sleep(1000) }
-        ];
-
-        for (const method of testMethods) {
-          try {
-            logToElement(logId, `测试方法: ${method.name}`);
-            const result = await method.fn();
-            logToElement(logId, `${method.name} 测试成功，结果: ${result}`);
-          } catch (error) {
-            logToElement(logId, `${method.name} 测试失败: ${error.message}`);
-          }
-          await HiddenWebContentsManager.sleep(500);
-        }
-
-        updateStatus(statusId, '所有方法测试完成！', 'success');
-        logToElement(logId, '=== 所有方法测试完成 ===');
-
-      } catch (error) {
-        updateStatus(statusId, `全面测试失败: ${error.message}`, 'error');
-        logToElement(logId, `错误: ${error.message}`, 'error');
-      }
-    }
 
     
 
