@@ -1,1 +1,21 @@
-.proxy-management[data-v-a5152fc7]{padding:20px}.proxy-management .toolbar[data-v-a5152fc7]{margin-bottom:20px}.proxy-management .toolbar .el-button[data-v-a5152fc7]{margin-right:10px}.proxy-management .pagination[data-v-a5152fc7]{margin-top:20px;display:flex;justify-content:flex-start}.proxy-management .dialog-footer[data-v-a5152fc7]{display:flex;justify-content:flex-start}.proxy-management .dialog-footer .el-button[data-v-a5152fc7]{margin-left:10px}
+.proxy-management[data-v-a5152fc7] {
+  padding: 20px;
+}
+.proxy-management .toolbar[data-v-a5152fc7] {
+  margin-bottom: 20px;
+}
+.proxy-management .toolbar .el-button[data-v-a5152fc7] {
+  margin-right: 10px;
+}
+.proxy-management .pagination[data-v-a5152fc7] {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-start;
+}
+.proxy-management .dialog-footer[data-v-a5152fc7] {
+  display: flex;
+  justify-content: flex-start;
+}
+.proxy-management .dialog-footer .el-button[data-v-a5152fc7] {
+  margin-left: 10px;
+}

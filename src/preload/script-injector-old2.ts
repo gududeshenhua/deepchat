@@ -1,5 +1,5 @@
 import { ScriptItem } from '@shared/types'
-import {  ipcRenderer } from 'electron'
+import { ipcRenderer } from 'electron'
 import path from 'path'
 
 export class ScriptInjector {
@@ -15,12 +15,16 @@ export class ScriptInjector {
   }
 
   async loadScriptsFromMain() {
-    this.scriptList = await ipcRenderer.invoke('presenter:call','scriptPresenter', 'getAllScripts')
-    this.scriptsPath = await ipcRenderer.invoke('presenter:call','scriptPresenter', 'getScriptPath')
+    this.scriptList = await ipcRenderer.invoke('presenter:call', 'scriptPresenter', 'getAllScripts')
+    this.scriptsPath = await ipcRenderer.invoke(
+      'presenter:call',
+      'scriptPresenter',
+      'getScriptPath'
+    )
   }
 
   matchUrl(url, patterns) {
-    return patterns.some(p => new RegExp('^' + p.replace(/\*/g, '.*') + '$').test(url))
+    return patterns.some((p) => new RegExp('^' + p.replace(/\*/g, '.*') + '$').test(url))
   }
 
   injectScripts() {
@@ -45,10 +49,10 @@ export class ScriptInjector {
   }
 
   listenHotReload() {
-    ipcRenderer.on('scripts:reload-now', async (_,options:{reload?:boolean}) => {
+    ipcRenderer.on('scripts:reload-now', async (_, options: { reload?: boolean }) => {
       console.log('[ScriptInjector] 🔥 热加载触发')
       // debugger
-      if(options&&options.reload) {
+      if (options && options.reload) {
         // debugger
         location.reload()
       }

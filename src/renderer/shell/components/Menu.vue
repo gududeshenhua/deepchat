@@ -1,7 +1,5 @@
 <template>
-  <aside
-    class="w-16 bg-[#e1f7f6] h-full flex flex-col overflow-hidden border-r border-border"
-  >
+  <aside class="w-16 bg-[#e1f7f6] h-full flex flex-col overflow-hidden border-r border-border">
     <!-- 顶部头像区域 -->
     <div class="w-full h-16 flex items-center justify-center">
       <div class="w-8 h-8 rounded-full bg-[#00a8a8] flex items-center justify-center">
@@ -17,14 +15,9 @@
           :key="item.label"
           @click="navigateToUrl(item)"
           class="w-full h-14 cursor-pointer flex flex-col items-center justify-center rounded-xl transition-all"
-          :class="active === item.url
-            ? 'bg-white shadow-sm'
-            : 'hover:bg-white/60'"
+          :class="active === item.url ? 'bg-white shadow-sm' : 'hover:bg-white/60'"
         >
-          <Icon
-            :icon="item.icon"
-            class="text-[#00a8a8] text-2xl"
-          />
+          <Icon :icon="item.icon" class="text-[#00a8a8] text-2xl" />
           <span
             class="text-xs mt-1"
             :class="active === item.url ? 'text-[#00a8a8]' : 'text-[#4a7977]'"
@@ -36,9 +29,9 @@
     </div>
   </aside>
 </template>
-<script setup >
-import { Icon } from "@iconify/vue";
-import { ref,computed,onMounted } from "vue";
+<script setup>
+import { Icon } from '@iconify/vue'
+import { ref, computed, onMounted } from 'vue'
 import { useTabStore } from '@shell/stores/tab'
 const { ipcRenderer } = window.electron
 import { TAB_EVENTS } from '../lib/events'
@@ -47,34 +40,33 @@ const tabStore = useTabStore()
 const currentTabId = computed(() => tabStore.currentTabId)
 
 const menus = [
-  { label: "首页", icon: "mdi:home-outline" , url: "home://chat" },
-  { label: "应用", icon: "mdi:view-grid-outline" , url: "local://page/test1.html" },
-  { label: "数据", icon: "mdi:chart-bar" ,url: "local://page/test2.html" },
-  { label: "工具", icon: "mdi:briefcase-outline",url: "local://page/test3.html"  },
-  { label: "消息", icon: "mdi:message-processing-outline",url: "local://page/test1.html"  },
-  { label: "设置", icon: "mdi:cog-outline",url: "home://setup" },
-  { label: "脚本", icon: "mdi:script-text-outline", url: "home://script" }
-]; 
+  { label: '首页', icon: 'mdi:home-outline', url: 'home://chat' },
+  { label: '应用', icon: 'mdi:view-grid-outline', url: 'local://page/test1.html' },
+  { label: '数据', icon: 'mdi:chart-bar', url: 'local://page/test2.html' },
+  { label: '工具', icon: 'mdi:briefcase-outline', url: 'local://page/test3.html' },
+  { label: '消息', icon: 'mdi:message-processing-outline', url: 'local://page/test1.html' },
+  { label: '设置', icon: 'mdi:cog-outline', url: 'home://setup' },
+  { label: '脚本', icon: 'mdi:script-text-outline', url: 'home://script' }
+]
 
-const active = ref("首页");
+const active = ref('首页')
 
 const navigateToUrl = (item) => {
-  active.value = item.url;
+  active.value = item.url
   // debugger
   // window.location.href = item.url
   tabStore.actionTab(currentTabId.value, 'navigate', { url: item.url })
   // 这里可以做真正的跳转逻辑
-};
+}
 
-onMounted(()=>{
+onMounted(() => {
   ipcRenderer.on(TAB_EVENTS.CURRENT_ACTIVE_TAB_UPDATED, (event, tab) => {
     // debugger;
-     console.log("currentMunu", tab);
+    console.log('currentMunu', tab)
     active.value = tab.originUrl
   })
 })
 </script>
-
 
 <style scoped>
 .scroll-thin-custom::-webkit-scrollbar {
@@ -93,5 +85,4 @@ onMounted(()=>{
 .scroll-thin-custom::-webkit-scrollbar-track {
   background: transparent;
 }
-
 </style>

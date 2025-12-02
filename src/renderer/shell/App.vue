@@ -1,6 +1,5 @@
 <template>
   <div class="w-screen h-screen flex" :class="isWinMacOS ? '' : 'bg-background'">
-
     <!-- 左侧菜单 -->
     <MenuBar />
     <!-- 右侧内容部分 -->

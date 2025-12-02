@@ -1,1 +1,4 @@
-.quota-management-dialog .el-descriptions[data-v-5f7c3512],.quota-management-dialog .el-form-item[data-v-5f7c3512]{margin-bottom:20px}
+.quota-management-dialog .el-descriptions[data-v-5f7c3512],
+.quota-management-dialog .el-form-item[data-v-5f7c3512] {
+  margin-bottom: 20px;
+}

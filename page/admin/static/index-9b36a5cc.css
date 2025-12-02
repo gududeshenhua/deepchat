@@ -1,1 +1,19 @@
-.image-row[data-v-93c375a8]{transition:all .3s ease}.image-row.dragging[data-v-93c375a8]{opacity:.5;background-color:#f0f9eb}.image-row.dragging .el-icon-rank[data-v-93c375a8]:before{color:#67c23a}.stats-container[data-v-e785553f],.user-management[data-v-2a4e9338]{padding:20px}.operation-column[data-v-2a4e9338]{z-index:1000;position:relative;background:white}
+.image-row[data-v-93c375a8] {
+  transition: all 0.3s ease;
+}
+.image-row.dragging[data-v-93c375a8] {
+  opacity: 0.5;
+  background-color: #f0f9eb;
+}
+.image-row.dragging .el-icon-rank[data-v-93c375a8]:before {
+  color: #67c23a;
+}
+.stats-container[data-v-e785553f],
+.user-management[data-v-2a4e9338] {
+  padding: 20px;
+}
+.operation-column[data-v-2a4e9338] {
+  z-index: 1000;
+  position: relative;
+  background: white;
+}

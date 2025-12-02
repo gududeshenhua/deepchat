@@ -1,1 +1,82 @@
-.video-container[data-v-223775dc]{padding:20px}.w-full[data-v-223775dc]{width:100%}.task-list[data-v-223775dc]{max-height:calc(100vh - 300px);padding:10px;overflow-y:auto}.task-item[data-v-223775dc]{padding:15px;border:1px solid #ebeef5;border-radius:4px;margin-bottom:10px;transition:all .3s}.task-item[data-v-223775dc]:hover{box-shadow:0 2px 12px rgba(0,0,0,.1)}.task-success[data-v-223775dc]{border-color:#67c23a}.task-failed[data-v-223775dc]{border-color:#f56c6c}.task-info[data-v-223775dc]{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.task-id[data-v-223775dc]{font-weight:700}.task-status[data-v-223775dc]{display:flex;align-items:center}.status-tag[data-v-223775dc]{position:relative;overflow:hidden}.task-theme[data-v-223775dc]{margin:5px 0;font-size:14px;color:#606266}.task-created-at[data-v-223775dc]{margin:5px 15px;font-size:14px;color:#909399}.task-progress[data-v-223775dc]{margin:10px 0}.task-progress-inline[data-v-223775dc]{display:inline-block;margin-left:8px;font-size:12px;color:#409eff}.task-link[data-v-223775dc]{margin-bottom:10px}.task-actions[data-v-223775dc]{margin-top:10px}.task-actions .el-button[data-v-223775dc]{margin-right:10px}.no-tasks[data-v-223775dc]{text-align:center;color:#909399;padding:20px}.card-header[data-v-223775dc]{display:flex;justify-content:space-between;align-items:center}
+.video-container[data-v-223775dc] {
+  padding: 20px;
+}
+.w-full[data-v-223775dc] {
+  width: 100%;
+}
+.task-list[data-v-223775dc] {
+  max-height: calc(100vh - 300px);
+  padding: 10px;
+  overflow-y: auto;
+}
+.task-item[data-v-223775dc] {
+  padding: 15px;
+  border: 1px solid #ebeef5;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  transition: all 0.3s;
+}
+.task-item[data-v-223775dc]:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+.task-success[data-v-223775dc] {
+  border-color: #67c23a;
+}
+.task-failed[data-v-223775dc] {
+  border-color: #f56c6c;
+}
+.task-info[data-v-223775dc] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.task-id[data-v-223775dc] {
+  font-weight: 700;
+}
+.task-status[data-v-223775dc] {
+  display: flex;
+  align-items: center;
+}
+.status-tag[data-v-223775dc] {
+  position: relative;
+  overflow: hidden;
+}
+.task-theme[data-v-223775dc] {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #606266;
+}
+.task-created-at[data-v-223775dc] {
+  margin: 5px 15px;
+  font-size: 14px;
+  color: #909399;
+}
+.task-progress[data-v-223775dc] {
+  margin: 10px 0;
+}
+.task-progress-inline[data-v-223775dc] {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 12px;
+  color: #409eff;
+}
+.task-link[data-v-223775dc] {
+  margin-bottom: 10px;
+}
+.task-actions[data-v-223775dc] {
+  margin-top: 10px;
+}
+.task-actions .el-button[data-v-223775dc] {
+  margin-right: 10px;
+}
+.no-tasks[data-v-223775dc] {
+  text-align: center;
+  color: #909399;
+  padding: 20px;
+}
+.card-header[data-v-223775dc] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

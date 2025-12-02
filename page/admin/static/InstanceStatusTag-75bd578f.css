@@ -1,1 +1,11 @@
-.is-loading[data-v-c6f4bbf7]{animation:rotate-c6f4bbf7 2s linear infinite}@keyframes rotate-c6f4bbf7{0%{transform:rotate(0)}to{transform:rotate(360deg)}}
+.is-loading[data-v-c6f4bbf7] {
+  animation: rotate-c6f4bbf7 2s linear infinite;
+}
+@keyframes rotate-c6f4bbf7 {
+  0% {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

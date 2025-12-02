@@ -1,1 +1,5 @@
-.dialog-footer[data-v-96007063]{display:flex;justify-content:flex-end;gap:10px}
+.dialog-footer[data-v-96007063] {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}

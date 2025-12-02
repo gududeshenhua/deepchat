@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="w-full h-8 bg-card flex items-center gap-1 px-2 border border-border"
-  >
+  <div class="w-full h-8 bg-card flex items-center gap-1 px-2 border border-border">
     <!-- Back -->
     <Button
       variant="ghost"
@@ -51,8 +49,8 @@
 </template>
 
 <script setup>
-import { ref,onMounted,computed } from "vue";
-import { Icon } from "@iconify/vue";
+import { ref, onMounted, computed } from 'vue'
+import { Icon } from '@iconify/vue'
 import { TAB_EVENTS } from '../lib/events'
 const { ipcRenderer } = window.electron
 import { useTabStore } from '@shell/stores/tab'
@@ -61,38 +59,38 @@ import { Button } from '@shadcn/components/ui/button'
 const tabStore = useTabStore()
 
 const currentTabId = computed(() => tabStore.currentTabId)
-const url = ref("");
+const url = ref('')
 
 const goBack = () => {
-  console.log("Back clicked");
+  console.log('Back clicked')
   // 这里可以调用浏览器历史回退逻辑
   tabStore.actionTab(currentTabId.value, 'goBack')
-};
+}
 
 const goForward = () => {
-  console.log("Forward clicked");
+  console.log('Forward clicked')
   // 这里可以调用浏览器历史前进逻辑
   tabStore.actionTab(currentTabId.value, 'goForward')
-};
+}
 
 const refresh = () => {
-  console.log("Refresh clicked");
+  console.log('Refresh clicked')
   // 这里可以刷新当前页面
   tabStore.actionTab(currentTabId.value, 'reload')
-};
+}
 
 const goHome = () => {
-  url.value = "home://chat";
-  navigateToUrl();
-};
+  url.value = 'home://chat'
+  navigateToUrl()
+}
 
 const navigateToUrl = () => {
-  console.log("Navigating to:", url.value);
+  console.log('Navigating to:', url.value)
   tabStore.actionTab(currentTabId.value, 'navigate', { url: url.value })
   // 这里可以做真正的跳转逻辑
-};
+}
 
-onMounted(()=>{
+onMounted(() => {
   ipcRenderer.on(TAB_EVENTS.CURRENT_ACTIVE_TAB_UPDATED, (event, tab) => {
     // debugger;
     url.value = tab.originUrl

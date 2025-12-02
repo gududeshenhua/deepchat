@@ -1,1 +1,56 @@
-@charset "UTF-8";.mobile-profile[data-v-23f31cb2]{background-color:#f7f8fa;padding:16px}.mobile-profile .user-card[data-v-23f31cb2]{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:16px;padding:24px;margin-bottom:16px;color:#fff}.mobile-profile .user-card .avatar-section[data-v-23f31cb2]{display:flex;align-items:center;gap:16px}.mobile-profile .user-card .avatar-section .user-avatar[data-v-23f31cb2]{border:3px solid rgba(255,255,255,.3)}.mobile-profile .user-card .avatar-section .user-info[data-v-23f31cb2]{flex:1}.mobile-profile .user-card .avatar-section .user-info .username[data-v-23f31cb2]{font-size:20px;font-weight:600;margin-bottom:4px}.mobile-profile .user-card .avatar-section .user-info .user-role[data-v-23f31cb2]{font-size:14px;opacity:.9;background:rgba(255,255,255,.2);padding:4px 12px;border-radius:12px;display:inline-block}.mobile-profile .menu-section[data-v-23f31cb2]{margin-bottom:24px}.mobile-profile .menu-section[data-v-23f31cb2] .van-cell{border-radius:8px;margin-bottom:8px}.mobile-profile .menu-section[data-v-23f31cb2] .van-cell:last-child{margin-bottom:0}.mobile-profile .logout-section .logout-btn[data-v-23f31cb2]{height:44px;font-size:16px;font-weight:500}@media (min-width: 821px){.mobile-profile[data-v-23f31cb2]{display:none}}
+@charset "UTF-8";
+.mobile-profile[data-v-23f31cb2] {
+  background-color: #f7f8fa;
+  padding: 16px;
+}
+.mobile-profile .user-card[data-v-23f31cb2] {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+  color: #fff;
+}
+.mobile-profile .user-card .avatar-section[data-v-23f31cb2] {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.mobile-profile .user-card .avatar-section .user-avatar[data-v-23f31cb2] {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+}
+.mobile-profile .user-card .avatar-section .user-info[data-v-23f31cb2] {
+  flex: 1;
+}
+.mobile-profile .user-card .avatar-section .user-info .username[data-v-23f31cb2] {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.mobile-profile .user-card .avatar-section .user-info .user-role[data-v-23f31cb2] {
+  font-size: 14px;
+  opacity: 0.9;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 12px;
+  display: inline-block;
+}
+.mobile-profile .menu-section[data-v-23f31cb2] {
+  margin-bottom: 24px;
+}
+.mobile-profile .menu-section[data-v-23f31cb2] .van-cell {
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.mobile-profile .menu-section[data-v-23f31cb2] .van-cell:last-child {
+  margin-bottom: 0;
+}
+.mobile-profile .logout-section .logout-btn[data-v-23f31cb2] {
+  height: 44px;
+  font-size: 16px;
+  font-weight: 500;
+}
+@media (min-width: 821px) {
+  .mobile-profile[data-v-23f31cb2] {
+    display: none;
+  }
+}

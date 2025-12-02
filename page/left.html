@@ -1,177 +1,176 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>浏览器侧边栏</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: Arial, sans-serif;
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        .user-box {
-            padding: 30px 0;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        height: 100vh;
+        display: flex;
+        overflow: hidden;
+      }
 
-        .user-box img {
-            width: 40px;
-            height: 40px;
-        }
-        
-        .sidebar {
-            width: 64px;
-            height: 100%;
-            background-color: #E5F8F7;
-            color: #4D4D4D;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .sidebar-button {
-            width: 50px;
-            height: 60px;
-            border-radius: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-around;
-            padding: 10px;
-            margin-bottom: 15px;
-        }
+      .user-box {
+        padding: 30px 0;
+      }
 
-        .sidebar-button .icon {
-            width: 24px;
-            height: 24px;
-            background-size: 100%;
-        }
-        
-        .sidebar-button .home-icon {
-            background-image: url('./img/siderBar/home_dark.png');
-        }
+      .user-box img {
+        width: 40px;
+        height: 40px;
+      }
 
-        .sidebar-button.active .home-icon {
-            background-image: url('./img/siderBar/home_light.png');
-        }
+      .sidebar {
+        width: 64px;
+        height: 100%;
+        background-color: #e5f8f7;
+        color: #4d4d4d;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
 
-        .sidebar-button .app-icon {
-            background-image: url('./img/siderBar/application_dark.png');
-        }
+      .sidebar-button {
+        width: 50px;
+        height: 60px;
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+        padding: 10px;
+        margin-bottom: 15px;
+      }
 
-        .sidebar-button.active .app-icon {
-            background-image: url('./img/siderBar/application_light.png');
-        }
+      .sidebar-button .icon {
+        width: 24px;
+        height: 24px;
+        background-size: 100%;
+      }
 
-        .sidebar-button .data-icon {
-            background-image: url('./img/siderBar/data_dark.png');
-        }
+      .sidebar-button .home-icon {
+        background-image: url('./img/siderBar/home_dark.png');
+      }
 
-        .sidebar-button.active .data-icon {
-            background-image: url('./img/siderBar/data_light.png');
-        }
-        
-        .sidebar-button .tool-icon {
-            background-image: url('./img/siderBar/tool_dark.png');
-        }
+      .sidebar-button.active .home-icon {
+        background-image: url('./img/siderBar/home_light.png');
+      }
 
-        .sidebar-button.active .tool-icon {
-            background-image: url('./img/siderBar/tool_light.png');
-        }
+      .sidebar-button .app-icon {
+        background-image: url('./img/siderBar/application_dark.png');
+      }
 
-        .sidebar-button .setting-icon {
-            background-image: url('./img/siderBar/set_dark.png');
-        }
+      .sidebar-button.active .app-icon {
+        background-image: url('./img/siderBar/application_light.png');
+      }
 
-        .sidebar-button.active .setting-icon {
-            background-image: url('./img/siderBar/set_light.png');
-        }
-        
-        .sidebar-button:hover {
-            background-color: #D3F0EE;
-        }
+      .sidebar-button .data-icon {
+        background-image: url('./img/siderBar/data_dark.png');
+      }
 
-        
-        .sidebar-button.active {
-            background: #FFFFFF;
-            color: #01A197;
-        }
-        
-        .sidebar-button .tooltip {
-            font-size: 12px;
-            white-space: nowrap;
-        }
-        
-        .sidebar-button:hover .tooltip {
-            opacity: 1;
-            visibility: visible;
-        }
+      .sidebar-button.active .data-icon {
+        background-image: url('./img/siderBar/data_light.png');
+      }
+
+      .sidebar-button .tool-icon {
+        background-image: url('./img/siderBar/tool_dark.png');
+      }
+
+      .sidebar-button.active .tool-icon {
+        background-image: url('./img/siderBar/tool_light.png');
+      }
+
+      .sidebar-button .setting-icon {
+        background-image: url('./img/siderBar/set_dark.png');
+      }
+
+      .sidebar-button.active .setting-icon {
+        background-image: url('./img/siderBar/set_light.png');
+      }
+
+      .sidebar-button:hover {
+        background-color: #d3f0ee;
+      }
+
+      .sidebar-button.active {
+        background: #ffffff;
+        color: #01a197;
+      }
+
+      .sidebar-button .tooltip {
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .sidebar-button:hover .tooltip {
+        opacity: 1;
+        visibility: visible;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="sidebar">
-        <div class="user-box">
-            <!-- <img src="./img/siderBar/user.png" alt=""> -->
-        </div>
-        <!-- local://html/common/chatBot/index.html/#/home -->
-        <div class="sidebar-button active" name="local://page/test1.html" title="主页">
-            <div class="icon home-icon"></div>
-            <span class="tooltip">主页</span>
-        </div>
-        <div class="sidebar-button" name="data" title="应用">
-            <div class="icon app-icon"></div>
-            <span class="tooltip">应用</span>
-        </div>
-        <div class="sidebar-button" name="local://page/cai1.html" title="数据">
-            <div class="icon data-icon"></div>
-            <span class="tooltip">数据</span>
-        </div>
-        <div class="sidebar-button" name="tools" title="工具">
-           <div class="icon tool-icon"></div>
-            <span class="tooltip">工具</span>
-        </div>
-        <div class="sidebar-button" name="setup" title="设置">
-            <div class="icon setting-icon"></div>
-            <span class="tooltip">设置</span>
-        </div>
+      <div class="user-box">
+        <!-- <img src="./img/siderBar/user.png" alt=""> -->
+      </div>
+      <!-- local://html/common/chatBot/index.html/#/home -->
+      <div class="sidebar-button active" name="local://page/test1.html" title="主页">
+        <div class="icon home-icon"></div>
+        <span class="tooltip">主页</span>
+      </div>
+      <div class="sidebar-button" name="data" title="应用">
+        <div class="icon app-icon"></div>
+        <span class="tooltip">应用</span>
+      </div>
+      <div class="sidebar-button" name="local://page/cai1.html" title="数据">
+        <div class="icon data-icon"></div>
+        <span class="tooltip">数据</span>
+      </div>
+      <div class="sidebar-button" name="tools" title="工具">
+        <div class="icon tool-icon"></div>
+        <span class="tooltip">工具</span>
+      </div>
+      <div class="sidebar-button" name="setup" title="设置">
+        <div class="icon setting-icon"></div>
+        <span class="tooltip">设置</span>
+      </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const buttons = document.querySelectorAll('.sidebar-button');
-            // 默认选中主页
-            buttons[0].classList.add('active');
-            buttons.forEach(button => {
-                button.addEventListener('click', function() {
-                    buttons.forEach(btn => {
-                        btn.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                    const name = this.getAttribute("name");
-                    const url = this.getAttribute("name");
-                    const outerUrl = name.startsWith('http') || name.startsWith('local');
-                    // if(window.electron){
-                    //     // pageId: 1
-                    //     window.electron.sendMessage({type: "loadURL", url: outerUrl ? name : url});
-                    // }
-                     if (outerUrl && window.myAPI && window.myAPI.browser) {
-                        window.myAPI.browser.navigate(url);
-                    }
-                });
-            });
-        });
+      document.addEventListener('DOMContentLoaded', function () {
+        const buttons = document.querySelectorAll('.sidebar-button')
+        // 默认选中主页
+        buttons[0].classList.add('active')
+        buttons.forEach((button) => {
+          button.addEventListener('click', function () {
+            buttons.forEach((btn) => {
+              btn.classList.remove('active')
+            })
+            this.classList.add('active')
+            const name = this.getAttribute('name')
+            const url = this.getAttribute('name')
+            const outerUrl = name.startsWith('http') || name.startsWith('local')
+            // if(window.electron){
+            //     // pageId: 1
+            //     window.electron.sendMessage({type: "loadURL", url: outerUrl ? name : url});
+            // }
+            if (outerUrl && window.myAPI && window.myAPI.browser) {
+              window.myAPI.browser.navigate(url)
+            }
+          })
+        })
+      })
     </script>
-</body>
+  </body>
 </html>

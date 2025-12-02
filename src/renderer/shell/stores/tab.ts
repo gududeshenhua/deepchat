@@ -43,7 +43,11 @@ export const useTabStore = defineStore('tab', () => {
     return newTab
   }
 
-  const actionTab = async (tabId: number, action: 'navigate' | 'reload' | 'goBack' | 'goForward', args?: { url?: string }) => {
+  const actionTab = async (
+    tabId: number,
+    action: 'navigate' | 'reload' | 'goBack' | 'goForward',
+    args?: { url?: string }
+  ) => {
     await tabPresenter.actionTab(tabId, action, args)
   }
 

@@ -1,1 +1,21 @@
-.script-management[data-v-8c04b805]{padding:20px}.script-management .toolbar[data-v-8c04b805]{margin-bottom:20px}.script-management .toolbar .el-button[data-v-8c04b805]{margin-right:10px}.script-management .pagination[data-v-8c04b805]{margin-top:20px;display:flex;justify-content:flex-start}.script-management .dialog-footer[data-v-8c04b805]{display:flex;justify-content:flex-start}.script-management .dialog-footer .el-button[data-v-8c04b805]{margin-left:10px}
+.script-management[data-v-8c04b805] {
+  padding: 20px;
+}
+.script-management .toolbar[data-v-8c04b805] {
+  margin-bottom: 20px;
+}
+.script-management .toolbar .el-button[data-v-8c04b805] {
+  margin-right: 10px;
+}
+.script-management .pagination[data-v-8c04b805] {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-start;
+}
+.script-management .dialog-footer[data-v-8c04b805] {
+  display: flex;
+  justify-content: flex-start;
+}
+.script-management .dialog-footer .el-button[data-v-8c04b805] {
+  margin-left: 10px;
+}

@@ -9,17 +9,11 @@
         上传脚本
       </Button>
 
-      <input
-        ref="fileInput"
-        type="file"
-        accept=".js"
-        class="hidden"
-        @change="onFileSelected"
-      />
+      <input ref="fileInput" type="file" accept=".js" class="hidden" @change="onFileSelected" />
     </div>
 
     <!-- Script List -->
-    <div >
+    <div>
       <draggable
         v-if="Array.isArray(scripts)"
         v-model="scripts"
@@ -29,9 +23,7 @@
         class="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-2 gap-4 max-w-[800px] mx-auto"
       >
         <template #item="{ element: s }">
-          <div
-            class="p-4 border rounded-xl shadow-sm bg-white"
-          >
+          <div class="p-4 border rounded-xl shadow-sm bg-white">
             <!-- Header with drag handle and script name -->
             <div class="flex justify-between items-center mb-3">
               <div class="flex items-center space-x-2">
@@ -40,7 +32,7 @@
                 </div>
                 <div class="font-semibold text-base">{{ s.name }}</div>
               </div>
-              
+
               <!-- Enable switch -->
               <label class="relative inline-flex items-center cursor-pointer">
                 <input
@@ -49,16 +41,18 @@
                   @change="update(s)"
                   class="sr-only peer"
                 />
-                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                <div
+                  class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                ></div>
               </label>
             </div>
 
             <!-- Script details -->
             <div class="space-y-2">
               <div class="text-xs text-gray-500">
-                <span class="font-medium">匹配规则：</span>{{ s.match.join(", ") }}
+                <span class="font-medium">匹配规则：</span>{{ s.match.join(', ') }}
               </div>
-              
+
               <div class="text-xs text-gray-500">
                 <span class="font-medium">入口文件：</span>{{ s.entry }}
               </div>
@@ -71,7 +65,7 @@
                 <Icon icon="material-symbols:edit" class="w-4 h-4 mr-1" />
                 编辑
               </Button>
-              
+
               <!-- Details -->
               <!-- <Button variant="secondary" size="sm" @click="showDetail(s)">
                 <Icon icon="material-symbols:info-outline" class="w-4 h-4 mr-1" />
@@ -87,15 +81,14 @@
         </template>
       </draggable>
     </div>
-    
+
     <!-- 匹配规则编辑对话框 -->
     <Dialog :open="showMatchDialog" @update:open="showMatchDialog = $event">
       <DialogContent class="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>编辑匹配规则</DialogTitle>
           <DialogDescription>
-            为脚本 "{{ scriptToEdit?.name }}" 设置匹配规则，每行一个规则
-            //*.example.com/*<br>
+            为脚本 "{{ scriptToEdit?.name }}" 设置匹配规则，每行一个规则 //*.example.com/*<br />
             *://github.com/*
           </DialogDescription>
         </DialogHeader>
@@ -120,15 +113,14 @@
         </DialogFooter>
       </DialogContent>
     </Dialog>
-    
+
     <!-- 上传脚本匹配规则对话框 -->
     <Dialog :open="showUploadMatchDialog" @update:open="showUploadMatchDialog = $event">
       <DialogContent class="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>设置匹配规则</DialogTitle>
           <DialogDescription>
-            为脚本 "{{ uploadScriptName }}" 设置匹配规则，每行一个规则（可选）
-            //*.example.com/*<br>
+            为脚本 "{{ uploadScriptName }}" 设置匹配规则，每行一个规则（可选） //*.example.com/*<br />
             *://github.com/*
           </DialogDescription>
         </DialogHeader>
@@ -154,18 +146,18 @@
         </DialogFooter>
       </DialogContent>
     </Dialog>
-    
+
     <!-- 脚本详情抽屉 -->
     <Sheet :open="showDetailSheet" @update:open="showDetailSheet = $event">
       <SheetContent class="max-w-[800px] rounded-t-lg mx-auto">
         <SheetHeader class="space-y-1">
           <SheetTitle class="text-lg">脚本详情</SheetTitle>
-          <SheetDescription class="text-sm">
-            查看脚本的详细内容
-          </SheetDescription>
+          <SheetDescription class="text-sm"> 查看脚本的详细内容 </SheetDescription>
         </SheetHeader>
         <div class="mt-4">
-          <pre class="bg-muted/50 rounded-md p-4 text-sm overflow-auto max-h-[60vh]">{{ currentScriptDetail }}</pre>
+          <pre class="bg-muted/50 rounded-md p-4 text-sm overflow-auto max-h-[60vh]">{{
+            currentScriptDetail
+          }}</pre>
         </div>
       </SheetContent>
     </Sheet>
@@ -189,8 +181,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from "vue"
-import { Button } from "@shadcn/components/ui/button"
+import { ref, onMounted } from 'vue'
+import { Button } from '@shadcn/components/ui/button'
 import { toast } from '@/components/use-toast'
 
 import {
@@ -201,14 +193,14 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from '@shadcn/components/ui/alert-dialog'
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
-  SheetTitle,
+  SheetTitle
 } from '@shadcn/components/ui/sheet'
 import {
   Dialog,
@@ -216,13 +208,13 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '@shadcn/components/ui/dialog'
 import { Label } from '@shadcn/components/ui/label'
 import { Textarea } from '@shadcn/components/ui/textarea'
-import { Icon } from "@iconify/vue"
-import draggable from "vuedraggable"
-import { useScriptStore } from "@/stores/script"
+import { Icon } from '@iconify/vue'
+import draggable from 'vuedraggable'
+import { useScriptStore } from '@/stores/script'
 
 const scriptStore = useScriptStore()
 
@@ -243,7 +235,7 @@ const uploadScriptData = ref<any>(null)
 
 // 读取全部脚本
 onMounted(async () => {
- refresh()
+  refresh()
 })
 
 // 更新单个项目
@@ -255,7 +247,7 @@ const update = async (item) => {
 }
 
 const refresh = async () => {
-   scripts.value = await scriptStore.getAllScripts()
+  scripts.value = await scriptStore.getAllScripts()
 }
 
 // 上传脚本
@@ -264,9 +256,9 @@ const openUpload = () => fileInput.value.click()
 const onFileSelected = async (e) => {
   const file = e.target.files[0]
   if (!file) return
-  
+
   const jsText = await file.text()
-  const baseName = file.name.replace(/\.js$/i, "")
+  const baseName = file.name.replace(/\.js$/i, '')
 
   // 保存上传的脚本数据
   uploadScriptData.value = {
@@ -274,12 +266,12 @@ const onFileSelected = async (e) => {
     baseName,
     fileName: file.name
   }
-  uploadScriptName.value = file.name.replace(".js", "")
+  uploadScriptName.value = file.name.replace('.js', '')
   uploadMatchRulesText.value = ''
-  
+
   // 显示匹配规则输入对话框
   showUploadMatchDialog.value = true
-  
+
   // 重置文件输入
   e.target.value = ''
 }
@@ -287,29 +279,29 @@ const onFileSelected = async (e) => {
 // 确认上传脚本并设置匹配规则
 const confirmUploadWithMatchRules = async () => {
   if (!uploadScriptData.value) return
-  
+
   const { jsText, baseName, fileName } = uploadScriptData.value
-  
+
   // 解析匹配规则
-  let matchRules = ["*://*/*"] // 默认规则
+  let matchRules = ['*://*/*'] // 默认规则
   if (uploadMatchRulesText.value.trim()) {
     matchRules = uploadMatchRulesText.value
       .split('\n')
-      .map(rule => rule.trim())
-      .filter(rule => rule.length > 0)
+      .map((rule) => rule.trim())
+      .filter((rule) => rule.length > 0)
   }
 
   const scriptItem = {
-    name: fileName.replace(".js", ""),
+    name: fileName.replace('.js', ''),
     enabled: true,
     match: matchRules,
-    entry: `${baseName}/index.js`,
+    entry: `${baseName}/index.js`
   }
 
-  let res:any = await scriptStore.uploadScript(scriptItem, jsText)
-  if(res&&res.error){
+  let res: any = await scriptStore.uploadScript(scriptItem, jsText)
+  if (res && res.error) {
     toast({
-      title: "提示",
+      title: '提示',
       description: res.error,
       variant: 'destructive',
       duration: 3000
@@ -325,20 +317,20 @@ const confirmUploadWithMatchRules = async () => {
 // 跳过匹配规则设置
 const skipMatchRules = async () => {
   if (!uploadScriptData.value) return
-  
+
   const { jsText, baseName, fileName } = uploadScriptData.value
-  
+
   const scriptItem = {
-    name: fileName.replace(".js", ""),
+    name: fileName.replace('.js', ''),
     enabled: true,
-    match: ["*://*/*"], // 使用默认规则
-    entry: `${baseName}/index.js`,
+    match: ['*://*/*'], // 使用默认规则
+    entry: `${baseName}/index.js`
   }
 
-  let res:any = await scriptStore.uploadScript(scriptItem, jsText)
-  if(res&&res.error){
+  let res: any = await scriptStore.uploadScript(scriptItem, jsText)
+  if (res && res.error) {
     toast({
-      title: "提示",
+      title: '提示',
       description: res.error,
       variant: 'destructive',
       duration: 3000
@@ -361,15 +353,15 @@ const editMatch = (script: any) => {
 // 保存匹配规则
 const saveMatchRules = async () => {
   if (!scriptToEdit.value) return
-  
+
   // 解析匹配规则
   const matchRules = matchRulesText.value
     .split('\n')
-    .map(rule => rule.trim())
-    .filter(rule => rule.length > 0)
-  
+    .map((rule) => rule.trim())
+    .filter((rule) => rule.length > 0)
+
   if (matchRules.length === 0) {
-    matchRules.push("*://*/*") // 确保至少有一个规则
+    matchRules.push('*://*/*') // 确保至少有一个规则
   }
 
   // 更新脚本的匹配规则
@@ -381,7 +373,7 @@ const saveMatchRules = async () => {
   await scriptStore.updateScript(updatedScript)
   scripts.value = await scriptStore.getAllScripts() // 刷新
   scriptStore.refreshWindowTabsScript()
-  
+
   // 关闭对话框
   showMatchDialog.value = false
   scriptToEdit.value = null
@@ -425,7 +417,6 @@ const cancelDelete = () => {
   showDeleteDialog.value = false
   scriptToDelete.value = null
 }
-
 </script>
 
 <style>

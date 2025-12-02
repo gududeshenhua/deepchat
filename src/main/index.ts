@@ -1,4 +1,4 @@
-import { app, dialog,protocol } from 'electron'
+import { app, dialog, protocol } from 'electron'
 import { LifecycleManager, registerCoreHooks } from './presenter/lifecyclePresenter'
 import { getInstance, Presenter } from './presenter'
 import { electronApp } from '@electron-toolkit/utils'
@@ -31,9 +31,9 @@ protocol.registerSchemesAsPrivileged([
       secure: true,
       supportFetchAPI: true,
       bypassCSP: true,
-      stream: true,
-    },
-  },
+      stream: true
+    }
+  }
 ])
 protocol.registerSchemesAsPrivileged([
   {
@@ -43,17 +43,22 @@ protocol.registerSchemesAsPrivileged([
       secure: true,
       supportFetchAPI: true,
       bypassCSP: true,
-      stream: true,
-    },
-  },
+      stream: true
+    }
+  }
 ])
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'json', privileges: { standard: true,
+  {
+    scheme: 'json',
+    privileges: {
+      standard: true,
       secure: true,
       supportFetchAPI: true,
       bypassCSP: true,
-      stream: true, } }
-]);
+      stream: true
+    }
+  }
+])
 // Initialize presenter after ready
 let presenter: Presenter
 // Start the lifecycle management system instead of using app.whenReady()

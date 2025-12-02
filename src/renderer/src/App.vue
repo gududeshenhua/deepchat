@@ -266,7 +266,7 @@ onMounted(() => {
     (newVal) => {
       try {
         router.push({ name: newVal })
-      }catch (error) {
+      } catch (error) {
         // router.push({ name: 'not-found' })
       }
     }

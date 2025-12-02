@@ -1,1 +1,12 @@
-@charset "UTF-8";.mobile-layout[data-v-88c8ead9]{height:100vh;background-color:#f7f8fa;width:100%;overflow:hidden}.mobile-layout .mobile-content[data-v-88c8ead9]{padding:12px;overflow-y:scroll;width:100%}
+@charset "UTF-8";
+.mobile-layout[data-v-88c8ead9] {
+  height: 100vh;
+  background-color: #f7f8fa;
+  width: 100%;
+  overflow: hidden;
+}
+.mobile-layout .mobile-content[data-v-88c8ead9] {
+  padding: 12px;
+  overflow-y: scroll;
+  width: 100%;
+}

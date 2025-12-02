@@ -1,1 +1,37 @@
-.self-data-container[data-v-73a3b5f8]{padding:20px}.self-data-container .search-container[data-v-73a3b5f8]{margin-bottom:20px;padding:20px;background:#fff;border-radius:4px}.self-data-container .pagination-container[data-v-73a3b5f8]{margin-top:20px;text-align:right}.self-data-container .email-info .email-item[data-v-73a3b5f8]{margin-bottom:4px;line-height:1.4}.self-data-container .email-info .email-item[data-v-73a3b5f8]:last-child{margin-bottom:0}.self-data-container .email-info .email-item .email-label[data-v-73a3b5f8]{font-weight:500;color:#606266;margin-right:4px}.self-data-container .email-info .email-item .email-value[data-v-73a3b5f8]{color:#409eff;margin-right:4px}.self-data-container .email-info .email-item .email-password[data-v-73a3b5f8]{color:#67c23a;font-size:12px}.self-data-container .email-info .no-email[data-v-73a3b5f8]{color:#909399;font-style:italic}
+.self-data-container[data-v-73a3b5f8] {
+  padding: 20px;
+}
+.self-data-container .search-container[data-v-73a3b5f8] {
+  margin-bottom: 20px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 4px;
+}
+.self-data-container .pagination-container[data-v-73a3b5f8] {
+  margin-top: 20px;
+  text-align: right;
+}
+.self-data-container .email-info .email-item[data-v-73a3b5f8] {
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+.self-data-container .email-info .email-item[data-v-73a3b5f8]:last-child {
+  margin-bottom: 0;
+}
+.self-data-container .email-info .email-item .email-label[data-v-73a3b5f8] {
+  font-weight: 500;
+  color: #606266;
+  margin-right: 4px;
+}
+.self-data-container .email-info .email-item .email-value[data-v-73a3b5f8] {
+  color: #409eff;
+  margin-right: 4px;
+}
+.self-data-container .email-info .email-item .email-password[data-v-73a3b5f8] {
+  color: #67c23a;
+  font-size: 12px;
+}
+.self-data-container .email-info .no-email[data-v-73a3b5f8] {
+  color: #909399;
+  font-style: italic;
+}

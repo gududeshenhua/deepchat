@@ -1,87 +1,95 @@
 <template>
-     <div class="container">
-        <div class="card">
-            <h2>ISC信息</h2>
-            <div class="input-group">
-                <label for="isc-username">账号：</label>
-                <div class="input-with-save">
-                    <input 
-                        type="text" 
-                        id="isc-username" 
-                        name="isc-username" 
-                        placeholder="请输入账号"
-                        v-model="iscUsername"
-                        @input="onInputChange('iscUsername')"
-                    >
-                    <button 
-                        v-if="changedFields.iscUsername" 
-                        class="save-button-small"
-                        @click="saveField('iscUsername', iscUsername)"
-                    >保存</button>
-                </div>
-            </div>
-            <div class="input-group">
-                <label for="isc-password">密码：</label>
-                <div class="input-with-save">
-                    <input 
-                        type="password" 
-                        id="isc-password" 
-                        name="isc-password" 
-                        placeholder="请输入密码"
-                        v-model="iscPassword"
-                        @input="onInputChange('iscPassword')"
-                    >
-                    <button 
-                        v-if="changedFields.iscPassword" 
-                        class="save-button-small"
-                        @click="saveField('iscPassword', iscPassword)"
-                    >保存</button>
-                </div>
-            </div>
+  <div class="container">
+    <div class="card">
+      <h2>ISC信息</h2>
+      <div class="input-group">
+        <label for="isc-username">账号：</label>
+        <div class="input-with-save">
+          <input
+            type="text"
+            id="isc-username"
+            name="isc-username"
+            placeholder="请输入账号"
+            v-model="iscUsername"
+            @input="onInputChange('iscUsername')"
+          />
+          <button
+            v-if="changedFields.iscUsername"
+            class="save-button-small"
+            @click="saveField('iscUsername', iscUsername)"
+          >
+            保存
+          </button>
         </div>
-        <div class="card">
-            <h2>下载设置</h2>
-            <div class="input-group">
-                <label for="download-directory">默认下载目录：</label>
-                <div class="directory-selector">
-                    <input 
-                        type="text" 
-                        id="download-directory" 
-                        class="directory-input" 
-                        name="download-directory" 
-                        placeholder="请选择默认下载目录" 
-                        readonly
-                        v-model="downloadDirectory"
-                        @input="onInputChange('downloadDirectory')"
-                    >
-                    <button class="select-button" @click="selectDirectory">选择目录</button>
-                    <button 
-                        v-if="changedFields.downloadDirectory" 
-                        class="save-button-small"
-                        @click="saveField('downloadDirectory', downloadDirectory)"
-                    >保存</button>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <div class="checkbox-container">
-                    <input 
-                        type="checkbox" 
-                        id="prompt-save-dialog" 
-                        name="prompt-save-dialog"
-                        v-model="promptSaveDialog"
-                        @change="onInputChange('promptSaveDialog')"
-                    >
-                    <label for="prompt-save-dialog">文件下载时是否显示文件保存对话框</label>
-                    <button 
-                        v-if="changedFields.promptSaveDialog" 
-                        class="save-button-small"
-                        @click="saveField('promptSaveDialog', promptSaveDialog)"
-                    >保存</button>
-                </div>
-            </div>
+      </div>
+      <div class="input-group">
+        <label for="isc-password">密码：</label>
+        <div class="input-with-save">
+          <input
+            type="password"
+            id="isc-password"
+            name="isc-password"
+            placeholder="请输入密码"
+            v-model="iscPassword"
+            @input="onInputChange('iscPassword')"
+          />
+          <button
+            v-if="changedFields.iscPassword"
+            class="save-button-small"
+            @click="saveField('iscPassword', iscPassword)"
+          >
+            保存
+          </button>
         </div>
+      </div>
     </div>
+    <div class="card">
+      <h2>下载设置</h2>
+      <div class="input-group">
+        <label for="download-directory">默认下载目录：</label>
+        <div class="directory-selector">
+          <input
+            type="text"
+            id="download-directory"
+            class="directory-input"
+            name="download-directory"
+            placeholder="请选择默认下载目录"
+            readonly
+            v-model="downloadDirectory"
+            @input="onInputChange('downloadDirectory')"
+          />
+          <button class="select-button" @click="selectDirectory">选择目录</button>
+          <button
+            v-if="changedFields.downloadDirectory"
+            class="save-button-small"
+            @click="saveField('downloadDirectory', downloadDirectory)"
+          >
+            保存
+          </button>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <div class="checkbox-container">
+          <input
+            type="checkbox"
+            id="prompt-save-dialog"
+            name="prompt-save-dialog"
+            v-model="promptSaveDialog"
+            @change="onInputChange('promptSaveDialog')"
+          />
+          <label for="prompt-save-dialog">文件下载时是否显示文件保存对话框</label>
+          <button
+            v-if="changedFields.promptSaveDialog"
+            class="save-button-small"
+            @click="saveField('promptSaveDialog', promptSaveDialog)"
+          >
+            保存
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -149,18 +157,18 @@ const initData = async () => {
   try {
     // 从store中加载数据
     await setupStore.syncFromMain()
-    
+
     // 设置默认值
     iscUsername.value = (await setupStore.getValue(fieldConfig.iscUsername)) || ''
     iscPassword.value = (await setupStore.getValue(fieldConfig.iscPassword)) || ''
     downloadDirectory.value = (await setupStore.getValue(fieldConfig.downloadDirectory)) || ''
     promptSaveDialog.value = (await setupStore.getValue(fieldConfig.promptSaveDialog)) || false
-    
+
     // 重置修改状态
-    Object.keys(changedFields).forEach(key => {
+    Object.keys(changedFields).forEach((key) => {
       changedFields[key as keyof typeof changedFields] = false
     })
-    
+
     console.log('初始化数据完成')
   } catch (error) {
     console.error('初始化数据失败:', error)
@@ -174,7 +182,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-    /* body {
+/* body {
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
@@ -184,160 +192,159 @@ onMounted(() => {
         background-color: #f5f5f5;
     } */
 
-    .container {
-        width: 80%;
-        /* margin: 0 auto; */
-        max-width: 1000px;
-        margin-top: 20px;
-        background-color: #fff;
-        border-radius: 8px;
-        /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
-        overflow: hidden;
-    }
+.container {
+  width: 80%;
+  /* margin: 0 auto; */
+  max-width: 1000px;
+  margin-top: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+  overflow: hidden;
+}
 
-    .card {
-        padding: 20px;
-        border-bottom: 1px solid #ddd;
-    }
+.card {
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+}
 
-    .card:last-child {
-        border-bottom: none;
-    }
+.card:last-child {
+  border-bottom: none;
+}
 
-    .card h2 {
-        margin-top: 0;
-        margin-bottom: 10px;
-        color: #333;
-    }
+.card h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+}
 
-    .card label {
-        display: block;
-        margin-bottom: 5px;
-        color: #666;
-    }
+.card label {
+  display: block;
+  margin-bottom: 5px;
+  color: #666;
+}
 
-    .input-group {
-        margin-bottom: 20px;
-    }
+.input-group {
+  margin-bottom: 20px;
+}
 
-    .input-group label {
-        display: block;
-        margin-bottom: 5px;
-        color: #666;
-        font-weight: 500;
-    }
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #666;
+  font-weight: 500;
+}
 
-    .input-with-save {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
+.input-with-save {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-    .card input[type="text"],
-    .card input[type="password"],
-    .card select {
-        flex: 1;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-        min-height: 36px;
-    }
+.card input[type='text'],
+.card input[type='password'],
+.card select {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  min-height: 36px;
+}
 
-    .checkbox-container {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 20px;
-    }
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
 
-    .checkbox-container label {
-        margin-bottom: 0;
-        flex: 1;
-    }
+.checkbox-container label {
+  margin-bottom: 0;
+  flex: 1;
+}
 
-    .checkbox-item {
-        display: flex;
-        align-items: center;
-        width: 300px;
-    }
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  width: 300px;
+}
 
-    .card input[type="checkbox"] {
-        margin-right: 10px;
-    }
+.card input[type='checkbox'] {
+  margin-right: 10px;
+}
 
-    .save-button {
-        width: 100%;
-        padding: 12px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
-        margin-top: 10px;
-    }
+.save-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
 
-    .save-button:hover {
-        background-color: #45a049;
-    }
+.save-button:hover {
+  background-color: #45a049;
+}
 
-    .save-button-small {
-        padding: 6px 12px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 12px;
-        white-space: nowrap;
-        height: 36px;
-        transition: background-color 0.2s;
-    }
+.save-button-small {
+  padding: 6px 12px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  white-space: nowrap;
+  height: 36px;
+  transition: background-color 0.2s;
+}
 
-    .save-button-small:hover {
-        background-color: #45a049;
-    }
+.save-button-small:hover {
+  background-color: #45a049;
+}
 
-    .save-button-small:disabled {
-        background-color: #cccccc;
-        cursor: not-allowed;
-    }
+.save-button-small:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
 
-    /* 新增的目录选择容器样式 - 修正对齐问题 */
-    .directory-selector {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 15px;
-    }
+/* 新增的目录选择容器样式 - 修正对齐问题 */
+.directory-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+}
 
-    .directory-input {
-        flex: 1;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        height: 36px;
-        box-sizing: border-box;
-        background-color: #f9f9f9;
-    }
+.directory-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  height: 36px;
+  box-sizing: border-box;
+  background-color: #f9f9f9;
+}
 
-    .select-button {
-        padding: 0 12px;
-        background-color: #2196F3;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        white-space: nowrap;
-        height: 36px;
-        display: flex;
-        align-items: center;
-        transition: background-color 0.2s;
-    }
+.select-button {
+  padding: 0 12px;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s;
+}
 
-    .select-button:hover {
-        background-color: #0b7dda;
-    }
-
+.select-button:hover {
+  background-color: #0b7dda;
+}
 </style>

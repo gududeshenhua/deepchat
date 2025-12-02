@@ -1,20 +1,20 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <script src="local://page/common/persenterFactory.js" ></script>
-  <script src="local://page/common/sqlite.js"></script>
-</head>
-<body>
-  <script>
-    console.log(window)
-    // debugger
-    const sqliteManager = window.SQLiteManager
-    // sqliteManager.demoStudentOperations()
-    async function demoStudentOperations() {
-      const studentSchema = `
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="local://page/common/persenterFactory.js"></script>
+    <script src="local://page/common/sqlite.js"></script>
+  </head>
+  <body>
+    <script>
+      console.log(window)
+      // debugger
+      const sqliteManager = window.SQLiteManager
+      // sqliteManager.demoStudentOperations()
+      async function demoStudentOperations() {
+        const studentSchema = `
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
           age INTEGER,
@@ -32,7 +32,7 @@
           major: '计算机科学',
           address: '北京市',
           maritalStatus: 'single',
-           graduated: false ? 1 : 0 
+          graduated: false ? 1 : 0
         })
         console.log('插入的学生ID:', studentId)
 
@@ -44,7 +44,7 @@
         //     major: '软件工程',
         //     address: '上海市',
         //     maritalStatus: 'single',
-        //      graduated: false ? 1 : 0 
+        //      graduated: false ? 1 : 0
         //   },
         //   {
         //     name: '王五',
@@ -52,7 +52,7 @@
         //     major: '人工智能',
         //     address: '深圳市',
         //     maritalStatus: 'single',
-        //      graduated: false ? 1 : 0 
+        //      graduated: false ? 1 : 0
         //   }
         // ]
         // await sqliteManager.batchInsert('students', students)
@@ -76,14 +76,14 @@
 
         // // 删除学生
         // await sqliteManager.deleteById('students', { id: 4 })
-    }
-    
-    async function testModifyTable() {
-      try {
-        console.log('=== 测试修改表结构 ===')
-        
-        // 首先创建学生表
-        const studentSchema = `
+      }
+
+      async function testModifyTable() {
+        try {
+          console.log('=== 测试修改表结构 ===')
+
+          // 首先创建学生表
+          const studentSchema = `
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
           age INTEGER,
@@ -92,22 +92,22 @@
           maritalStatus TEXT,
           graduated BOOLEAN DEFAULT 0
         `
-        await sqliteManager.createTable('students', studentSchema)
-        console.log('学生表创建成功')
-        
-        // 插入一些测试数据
-        await sqliteManager.insert('students', {
-          name: '测试学生',
-          age: 20,
-          major: '计算机科学',
-          address: '北京市',
-          maritalStatus: 'single',
-          graduated: 0
-        })
-        console.log('测试数据插入成功')
-        
-        // 修改表结构，添加新字段
-        const newStudentSchema = `
+          await sqliteManager.createTable('students', studentSchema)
+          console.log('学生表创建成功')
+
+          // 插入一些测试数据
+          await sqliteManager.insert('students', {
+            name: '测试学生',
+            age: 20,
+            major: '计算机科学',
+            address: '北京市',
+            maritalStatus: 'single',
+            graduated: 0
+          })
+          console.log('测试数据插入成功')
+
+          // 修改表结构，添加新字段
+          const newStudentSchema = `
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
           age INTEGER,
@@ -118,93 +118,90 @@
           email TEXT,
           phone TEXT
         `
-        await sqliteManager.modifyTable('students', newStudentSchema)
-        console.log('表结构修改成功，添加了email和phone字段')
-        
-        // 验证表结构修改
-        const students = await sqliteManager.getAllData('students')
-        console.log('修改后的学生数据:', students)
-        
-      } catch (error) {
-        console.error('修改表结构测试失败:', error)
+          await sqliteManager.modifyTable('students', newStudentSchema)
+          console.log('表结构修改成功，添加了email和phone字段')
+
+          // 验证表结构修改
+          const students = await sqliteManager.getAllData('students')
+          console.log('修改后的学生数据:', students)
+        } catch (error) {
+          console.error('修改表结构测试失败:', error)
+        }
       }
-    }
-    
-    async function testDropTable() {
-      try {
-        console.log('=== 测试删除表 ===')
-        
-        // 创建临时表
-        const tempSchema = `
+
+      async function testDropTable() {
+        try {
+          console.log('=== 测试删除表 ===')
+
+          // 创建临时表
+          const tempSchema = `
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           temp_field TEXT
         `
-        await sqliteManager.createTable('temp_table', tempSchema)
-        console.log('临时表创建成功')
-        
-        // 删除表
-        await sqliteManager.dropTable('temp_table')
-        console.log('临时表删除成功')
-        
-      } catch (error) {
-        console.error('删除表测试失败:', error)
+          await sqliteManager.createTable('temp_table', tempSchema)
+          console.log('临时表创建成功')
+
+          // 删除表
+          await sqliteManager.dropTable('temp_table')
+          console.log('临时表删除成功')
+        } catch (error) {
+          console.error('删除表测试失败:', error)
+        }
       }
-    }
-    
-    async function testTruncateTable() {
-      try {
-        console.log('=== 测试清空表 ===')
-        
-        // 创建测试表
-        const testSchema = `
+
+      async function testTruncateTable() {
+        try {
+          console.log('=== 测试清空表 ===')
+
+          // 创建测试表
+          const testSchema = `
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           content TEXT
         `
-        await sqliteManager.createTable('test_table', testSchema)
-        console.log('测试表创建成功')
-        
-        // 插入一些数据
-        await sqliteManager.batchInsert('test_table', [
-          { content: '测试数据1' },
-          { content: '测试数据2' },
-          { content: '测试数据3' }
-        ])
-        console.log('测试数据插入成功')
-        
-        // 验证数据存在
-        const beforeTruncate = await sqliteManager.getAllData('test_table')
-        console.log('清空前数据条数:', beforeTruncate.length)
-        
-        // 清空表
-        await sqliteManager.truncateTable('test_table')
-        console.log('表清空成功')
-        
-        // 验证表已清空
-        const afterTruncate = await sqliteManager.getAllData('test_table')
-        console.log('清空后数据条数:', afterTruncate.length)
-        
-      } catch (error) {
-        console.error('清空表测试失败:', error)
+          await sqliteManager.createTable('test_table', testSchema)
+          console.log('测试表创建成功')
+
+          // 插入一些数据
+          await sqliteManager.batchInsert('test_table', [
+            { content: '测试数据1' },
+            { content: '测试数据2' },
+            { content: '测试数据3' }
+          ])
+          console.log('测试数据插入成功')
+
+          // 验证数据存在
+          const beforeTruncate = await sqliteManager.getAllData('test_table')
+          console.log('清空前数据条数:', beforeTruncate.length)
+
+          // 清空表
+          await sqliteManager.truncateTable('test_table')
+          console.log('表清空成功')
+
+          // 验证表已清空
+          const afterTruncate = await sqliteManager.getAllData('test_table')
+          console.log('清空后数据条数:', afterTruncate.length)
+        } catch (error) {
+          console.error('清空表测试失败:', error)
+        }
       }
-    }
-    
-    // 综合测试函数
-    async function runAllTests() {
-      try {
-        console.log('开始SQLite功能测试...')
-        
-        await testModifyTable()
-        // await testDropTable() 
-        // await testTruncateTable()
-        
-        console.log('所有测试完成!')
-      } catch (error) {
-        console.error('测试过程中出现错误:', error)
+
+      // 综合测试函数
+      async function runAllTests() {
+        try {
+          console.log('开始SQLite功能测试...')
+
+          await testModifyTable()
+          // await testDropTable()
+          // await testTruncateTable()
+
+          console.log('所有测试完成!')
+        } catch (error) {
+          console.error('测试过程中出现错误:', error)
+        }
       }
-    }
-    
-    // 运行测试
-    runAllTests()
-  </script>
-</body>
+
+      // 运行测试
+      runAllTests()
+    </script>
+  </body>
 </html>
