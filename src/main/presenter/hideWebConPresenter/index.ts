@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { WebContentsView } from 'electron'
+import { WebContentsView, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 import { eventBus } from '@/eventbus'
@@ -95,6 +95,11 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
       // 发送创建事件
       eventBus.sendToMain(HIDDEN_WEB_CONTENTS_EVENTS.CREATED, id)
 
+      if (options.visible) {
+        const win = new BrowserWindow({ width: 800, height: 600 })
+        win.contentView.addChildView(view)
+        view.setBounds({ x: 0, y: 0, width: 800, height: 600 })
+      }
       return id
     } catch (error) {
       console.error('Failed to create hidden web contents:', error)

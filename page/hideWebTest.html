@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>隐藏WebContents测试页面</title>
+  <script src="local://page/common/persenterFactory.js"></script>
+  <script src="local://page/common/hideWebCon.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background: #f9f9f9;
+    }
+    .test-section h3 {
+      margin-top: 0;
+      color: #555;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      margin: 5px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .log {
+      background: #333;
+      color: #0f0;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .status {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .status.info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>隐藏WebContents功能测试</h1>
+    
+    <div class="test-section">
+      <h3>1. 基础功能测试</h3>
+      <button onclick="testBasicFunctions()">测试基础功能</button>
+      <!-- <button onclick="testDemo()">运行演示示例</button> -->
+      <div id="basicStatus"></div>
+      <div id="basicLog" class="log"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>2. DOM操作测试</h3>
+      <button onclick="testDOMOperations()">测试DOM操作</button>
+      <button onclick="testFormOperations()">测试表单操作</button>
+      <div id="domStatus"></div>
+      <div id="domLog" class="log"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>3. 百度搜索页面测试</h3>
+      <button onclick="testBaiduSearch()">测试百度搜索</button>
+      <button onclick="testBaiduAPI()">测试百度API拦截</button>
+      <div id="baiduStatus"></div>
+      <div id="baiduLog" class="log"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>4. 高级功能测试</h3>
+      <button onclick="testAdvancedFeatures()">测试高级功能</button>
+      <button onclick="testAllMethods()">测试所有方法</button>
+      <div id="advancedStatus"></div>
+      <div id="advancedLog" class="log"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>5. 清理操作</h3>
+      <button onclick="cleanup()">清理所有WebContents</button>
+      <div id="cleanupStatus"></div>
+      <div id="cleanupLog" class="log"></div>
+    </div>
+  </div>
+
+  <script>
+    let currentWebContentsId = null;
+
+    // 日志函数
+    function logToElement(elementId, message, type = 'info') {
+      const element = document.getElementById(elementId);
+      if (element) {
+        const timestamp = new Date().toLocaleTimeString();
+        element.innerHTML += `[${timestamp}] ${message}\n`;
+        element.scrollTop = element.scrollHeight;
+      }
+      console.log(`[${type.toUpperCase()}] ${message}`);
+    }
+
+    function updateStatus(elementId, message, type = 'info') {
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.innerHTML = `<div class="status ${type}">${message}</div>`;
+      }
+    }
+
+    // 1. 基础功能测试
+    async function testBasicFunctions() {
+      const logId = 'basicLog';
+      const statusId = 'basicStatus';
+      
+      try {
+        updateStatus(statusId, '开始基础功能测试...', 'info');
+        logToElement(logId, '=== 开始基础功能测试 ===');
+
+        // 创建隐藏WebContents
+        logToElement(logId, '创建隐藏WebContents...');
+        const id = await HiddenWebContentsManager.createHiddenWebContents({
+          url: 'https://www.baidu.com',
+          visible: true
+        });
+        currentWebContentsId = id;
+        logToElement(logId, `WebContents创建成功，ID: ${id}`);
+
+        // 等待页面加载
+        logToElement(logId, '等待页面加载...');
+        await HiddenWebContentsManager.sleep(3000);
+
+        // 获取WebContents数据
+        logToElement(logId, '获取WebContents数据...');
+        const data = await HiddenWebContentsManager.getHiddenWebContentsData(id);
+        logToElement(logId, `WebContents数据: ${JSON.stringify(data)}`);
+
+        // 获取所有WebContents
+        logToElement(logId, '获取所有WebContents...');
+        const allData = await HiddenWebContentsManager.getAllHiddenWebContentsData();
+        logToElement(logId, `当前有 ${allData.length} 个WebContents`);
+
+        updateStatus(statusId, '基础功能测试完成！', 'success');
+        logToElement(logId, '=== 基础功能测试完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `基础功能测试失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // 2. DOM操作测试
+    async function testDOMOperations() {
+      const logId = 'domLog';
+      const statusId = 'domStatus';
+      
+      if (!currentWebContentsId) {
+        updateStatus(statusId, '请先运行基础功能测试', 'error');
+        return;
+      }
+
+      try {
+        updateStatus(statusId, '开始DOM操作测试...', 'info');
+        logToElement(logId, '=== 开始DOM操作测试 ===');
+
+        const id = currentWebContentsId;
+
+        // 等待页面元素
+        logToElement(logId, '等待百度搜索框加载...');
+        const found = await HiddenWebContentsManager.waitForElement(id, '#kw', 10000);
+        logToElement(logId, `搜索框${found ? '找到' : '未找到'}`);
+
+        // 检查元素是否存在
+        logToElement(logId, '检查元素是否存在...');
+        const hasSearchBox = await HiddenWebContentsManager.hasElement(id, '#kw');
+        logToElement(logId, `搜索框存在: ${hasSearchBox}`);
+
+        // 执行JavaScript
+        logToElement(logId, '执行JavaScript代码...');
+        await HiddenWebContentsManager.executeJavaScript(id, `
+          document.title = '测试页面 - ' + new Date().toLocaleString();
+          console.log('页面标题已修改');
+        `);
+
+        // 设置输入框值
+        logToElement(logId, '设置搜索框值...');
+        await HiddenWebContentsManager.setInputValue(id, '#kw', '隐藏WebContents测试');
+
+        // 点击搜索按钮
+        logToElement(logId, '点击搜索按钮...');
+        await HiddenWebContentsManager.sleep(1000);
+        await HiddenWebContentsManager.clickElement(id, '#su');
+
+        // 等待搜索结果
+        logToElement(logId, '等待搜索结果...');
+        await HiddenWebContentsManager.sleep(3000);
+
+        updateStatus(statusId, 'DOM操作测试完成！', 'success');
+        logToElement(logId, '=== DOM操作测试完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `DOM操作测试失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // 3. 百度搜索页面测试
+    async function testBaiduSearch() {
+      const logId = 'baiduLog';
+      const statusId = 'baiduStatus';
+      
+      try {
+        updateStatus(statusId, '开始百度搜索测试...', 'info');
+        logToElement(logId, '=== 开始百度搜索测试 ===');
+
+        // 创建新的WebContents用于百度搜索
+        const id = await HiddenWebContentsManager.createHiddenWebContents({
+          url: 'https://www.baidu.com',
+          visible: false
+        });
+        logToElement(logId, `创建百度搜索WebContents，ID: ${id}`);
+
+        // 等待页面加载
+        await HiddenWebContentsManager.sleep(3000);
+
+        // 搜索测试
+        logToElement(logId, '执行搜索操作...');
+        await HiddenWebContentsManager.setInputValue(id, '#kw', '人工智能');
+        await HiddenWebContentsManager.sleep(1000);
+        await HiddenWebContentsManager.clickElement(id, '#su');
+        await HiddenWebContentsManager.sleep(3000);
+
+        // 检查搜索结果
+        const hasResults = await HiddenWebContentsManager.hasElement(id, '.result');
+        logToElement(logId, `搜索结果${hasResults ? '找到' : '未找到'}`);
+
+        // 获取页面标题
+        const title = await HiddenWebContentsManager.executeJavaScript(id, 'return document.title');
+        logToElement(logId, `页面标题: ${title}`);
+
+        updateStatus(statusId, '百度搜索测试完成！', 'success');
+        logToElement(logId, '=== 百度搜索测试完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `百度搜索测试失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // 4. 百度API拦截测试（参考您提供的示例）
+    async function testBaiduAPI() {
+      const logId = 'baiduLog';
+      const statusId = 'baiduStatus';
+      
+      try {
+        updateStatus(statusId, '开始百度API拦截测试...', 'info');
+        logToElement(logId, '=== 开始百度API拦截测试 ===');
+
+        // 创建WebContents
+        const id = await HiddenWebContentsManager.createHiddenWebContents({
+          url: 'https://www.baidu.com',
+          visible: true
+        });
+        logToElement(logId, `创建WebContents，ID: ${id}`);
+
+        await HiddenWebContentsManager.sleep(2000);
+
+       
+        // 拦截百度API请求（参考您提供的XMLHttpRequest重写示例）
+        const interceptResult = await HiddenWebContentsManager.executeJavaScript(id, `
+          (function(){
+            // 重写 XMLHttpRequest
+            const originalXHROpen = XMLHttpRequest.prototype.open;
+            const originalXHRSend = XMLHttpRequest.prototype.send;
+
+            XMLHttpRequest.prototype.open = function(method, url) {
+              this._method = method;
+              this._url = url;
+              return originalXHROpen.apply(this, arguments);
+            };
+
+            XMLHttpRequest.prototype.send = function(body) {
+              this.addEventListener('readystatechange', function () {
+                if (this.readyState === 4 && this._url.includes('/pcsearch')) {
+                  console.log('捕获到百度搜索建议API响应:');
+                  console.log('URL:', this._url);
+                  console.log('状态码:', this.status);
+                  console.log('响应体:', this.responseText);
+                  
+                  // 这里可以处理拦截到的数据
+                  if (this.status === 200) {
+                    window.interceptedData = {
+                      url: this._url,
+                      response: this.responseText,
+                      timestamp: new Date().toISOString()
+                    };
+                  }
+                }
+              });
+
+              return originalXHRSend.apply(this, arguments);
+            };
+            
+            return 'XMLHttpRequest拦截器已安装';
+          })()
+        `);
+
+        logToElement(logId, `API拦截器安装结果: ${interceptResult}`);
+
+        // 触发搜索以产生API请求
+        logToElement(logId, '执行搜索操作...');
+        await HiddenWebContentsManager.setInputValue(id, '#kw', '人工智能');
+        await HiddenWebContentsManager.sleep(1000);
+        await HiddenWebContentsManager.clickElement(id, '#su');
+        await HiddenWebContentsManager.sleep(6000);
+        logToElement(logId, `设置输入框结果成功:`);
+        // 检查是否拦截到数据
+        const interceptedData = await HiddenWebContentsManager.executeJavaScript(id, 'window.interceptedData');
+        if (interceptedData) {
+          logToElement(logId, `成功拦截到API数据: ${JSON.stringify(interceptedData)}`);
+        } else {
+          logToElement(logId, '未拦截到API数据');
+        }
+
+        updateStatus(statusId, '百度API拦截测试完成！', 'success');
+        logToElement(logId, '=== 百度API拦截测试完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `百度API拦截测试失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // 5. 高级功能测试
+    async function testAdvancedFeatures() {
+      const logId = 'advancedLog';
+      const statusId = 'advancedStatus';
+      
+      try {
+        updateStatus(statusId, '开始高级功能测试...', 'info');
+        logToElement(logId, '=== 开始高级功能测试 ===');
+
+        // 测试间隔点击功能
+        logToElement(logId, '测试间隔点击功能...');
+        const id = await HiddenWebContentsManager.createHiddenWebContents({
+          url: 'https://www.baidu.com',
+          visible: true
+        });
+
+        await HiddenWebContentsManager.sleep(2000);
+
+        // 测试表单提交（虽然百度首页没有表单提交按钮，但演示用法）
+        logToElement(logId, '测试表单操作...');
+        try {
+          await HiddenWebContentsManager.submitForm(id, '#form');
+          logToElement(logId, '表单提交测试完成');
+        } catch (error) {
+          logToElement(logId, `表单提交测试失败（预期行为）: ${error.message}`);
+        }
+
+        // 测试根据文本点击元素
+        logToElement(logId, '测试文本匹配点击...');
+        try {
+          await HiddenWebContentsManager.clickElementByText(id, 'a', '新闻');
+          logToElement(logId, '文本匹配点击测试完成');
+        } catch (error) {
+          logToElement(logId, `文本匹配点击测试失败: ${error.message}`);
+        }
+
+        updateStatus(statusId, '高级功能测试完成！', 'success');
+        logToElement(logId, '=== 高级功能测试完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `高级功能测试失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // 6. 测试所有方法
+    async function testAllMethods() {
+      const logId = 'advancedLog';
+      const statusId = 'advancedStatus';
+      
+      try {
+        updateStatus(statusId, '开始全面测试所有方法...', 'info');
+        logToElement(logId, '=== 开始全面测试所有方法 ===');
+
+        // 创建WebContents
+        const id = await HiddenWebContentsManager.createHiddenWebContents({
+          url: 'https://www.baidu.com',
+          visible: false
+        });
+        logToElement(logId, `创建WebContents，ID: ${id}`);
+
+        await HiddenWebContentsManager.sleep(3000);
+
+        // 测试所有DOM操作方法
+        const testMethods = [
+          { name: 'waitForElement', fn: () => HiddenWebContentsManager.waitForElement(id, 'body', 5000) },
+          { name: 'hasElement', fn: () => HiddenWebContentsManager.hasElement(id, 'body') },
+          { name: 'executeJavaScript', fn: () => HiddenWebContentsManager.executeJavaScript(id, 'return document.title') },
+          { name: 'setInputValue', fn: () => HiddenWebContentsManager.setInputValue(id, '#kw', '全面测试') },
+          { name: 'getInputValue', fn: () => HiddenWebContentsManager.getInputValue(id, '#kw') },
+          { name: 'clickElement', fn: () => HiddenWebContentsManager.clickElement(id, '#su') },
+          { name: 'sleep', fn: () => HiddenWebContentsManager.sleep(1000) }
+        ];
+
+        for (const method of testMethods) {
+          try {
+            logToElement(logId, `测试方法: ${method.name}`);
+            const result = await method.fn();
+            logToElement(logId, `${method.name} 测试成功，结果: ${result}`);
+          } catch (error) {
+            logToElement(logId, `${method.name} 测试失败: ${error.message}`);
+          }
+          await HiddenWebContentsManager.sleep(500);
+        }
+
+        updateStatus(statusId, '所有方法测试完成！', 'success');
+        logToElement(logId, '=== 所有方法测试完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `全面测试失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    
+
+    // 8. 清理操作
+    async function cleanup() {
+      const logId = 'cleanupLog';
+      const statusId = 'cleanupStatus';
+      
+      try {
+        updateStatus(statusId, '开始清理操作...', 'info');
+        logToElement(logId, '=== 开始清理操作 ===');
+
+        // 获取所有WebContents
+        const allData = await HiddenWebContentsManager.getAllHiddenWebContentsData();
+        logToElement(logId, `需要清理 ${allData.length} 个WebContents`);
+
+        // 关闭所有WebContents
+        for (const data of allData) {
+          try {
+            await HiddenWebContentsManager.closeHiddenWebContents(data.id);
+            logToElement(logId, `已关闭WebContents: ${data.id}`);
+          } catch (error) {
+            logToElement(logId, `关闭WebContents ${data.id} 失败: ${error.message}`);
+          }
+        }
+
+        currentWebContentsId = null;
+        updateStatus(statusId, '清理操作完成！', 'success');
+        logToElement(logId, '=== 清理操作完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `清理操作失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+  </script>
+</body>
+</html>
