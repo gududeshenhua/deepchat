@@ -124,7 +124,7 @@ export class Presenter implements IPresenter {
     this.dialogPresenter = new DialogPresenter()
     this.setupPresenter = new SetupPresenter()
     this.customSqlitePresenter = new CustomSqlitePresenter()
-    this.hideWebConPresenter = new HiddenWebContentsPresenter()
+    this.hideWebConPresenter = new HiddenWebContentsPresenter(this.tabPresenter)
     // Define dbDir for knowledge presenter
     const dbDir = path.join(app.getPath('userData'), 'app_db')
     this.knowledgePresenter = new KnowledgePresenter(

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { WebContentsView, BrowserWindow } from 'electron'
+import { WebContentsView, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 import { eventBus } from '@/eventbus'
@@ -7,10 +7,11 @@ import { HIDDEN_WEB_CONTENTS_EVENTS } from '@/events'
 import {
   HiddenWebContentsData,
   HiddenWebContentsOptions,
-  IHiddenWebContentsPresenter
+  IHiddenWebContentsPresenter,
+  ITabPresenter
 } from '@shared/presenter'
 
-// 方案 1（简单）：TabPresenter 作为中转（推荐）
+// 方案 1（简单）：HiddenWebContentsPresenter 作为中转（推荐）
 // // tabA send → presenter → tabB dispatch
 
 // ipcMain.on("tab-message", (event, targetTabId, payload) => {
@@ -36,8 +37,45 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
   // 存储隐藏WebContents的状态数据
   private hiddenWebContentsState: Map<number, HiddenWebContentsData> = new Map()
 
-  constructor() {
+  // Tab展示器，用于WebContents ID到Tab ID的映射
+  private tabPresenter: ITabPresenter | null = null
+
+  // 通信事件名称
+  private readonly COMMUNICATION_EVENTS = {
+    SEND_MESSAGE: 'webcontents-send-message',
+    RECEIVE_MESSAGE: 'webcontents-receive-message',
+    BROADCAST_MESSAGE: 'webcontents-broadcast-message'
+  }
+
+  constructor(tabPresenter: ITabPresenter) {
+    this.tabPresenter = tabPresenter
     this.initBusHandlers()
+    this.initIpcHandlers()
+  }
+
+  // /**
+  //  * 设置Tab展示器
+  //  */
+  // setTabPresenter(tabPresenter: ITabPresenter): void {
+  //   this.tabPresenter = tabPresenter
+  // }
+
+  /**
+   * 初始化IPC事件处理器
+   */
+  private initIpcHandlers(): void {
+    // 监听发送消息到指定WebContents的事件
+    ipcMain.on(
+      this.COMMUNICATION_EVENTS.SEND_MESSAGE,
+      async (_event, targetWebContentsId: number, payload: any) => {
+        return await this.sendMessageToWebContents(targetWebContentsId, payload)
+      }
+    )
+
+    // // 监听广播消息到所有WebContents的事件
+    // ipcMain.handle(this.COMMUNICATION_EVENTS.BROADCAST_MESSAGE, async (event, payload: any) => {
+    //   return await this.broadcastMessage(payload)
+    // })
   }
 
   // 初始化事件总线处理器
@@ -391,5 +429,86 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
     `
 
     return await this.executeJavaScript(id, script)
+  }
+
+  // ========== WebContents通信相关方法 ==========
+
+  /**
+   * 发送消息到指定的WebContents
+   * @param targetWebContentsId 目标WebContents ID
+   * @param payload 消息负载
+   * @returns 是否发送成功
+   */
+  async sendMessageToWebContents(targetWebContentsId: number, payload: any): Promise<boolean> {
+    try {
+      if (!this.tabPresenter) {
+        console.warn('TabPresenter not available, cannot send message')
+        return false
+      }
+      // || this.hiddenWebContents.get(targetWebContentsId)?.webContents.id
+      // 获取目标WebContents对应的Tab ID
+      const tabId = this.tabPresenter.getTabIdByWebContentsId(targetWebContentsId)
+      if (!tabId) {
+        console.warn(`No tab found for WebContents ID: ${targetWebContentsId}`)
+        return false
+      }
+
+      // 使用eventBus发送消息到指定Tab
+      eventBus.sendToTab(tabId, this.COMMUNICATION_EVENTS.RECEIVE_MESSAGE, {
+        fromWebContentsId: targetWebContentsId,
+        payload,
+        timestamp: Date.now()
+      })
+
+      console.log(`Message sent to WebContents ${targetWebContentsId} (Tab ${tabId})`)
+      return true
+    } catch (error) {
+      console.error(`Failed to send message to WebContents ${targetWebContentsId}:`, error)
+      return false
+    }
+  }
+
+  /**
+   * 广播消息到所有WebContents
+   * @param payload 消息负载
+   * @returns 发送成功的WebContents数量
+   */
+  async broadcastMessage(payload: any): Promise<number> {
+    try {
+      if (!this.tabPresenter) {
+        console.warn('TabPresenter not available, cannot broadcast message')
+        return 0
+      }
+
+      let successCount = 0
+      const broadcastData = {
+        payload,
+        timestamp: Date.now(),
+        from: 'broadcast'
+      }
+
+      // 遍历所有隐藏的WebContents
+      for (const [webContentsId, view] of this.hiddenWebContents) {
+        if (view && !view.webContents.isDestroyed()) {
+          try {
+            // 获取对应的Tab ID
+            const tabId = this.tabPresenter.getTabIdByWebContentsId(webContentsId)
+            if (tabId) {
+              // 发送消息到该Tab
+              eventBus.sendToTab(tabId, this.COMMUNICATION_EVENTS.RECEIVE_MESSAGE, broadcastData)
+              successCount++
+            }
+          } catch (error) {
+            console.error(`Failed to broadcast to WebContents ${webContentsId}:`, error)
+          }
+        }
+      }
+
+      console.log(`Broadcast message sent to ${successCount} WebContents`)
+      return successCount
+    } catch (error) {
+      console.error('Failed to broadcast message:', error)
+      return 0
+    }
   }
 }

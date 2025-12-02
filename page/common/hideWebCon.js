@@ -293,6 +293,230 @@
       });
     }
 
+    // ========== WebContents通信相关方法 ==========
+
+    /**
+     * 发送消息到指定的WebContents
+     * @param {number} targetWebContentsId - 目标WebContents ID
+     * @param {any} payload - 消息负载
+     * @returns {Promise<boolean>} 是否发送成功
+     */
+    async sendMessageToWebContents(targetWebContentsId, payload) {
+      try {
+        const success = await this.hiddenWebContentsPresenter.sendMessageToWebContents(targetWebContentsId, payload)
+        console.log(`Message sent to WebContents ${targetWebContentsId}: ${success}`)
+        return success
+      } catch (error) {
+        console.error(`Failed to send message to WebContents ${targetWebContentsId}:`, error)
+        throw error
+      }
+    }
+
+    /**
+     * 广播消息到所有WebContents
+     * @param {any} payload - 消息负载
+     * @returns {Promise<number>} 发送成功的WebContents数量
+     */
+    async broadcastMessage(payload) {
+      try {
+        const successCount = await this.hiddenWebContentsPresenter.broadcastMessage(payload)
+        console.log(`Broadcast message sent to ${successCount} WebContents`)
+        return successCount
+      } catch (error) {
+        console.error('Failed to broadcast message:', error)
+        throw error
+      }
+    }
+
+    /**
+     * 监听来自其他WebContents的消息
+     * @param {function} callback - 消息回调函数
+     */
+    onMessageReceived(callback) {
+      if (typeof callback !== 'function') {
+        throw new TypeError('Callback must be a function')
+      }
+
+      // 监听来自presenter的消息
+      const messageHandler = (event, data) => {
+        try {
+          callback(data)
+        } catch (error) {
+          console.error('Error in message callback:', error)
+        }
+      }
+
+      // 注册事件监听器
+      window.electron?.ipcRenderer?.on('webcontents-receive-message', messageHandler)
+      
+      // 返回取消监听函数
+      return () => {
+        window.electron?.ipcRenderer?.removeListener('webcontents-receive-message', messageHandler)
+      }
+    }
+
+    /**
+     * 获取所有可通信的WebContents ID列表
+     * @returns {Promise<number[]>} WebContents ID数组
+     */
+    // async getCommunicableWebContentsIds() {
+    //   try {
+    //     const ids = await this.hiddenWebContentsPresenter.getCommunicableWebContentsIds()
+    //     console.log(`Found ${ids.length} communicable WebContents`)
+    //     return ids
+    //   } catch (error) {
+    //     console.error('Failed to get communicable WebContents IDs:', error)
+    //     throw error
+    //   }
+    // }
+
+    // /**
+    //  * 检查WebContents是否可以通信
+    //  * @param {number} webContentsId - WebContents ID
+    //  * @returns {Promise<boolean>} 是否可以通信
+    //  */
+    // async canCommunicate(webContentsId) {
+    //   try {
+    //     const canCommunicate = await this.hiddenWebContentsPresenter.canCommunicate(webContentsId)
+    //     console.log(`WebContents ${webContentsId} can communicate: ${canCommunicate}`)
+    //     return canCommunicate
+    //   } catch (error) {
+    //     console.error(`Failed to check communication status for WebContents ${webContentsId}:`, error)
+    //     throw error
+    //   }
+    // }
+
+    /**
+     * 获取WebContents的通信信息
+     * @param {number} webContentsId - WebContents ID
+     * @returns {Promise<Object>} 通信信息对象
+     */
+    async getWebContentsCommunicationInfo(webContentsId) {
+      try {
+        const info = await this.hiddenWebContentsPresenter.getWebContentsCommunicationInfo(webContentsId)
+        console.log(`Communication info for WebContents ${webContentsId}:`, info)
+        return info
+      } catch (error) {
+        console.error(`Failed to get communication info for WebContents ${webContentsId}:`, error)
+        throw error
+      }
+    }
+
+    /**
+     * 发送消息并等待响应（请求-响应模式）
+     * @param {number} targetWebContentsId - 目标WebContents ID
+     * @param {any} payload - 消息负载
+     * @param {number} timeout - 超时时间（毫秒），默认5000
+     * @returns {Promise<any>} 响应数据
+     */
+    async sendMessageAndWaitForResponse(targetWebContentsId, payload, timeout = 5000) {
+      return new Promise((resolve, reject) => {
+        const messageId = Date.now() + Math.random().toString(36).substr(2, 9)
+        
+        // 设置超时
+        const timeoutId = setTimeout(() => {
+          unsubscribe()
+          reject(new Error(`Message response timeout after ${timeout}ms`))
+        }, timeout)
+
+        // 监听响应
+        const unsubscribe = this.onMessageReceived((data) => {
+          if (data.messageId === messageId && data.type === 'response') {
+            clearTimeout(timeoutId)
+            unsubscribe()
+            resolve(data.response)
+          }
+        })
+
+        // 发送请求消息
+        this.sendMessageToWebContents(targetWebContentsId, {
+          type: 'request',
+          messageId,
+          payload,
+          timestamp: Date.now()
+        }).catch(reject)
+      })
+    }
+
+    /**
+     * 注册消息处理器（用于处理请求-响应模式）
+     * @param {function} handler - 消息处理函数
+     */
+    registerMessageHandler(handler) {
+      if (typeof handler !== 'function') {
+        throw new TypeError('Handler must be a function')
+      }
+
+      return this.onMessageReceived(async (data) => {
+        if (data.type === 'request' && data.messageId) {
+          try {
+            const response = await handler(data.payload)
+            
+            // 发送响应
+            await this.sendMessageToWebContents(data.fromWebContentsId, {
+              type: 'response',
+              messageId: data.messageId,
+              response,
+              timestamp: Date.now()
+            })
+          } catch (error) {
+            console.error('Error handling message:', error)
+            
+            // 发送错误响应
+            await this.sendMessageToWebContents(data.fromWebContentsId, {
+              type: 'error',
+              messageId: data.messageId,
+              error: error.message,
+              timestamp: Date.now()
+            })
+          }
+        }
+      })
+    }
+
+    // /**
+    //  * 演示通信功能的示例方法
+    //  */
+    // async demonstrateCommunication() {
+    //   console.log('Starting communication demonstration...')
+      
+    //   try {
+    //     // 获取所有可通信的WebContents
+    //     const webContentsIds = await this.getCommunicableWebContentsIds()
+        
+    //     if (webContentsIds.length === 0) {
+    //       console.log('No communicable WebContents found')
+    //       return
+    //     }
+
+    //     console.log(`Found ${webContentsIds.length} communicable WebContents:`, webContentsIds)
+
+    //     // 发送测试消息到第一个WebContents
+    //     if (webContentsIds.length > 0) {
+    //       const targetId = webContentsIds[0]
+    //       const success = await this.sendMessageToWebContents(targetId, {
+    //         type: 'test',
+    //         message: 'Hello from communication demo!',
+    //         timestamp: Date.now()
+    //       })
+          
+    //       console.log(`Test message sent to WebContents ${targetId}: ${success}`)
+    //     }
+
+    //     // 广播测试消息
+    //     const broadcastCount = await this.broadcastMessage({
+    //       type: 'broadcast',
+    //       message: 'This is a broadcast message!',
+    //       timestamp: Date.now()
+    //     })
+        
+    //     console.log(`Broadcast message sent to ${broadcastCount} WebContents`)
+
+    //     console.log('Communication demonstration completed')
+    //   } catch (error) {
+    //     console.error('Communication demonstration failed:', error)
+    //   }
+    // }
     
   }
 

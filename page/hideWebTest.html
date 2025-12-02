@@ -115,14 +115,24 @@
     </div>
 
     <div class="test-section">
-      <h3>4. 高级功能测试</h3>
+      <h3>4. WebContents通信测试</h3>
+      <!-- <button onclick="testCommunication()">测试通信功能</button> -->
+      <button onclick="testMessageSending()">测试消息发送</button>
+      <!-- <button onclick="testBroadcast()">测试广播消息</button> -->
+      <button onclick="testRequestResponse()">测试请求-响应模式</button>
+      <div id="communicationStatus"></div>
+      <div id="communicationLog" class="log"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>5. 高级功能测试</h3>
       <button onclick="testAdvancedFeatures()">测试高级功能</button>
       <div id="advancedStatus"></div>
       <div id="advancedLog" class="log"></div>
     </div>
 
     <div class="test-section">
-      <h3>5. 清理操作</h3>
+      <h3>6. 清理操作</h3>
       <button onclick="cleanup()">清理所有WebContents</button>
       <div id="cleanupStatus"></div>
       <div id="cleanupLog" class="log"></div>
@@ -373,7 +383,120 @@
       }
     }
 
-    // 5. 高级功能测试
+    // 5. WebContents通信测试
+
+    // 6. 消息发送测试
+    async function testMessageSending() {
+      const logId = 'communicationLog';
+      const statusId = 'communicationStatus';
+      
+      try {
+        updateStatus(statusId, '开始消息发送测试...', 'info');
+        logToElement(logId, '=== 开始消息发送测试 ===');
+
+        // 创建WebContents
+        const id1 = await HiddenWebContentsManager.createHiddenWebContents({
+          url: 'https://www.baidu.com',
+          visible: false
+        });
+        const id2 = await HiddenWebContentsManager.createHiddenWebContents({
+          url: 'https://www.google.com',
+          visible: false
+        });
+        
+        logToElement(logId, `创建WebContents1 (ID: ${id1}) 和 WebContents2 (ID: ${id2})`);
+        await HiddenWebContentsManager.sleep(2000);
+
+        // 设置消息监听器
+        logToElement(logId, '设置消息监听器...');
+        await HiddenWebContentsManager.onMessageReceived((data) => {
+          logToElement(logId, `WebContents2 收到消息: ${JSON.stringify(data)}`);
+        });
+
+        // 发送不同类型的消息
+        const testMessages = [
+          { type: 'text', content: '简单文本消息' },
+          { type: 'object', content: { key: 'value', number: 123 } },
+          { type: 'array', content: [1, 2, 3, 'test'] },
+          { type: 'complex', content: { nested: { deep: 'value' }, list: ['a', 'b'] } }
+        ];
+
+        for (const testMsg of testMessages) {
+          logToElement(logId, `发送 ${testMsg.type} 类型消息...`);
+          const result = await HiddenWebContentsManager.sendMessageToWebContents("1",testMsg);
+          logToElement(logId, `发送结果: ${result.success ? '成功' : '失败'} - ${result.message}`);
+          await HiddenWebContentsManager.sleep(1000);
+        }
+
+        updateStatus(statusId, '消息发送测试完成！', 'success');
+        logToElement(logId, '=== 消息发送测试完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `消息发送测试失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // 8. 请求-响应模式测试
+    async function testRequestResponse() {
+      const logId = 'communicationLog';
+      const statusId = 'communicationStatus';
+      
+      try {
+        updateStatus(statusId, '开始请求-响应模式测试...', 'info');
+        logToElement(logId, '=== 开始请求-响应模式测试 ===');
+
+        // 创建两个WebContents
+        const id1 = await HiddenWebContentsManager.createHiddenWebContents({
+          url: 'https://www.baidu.com',
+          visible: false
+        });
+        const id2 = await HiddenWebContentsManager.createHiddenWebContents({
+          url: 'https://www.google.com',
+          visible: false
+        });
+        
+        logToElement(logId, `创建WebContents1 (ID: ${id1}) 和 WebContents2 (ID: ${id2})`);
+        await HiddenWebContentsManager.sleep(2000);
+
+        // 在WebContents2上设置请求处理器
+        await HiddenWebContentsManager.onRequestReceived(id2, 'get-page-info', async (requestData) => {
+          logToElement(logId, `WebContents2 收到请求: ${JSON.stringify(requestData)}`);
+          
+          // 模拟获取页面信息
+          const pageInfo = {
+            title: await HiddenWebContentsManager.executeJavaScript(id2, 'return document.title'),
+            url: await HiddenWebContentsManager.executeJavaScript(id2, 'return window.location.href'),
+            timestamp: Date.now(),
+            requestId: requestData.requestId
+          };
+          
+          return pageInfo;
+        });
+
+        // 从WebContents1发送请求
+        logToElement(logId, '从WebContents1发送请求...');
+        const response = await HiddenWebContentsManager.sendRequestToWebContents(id1, id2, 'get-page-info', {
+          requestId: 'test-request-123',
+          additionalData: 'test data'
+        });
+
+        if (response.success) {
+          logToElement(logId, `请求成功，收到响应: ${JSON.stringify(response.data)}`);
+        } else {
+          logToElement(logId, `请求失败: ${response.message}`);
+        }
+
+        updateStatus(statusId, '请求-响应模式测试完成！', 'success');
+        logToElement(logId, '=== 请求-响应模式测试完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `请求-响应模式测试失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // 9. 高级功能测试
     async function testAdvancedFeatures() {
       const logId = 'advancedLog';
       const statusId = 'advancedStatus';
@@ -421,7 +544,7 @@
 
     
 
-    // 8. 清理操作
+    // 10. 清理操作
     async function cleanup() {
       const logId = 'cleanupLog';
       const statusId = 'cleanupStatus';
