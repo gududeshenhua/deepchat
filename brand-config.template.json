@@ -1,42 +1,42 @@
 {
   "_comment": "请修改以下配置为您的品牌信息",
   "app": {
-    "name": "DeepChat",
-    "productName": "DeepChat",
-    "appId": "com.wefonk.deepchat",
-    "description": "DeepChat，一个简单易用的AI客户端",
+    "name": "AiWork",
+    "productName": "AiWork",
+    "appId": "com.wefonk.AiWork",
+    "description": "AiWork，一个简单易用的AI客户端",
     "author": "ThinkInAIXYZ",
     "website": "https://deepchatai.cn",
     "copyright": "© 2025 ThinkInAIXYZ",
-    "executableName": "DeepChat"
+    "executableName": "AiWork"
   },
   "update": {
     "baseUrl": "https://cdn.deepchatai.cn/upgrade/"
   },
   "i18n": {
     "appTitle": {
-      "en-US": "DeepChat",
-      "zh-CN": "DeepChat",
-      "zh-TW": "DeepChat",
-      "zh-HK": "DeepChat",
-      "ja-JP": "DeepChat",
-      "ko-KR": "DeepChat",
-      "ru-RU": "DeepChat",
-      "fr-FR": "DeepChat",
-      "fa-IR": "DeepChat",
-      "pt-BR": "DeepChat"
+      "en-US": "AiWork",
+      "zh-CN": "AiWork",
+      "zh-TW": "AiWork",
+      "zh-HK": "AiWork",
+      "ja-JP": "AiWork",
+      "ko-KR": "AiWork",
+      "ru-RU": "AiWork",
+      "fr-FR": "AiWork",
+      "fa-IR": "AiWork",
+      "pt-BR": "AiWork"
     },
     "appDescription": {
-      "en-US": "DeepChat is a cross-platform AI client, dedicated to making AI accessible to more people.",
-      "zh-CN": "DeepChat是一个跨平台AI客户端，致力于让更多人便捷地使用AI。",
-      "zh-TW": "DeepChat 是一款跨平台 AI 應用程式，致力於讓更多人輕鬆使用 AI。",
-      "zh-HK": "DeepChat是一個跨平台AI客戶端，致力於讓更多人便捷地使用AI。",
-      "ja-JP": "DeepChatは、より多くの人々にAIへのアクセスを提供することを目的としたクロスプラットフォームAIクライアントです。",
-      "ko-KR": "DeepChat은 더 많은 사람들이 AI에 접근할 수 있도록 하는 크로스 플랫폼 AI 클라이언트입니다。",
-      "ru-RU": "DeepChat - это кроссплатформенный AI-клиент, предназначенный для того, чтобы сделать AI доступным для большего количества людей.",
-      "fr-FR": "DeepChat est un client IA multiplateforme, dédié à rendre l'IA accessible à plus de personnes.",
+      "en-US": "AiWork is a cross-platform AI client, dedicated to making AI accessible to more people.",
+      "zh-CN": "AiWork是一个跨平台AI客户端，致力于让更多人便捷地使用AI。",
+      "zh-TW": "AiWork 是一款跨平台 AI 應用程式，致力於讓更多人輕鬆使用 AI。",
+      "zh-HK": "AiWork是一個跨平台AI客戶端，致力於讓更多人便捷地使用AI。",
+      "ja-JP": "AiWorkは、より多くの人々にAIへのアクセスを提供することを目的としたクロスプラットフォームAIクライアントです。",
+      "ko-KR": "AiWork은 더 많은 사람들이 AI에 접근할 수 있도록 하는 크로스 플랫폼 AI 클라이언트입니다。",
+      "ru-RU": "AiWork - это кроссплатформенный AI-клиент, предназначенный для того, чтобы сделать AI доступным для большего количества людей.",
+      "fr-FR": "AiWork est un client IA multiplateforme, dédié à rendre l'IA accessible à plus de personnes.",
       "fa-IR": "دیپ چت یک کلاینت هوش مصنوعی چندپلتفرمه که هدفش در دسترس قرار دادن هوش مصنوعی برای افراد بیشتری است.",
-      "pt-BR": "DeepChat é um cliente de IA multiplataforma, dedicado a tornar a IA acessível a mais pessoas."
+      "pt-BR": "AiWork é um cliente de IA multiplataforma, dedicado a tornar a IA acessível a mais pessoas."
     },
     "websiteText": {
       "en-US": "Visit Our Website",
@@ -79,7 +79,7 @@
     "repository": "ThinkInAIXYZ/deepchat"
   },
   "mcp": {
-    "serverDescriptionSuffix": "DeepChat内置",
-    "serverDescriptionSuffixEn": "DeepChat built-in"
+    "serverDescriptionSuffix": "AiWork内置",
+    "serverDescriptionSuffixEn": "AiWork built-in"
   }
 }

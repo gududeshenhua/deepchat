@@ -125,24 +125,39 @@
     Download and install now?" /SD IDYES IDYES InstallVCRedist IDNO DontInstall
 
   InstallVCRedist:
+    ; 先尝试在线下载
     StrCpy $5 "https://aka.ms/vs/17/release/vc_redist.$2.exe"
     StrCpy $6 "$TEMP\vc_redist.$2.exe"
     inetc::get /CAPTION " " /BANNER "Downloading Microsoft Visual C++ Redistributable ($2)..." "$5" "$6"
-    ExecWait "$6 /install /norestart"
-    ; vc_redist exit code is unreliable, so we re-check registry
+    Pop $R1   ; OK / Cancel
+    Pop $R0   ; 错误码：0 表示成功
+
+    ; === 日志输出 ===
+    MessageBox MB_ICONSTOP "inetc::get returns:\r\nR1='$R1'\r\nR0='$R0'"
+    Sleep 500  ; 给你时间在界面看到日志
     
-    Push $2 ; Pass arch to checkVCRedist again
+    ${If} $R0 != 0
+      ${If} $2 == "x64"
+        StrCpy $6 "$INSTDIR\resources\app.asar.unpacked\vc_redist.x64.exe"
+      ${ElseIf} $2 == "arm64"
+        StrCpy $6 "$INSTDIR\resources\app.asar.unpacked\vc_redist.arm64.exe"
+      ${ElseIf} $2 == "x86"
+        StrCpy $6 "$INSTDIR\resources\app.asar.unpacked\vc_redist.x86.exe"
+      ${EndIf}
+    ${EndIf}
+    MessageBox MB_ICONSTOP "inetc::get returns:\r\npath='$6'"
+    ExecWait "$6 /install /norestart"
+    ; 再次检查是否安装成功
+    Push $2
     Call checkVCRedist
     Pop $2
     ${If} $0 == "1"
       Goto ContinueInstall
+    ${Else}
+      MessageBox MB_ICONSTOP "VC++ Redistributable 安装失败"
+      Abort
     ${EndIf}
 
-    MessageBox MB_ICONSTOP "\
-      There was an unexpected error installing$\r$\n\
-      Microsoft Visual C++ Redistributable.$\r$\n\
-      The installation of ${PRODUCT_NAME} cannot continue."
-    Abort ; Abort if installation failed
 
   DontInstall:
     Abort ; Abort if user chose not to install
