@@ -9,7 +9,7 @@
           <p class="text-sm text-muted-foreground px-8">
             {{ t('about.description') }}
           </p>
-          <div class="flex gap-2">
+          <!-- <div class="flex gap-2">
             <a
               class="text-xs text-muted-foreground hover:text-primary flex items-center"
               href="https://deepchat.thinkinai.xyz/"
@@ -42,7 +42,7 @@
               <Icon icon="lucide:scale" class="mr-1 h-3 w-3" />
               Apache License 2.0
             </a>
-          </div>
+          </div> -->
         </div>
 
         <!-- 更新渠道选择 -->
@@ -240,13 +240,13 @@ const handleCheckUpdate = async () => {
   // 不再自动打开对话框，而是由下载完成后自动弹出
 }
 
-const openExternalLink = (url: string) => {
-  if (window.api?.openExternal) {
-    window.api.openExternal(url)
-  } else {
-    window.open(url, '_blank', 'noopener,noreferrer')
-  }
-}
+// const openExternalLink = (url: string) => {
+//   if (window.api?.openExternal) {
+//     window.api.openExternal(url)
+//   } else {
+//     window.open(url, '_blank', 'noopener,noreferrer')
+//   }
+// }
 
 onMounted(async () => {
   deviceInfo.value = await devicePresenter.getDeviceInfo()
