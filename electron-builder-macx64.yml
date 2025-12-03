@@ -1,5 +1,5 @@
 appId: com.wefonk.deepchat
-productName: DeepChat
+productName: AiWork
 directories:
   buildResources: build
 files:
@@ -32,6 +32,12 @@ extraResources:
   - from: ./resources/script/
     to: app.asar.unpacked/resources/script
     filter: ['**/*']
+  - from: ./resources/vc_redist.x64.exe
+    to: app.asar.unpacked/resources/vc_redist.x64.exe
+  - from: ./resources/vc_redist.arm64.exe
+    to: app.asar.unpacked/resources/vc_redist.arm64.exe
+  - from: ./resources/vc_redist.x86.exe
+    to: app.asar.unpacked/resources/vc_redist.x86.exe
 afterSign: scripts/notarize.js
 afterPack: scripts/afterPack.js
 electronLanguages:

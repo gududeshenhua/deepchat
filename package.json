@@ -1,7 +1,7 @@
 {
-  "name": "DeepChat",
+  "name": "AiWork",
   "version": "0.4.6",
-  "description": "DeepChat，一个简单易用的AI客户端",
+  "description": "AiWork",
   "main": "./out/main/index.js",
   "author": "ThinkInAIXYZ",
   "type": "module",
