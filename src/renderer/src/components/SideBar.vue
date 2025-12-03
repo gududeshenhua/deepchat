@@ -67,10 +67,10 @@
         @click="handleProfileClick"
       >
         <Icon icon="lucide:user" class="h-5 w-5" />
-        <span
+        <!-- <span
           v-if="upgrade.hasUpdate"
           class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full animate-pulse"
-        ></span>
+        ></span> -->
         <span class="sr-only">User Profile</span>
       </Button>
     </div>
@@ -80,8 +80,9 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import { Button } from '@shadcn/components/ui/button'
-import { onMounted, watch } from 'vue'
-import { useUpgradeStore } from '@/stores/upgrade'
+// watch
+import { onMounted,  } from 'vue'
+// import { useUpgradeStore } from '@/stores/upgrade'
 import { useThemeStore } from '@/stores/theme'
 defineProps<{
   modelValue: string
@@ -93,31 +94,31 @@ const emits = defineEmits<{
   'update:modelValue': [value: string]
 }>()
 
-const upgrade = useUpgradeStore()
+// const upgrade = useUpgradeStore()
 
 const handleProfileClick = async () => {
-  if (!upgrade.hasUpdate) {
-    await upgrade.checkUpdate(true)
-  } else {
-    if (upgrade.isReadyToInstall) {
-      upgrade.openUpdateDialog()
-    }
-  }
+  // if (!upgrade.hasUpdate) {
+  //   await upgrade.checkUpdate(true)
+  // } else {
+  //   if (upgrade.isReadyToInstall) {
+  //     upgrade.openUpdateDialog()
+  //   }
+  // }
 
   emits('update:modelValue', 'settings')
 }
 
 // 监听更新状态变化，当有新更新时自动显示更新弹窗
-watch(
-  () => upgrade.isReadyToInstall,
-  (newVal, oldVal) => {
-    if (newVal && !oldVal) {
-      upgrade.openUpdateDialog()
-    }
-  }
-)
+// watch(
+//   () => upgrade.isReadyToInstall,
+//   (newVal, oldVal) => {
+//     if (newVal && !oldVal) {
+//       upgrade.openUpdateDialog()
+//     }
+//   }
+// )
 
 onMounted(() => {
-  upgrade.checkUpdate(true)
+  // upgrade.checkUpdate(true)
 })
 </script>

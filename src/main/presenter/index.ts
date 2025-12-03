@@ -21,7 +21,7 @@ import {
   ISyncPresenter,
   ITabPresenter,
   IThreadPresenter,
-  IUpgradePresenter,
+  // IUpgradePresenter,
   IWindowPresenter,
   IScriptPresenter,
   ISetupPresenter,
@@ -32,7 +32,7 @@ import { eventBus } from '@/eventbus'
 import { LLMProviderPresenter } from './llmProviderPresenter'
 import { ThreadPresenter } from './threadPresenter'
 import { DevicePresenter } from './devicePresenter'
-import { UpgradePresenter } from './upgradePresenter'
+// import { UpgradePresenter } from './upgradePresenter'
 import { FilePresenter } from './filePresenter/FilePresenter'
 import { McpPresenter } from './mcpPresenter'
 import { SyncPresenter } from './syncPresenter'
@@ -72,7 +72,7 @@ export class Presenter implements IPresenter {
   configPresenter: IConfigPresenter
   threadPresenter: IThreadPresenter
   devicePresenter: IDevicePresenter
-  upgradePresenter: IUpgradePresenter
+  // upgradePresenter: IUpgradePresenter
   shortcutPresenter: IShortcutPresenter
   filePresenter: IFilePresenter
   mcpPresenter: IMCPPresenter
@@ -112,7 +112,7 @@ export class Presenter implements IPresenter {
       this.configPresenter
     )
     this.mcpPresenter = new McpPresenter(this.configPresenter)
-    this.upgradePresenter = new UpgradePresenter(this.configPresenter)
+    // this.upgradePresenter = new UpgradePresenter(this.configPresenter)
     this.shortcutPresenter = new ShortcutPresenter(this.configPresenter)
     this.filePresenter = new FilePresenter()
     this.syncPresenter = new SyncPresenter(this.configPresenter, this.sqlitePresenter)

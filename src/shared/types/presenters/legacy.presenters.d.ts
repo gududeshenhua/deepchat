@@ -420,7 +420,7 @@ export interface IPresenter {
   configPresenter: IConfigPresenter
   threadPresenter: IThreadPresenter
   devicePresenter: IDevicePresenter
-  upgradePresenter: IUpgradePresenter
+  upgradePresenter?: IUpgradePresenter
   shortcutPresenter: IShortcutPresenter
   filePresenter: IFilePresenter
   mcpPresenter: IMCPPresenter

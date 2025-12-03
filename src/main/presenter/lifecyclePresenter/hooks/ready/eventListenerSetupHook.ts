@@ -78,7 +78,7 @@ export const eventListenerSetupHook: LifecycleHook = {
       targetWindow.focus() // Ensure window is on top
 
       // Trigger update
-      presenter.upgradePresenter.checkUpdate()
+      // presenter.upgradePresenter.checkUpdate()
     })
 
     // Listen for show/hide window events (triggered from tray or shortcut or floating window)

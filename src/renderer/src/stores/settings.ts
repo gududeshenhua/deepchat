@@ -14,7 +14,7 @@ import { CONFIG_EVENTS, OLLAMA_EVENTS, DEEPLINK_EVENTS, PROVIDER_DB_EVENTS } fro
 import type { AWS_BEDROCK_PROVIDER, AwsBedrockCredential, OllamaModel } from '@shared/presenter'
 import { useRouter } from 'vue-router'
 import { useMcpStore } from '@/stores/mcp'
-import { useUpgradeStore } from '@/stores/upgrade'
+// import { useUpgradeStore } from '@/stores/upgrade'
 import { useThrottleFn } from '@vueuse/core'
 
 // 定义字体大小级别对应的 Tailwind 类
@@ -26,7 +26,7 @@ export const useSettingsStore = defineStore('settings', () => {
   const llmP = usePresenter('llmproviderPresenter')
   const threadP = usePresenter('threadPresenter')
   const router = useRouter()
-  const upgradeStore = useUpgradeStore()
+  // const upgradeStore = useUpgradeStore()
   const providers = ref<LLM_PROVIDER[]>([])
   const providerOrder = ref<string[]>([])
   const enabledModels = ref<{ providerId: string; models: RENDERER_MODEL_META[] }[]>([])
@@ -2077,7 +2077,7 @@ export const useSettingsStore = defineStore('settings', () => {
     findModelByIdOrName,
     mcpInstallCache,
     clearMcpInstallCache,
-    isUpdating: upgradeStore.isUpdating,
+    // isUpdating: upgradeStore.isUpdating,
     loadSavedOrder,
     updateProvidersOrder,
     sortedProviders,

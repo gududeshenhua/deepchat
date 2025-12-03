@@ -110,7 +110,7 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
 
       // 加载URL
 
-      await view.webContents.loadURL(options.url)
+      view.webContents.loadURL(options.url)
 
       if (is.dev) {
         view.webContents.openDevTools({ mode: 'detach' })

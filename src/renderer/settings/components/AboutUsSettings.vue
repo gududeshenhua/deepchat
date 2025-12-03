@@ -74,7 +74,7 @@
           </Button>
 
           <!-- 检查更新按钮 -->
-          <Button
+          <!-- <Button
             variant="outline"
             size="sm"
             class="mb-2 text-xs"
@@ -100,7 +100,7 @@
             <span v-else>
               {{ t('about.checkUpdateButton') }}
             </span>
-          </Button>
+          </Button> -->
         </div>
 
         <!-- <div class="text-sm text-muted-foreground p-6 rounded-lg shadow-md bg-card border">
@@ -183,7 +183,7 @@ import {
   SelectValue
 } from '@shadcn/components/ui/select'
 import NodeRenderer from 'vue-renderer-markdown'
-import { useUpgradeStore } from '@/stores/upgrade'
+// import { useUpgradeStore } from '@/stores/upgrade'
 import { useLanguageStore } from '@/stores/language'
 import type { AcceptableValue } from 'reka-ui'
 
@@ -205,7 +205,7 @@ const deviceInfo = ref<{
   osVersion: ''
 })
 const appVersion = ref('')
-const upgrade = useUpgradeStore()
+// const upgrade = useUpgradeStore()
 const updateChannel = ref('stable')
 
 // 免责声明对话框状态
@@ -227,18 +227,18 @@ const setUpdateChannel = async (channel: AcceptableValue) => {
 }
 
 // 检查更新
-const handleCheckUpdate = async () => {
-  // 如果已下载完成，直接打开更新对话框
-  if (upgrade.isReadyToInstall) {
-    upgrade.openUpdateDialog()
-    return
-  }
+// const handleCheckUpdate = async () => {
+//   // 如果已下载完成，直接打开更新对话框
+//   if (upgrade.isReadyToInstall) {
+//     upgrade.openUpdateDialog()
+//     return
+//   }
 
-  // 正常检查更新流程
-  await upgrade.checkUpdate(false)
+//   // 正常检查更新流程
+//   await upgrade.checkUpdate(false)
 
-  // 不再自动打开对话框，而是由下载完成后自动弹出
-}
+//   // 不再自动打开对话框，而是由下载完成后自动弹出
+// }
 
 // const openExternalLink = (url: string) => {
 //   if (window.api?.openExternal) {

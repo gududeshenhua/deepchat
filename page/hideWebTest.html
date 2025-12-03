@@ -173,12 +173,31 @@
         // 创建隐藏WebContents
         logToElement(logId, '创建隐藏WebContents...');
         const id = await HiddenWebContentsManager.createHiddenWebContents({
-          url: 'https://www.baidu.com',
+          url: "http://www.baidu.com",
+          // 'http://localhost:4000/login'
           visible: true
         });
         currentWebContentsId = id;
         logToElement(logId, `WebContents创建成功，ID: ${id}`);
-
+        // // debugger
+        // await HiddenWebContentsManager.executeJavaScript(id, `
+        //   document.title = '测试页面 - ' + new Date().toLocaleString();
+        //   console.log('页面标题已修改');
+        // `);
+        // await HiddenWebContentsManager.sleep(6000);
+        // if(await HiddenWebContentsManager.executeJavaScript(id, `
+        //   globalThis.location.href.includes('3000')
+        // `)){
+        //   logToElement(logId, '登录页加载成功');
+        // } else {
+        //   logToElement(logId, '登录页加载失败');
+        // }
+        // // if (await HiddenWebContentsManager.executeJavascript(id, `globalThis.location.href.includes('3000')`)) {
+        //   logToElement(logId, '登录页加载成功');
+        // } else {
+        //   logToElement(logId, '登录页加载失败');
+        // }
+        // return;
         // 等待页面加载
         logToElement(logId, '等待页面加载...');
         await HiddenWebContentsManager.sleep(3000);
