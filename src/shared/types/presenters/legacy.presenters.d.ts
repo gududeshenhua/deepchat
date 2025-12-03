@@ -286,7 +286,7 @@ export interface HiddenWebContentsData {
 export interface IHiddenWebContentsPresenter {
   createHiddenWebContents(options: HiddenWebContentsOptions): Promise<number>
   closeHiddenWebContents(id: number): Promise<boolean>
-  getHiddenWebContents(id: number): WebContentsView | undefined
+  getHiddenWebContents(id: number): Promise<WebContentsView | undefined>
   getHiddenWebContentsData(id: number): HiddenWebContentsData | undefined
   getAllHiddenWebContents(): Map<number, WebContentsView>
   getAllHiddenWebContentsData(): HiddenWebContentsData[]

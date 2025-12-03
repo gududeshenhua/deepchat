@@ -1,4 +1,4 @@
-import { IWindowPresenter, ITabPresenter } from '@shared/presenter'
+import { IWindowPresenter, ITabPresenter, IHiddenWebContentsPresenter } from '@shared/presenter'
 import EventEmitter from 'events'
 
 export enum SendTarget {
@@ -9,6 +9,7 @@ export enum SendTarget {
 export class EventBus extends EventEmitter {
   private windowPresenter: IWindowPresenter | null = null
   private tabPresenter: ITabPresenter | null = null
+  private hideWebConPresenter: IHiddenWebContentsPresenter | null = null
 
   constructor() {
     super()
@@ -83,6 +84,35 @@ export class EventBus extends EventEmitter {
     this.tabPresenter = tabPresenter
   }
 
+  setHideWebConPresenter(hideWebConPresenter: IHiddenWebContentsPresenter) {
+    this.hideWebConPresenter = hideWebConPresenter
+  }
+
+  /**
+   * 向指定隐藏WebContents发送事件
+   * @param hideWebConId 隐藏WebContents ID
+   * @param eventName 事件名称
+   * @param args 事件参数
+   */
+  sendToHiddenWebCon(hideWebConId: number, eventName: string, ...args: unknown[]) {
+    if (!this.hideWebConPresenter) {
+      console.warn('HideWebConPresenter not available, cannot send to hidden web contents')
+      return
+    }
+    // 获取Tab实例并发送事件
+    this.hideWebConPresenter
+      .getHiddenWebContents(hideWebConId)
+      .then((hideView) => {
+        if (hideView && !hideView.webContents.isDestroyed()) {
+          hideView.webContents.send(eventName, ...args)
+        } else {
+          console.warn(`Tab ${hideWebConId} not found or destroyed, cannot send event ${eventName}`)
+        }
+      })
+      .catch((error) => {
+        console.error(`Error sending event ${eventName} to tab ${hideWebConId}:`, error)
+      })
+  }
   /**
    * 向指定Tab发送事件
    * @param tabId Tab ID

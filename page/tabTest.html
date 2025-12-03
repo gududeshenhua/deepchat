@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tab Manager 测试页面</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+    .test-section h2 {
+      margin-top: 0;
+      color: #555;
+    }
+    .button-group {
+      margin: 10px 0;
+    }
+    button {
+      padding: 8px 16px;
+      margin: 5px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    button:disabled {
+      background-color: #6c757d;
+      cursor: not-allowed;
+    }
+    .result {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #e9ecef;
+      border-radius: 4px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+    .status {
+      padding: 5px 10px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+    .status.success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .status.error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .status.info {
+      background-color: #d1ecf1;
+      color: #0c5460;
+    }
+    .log {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 10px;
+      background-color: #f8f9fa;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .tab-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 10px 0;
+    }
+    .tab-item {
+      padding: 8px 12px;
+      background-color: #e7f3ff;
+      border: 1px solid #b3d9ff;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .tab-item.active {
+      background-color: #007bff;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Tab Manager 功能测试</h1>
+    
+    <!-- 状态显示区域 -->
+    <div class="test-section">
+      <h2>系统状态</h2>
+      <div id="systemStatus" class="status info">未初始化</div>
+      <div class="button-group">
+        <!-- <button onclick="checkInitialization()">检查初始化状态</button> -->
+        <button onclick="getCurrentTabId()">获取当前标签页ID</button>
+        <button onclick="getAllTabs()">获取所有标签页</button>
+      </div>
+    </div>
+
+    <!-- 标签页创建测试 -->
+    <div class="test-section">
+      <h2>标签页创建测试</h2>
+      <div class="button-group">
+        <button onclick="createBlankTab()">创建空白标签页</button>
+      </div>
+      <div class="button-group">
+        <input type="text" id="customUrl" placeholder="输入自定义URL" value="https://www.baidu.com" style="padding: 8px; width: 300px;">
+      </div>
+    </div>
+
+    <!-- 标签页操作测试 -->
+    <div class="test-section">
+      <h2>标签页操作测试</h2>
+      <div class="button-group">
+        <button onclick="reloadCurrentTab()">刷新当前标签页</button>
+        <button onclick="goBack()">后退</button>
+        <button onclick="goForward()">前进</button>
+        <button onclick="jumpBaidu()">跳转到百度</button>
+      </div>
+      <div class="button-group">
+        <button onclick="closeSpecificTab()">关闭指定标签页</button>
+        <button onclick="switchToTab()">切换到指定标签页</button>
+      </div>
+      <div class="button-group">
+        <button onclick="closeAllTabs()">关闭所有标签页</button>
+      </div>
+      <div class="button-group">
+        <input type="number" id="tabIdInput" placeholder="输入标签页ID" value="1" style="padding: 8px; width: 150px;">
+      </div>
+    </div>
+
+    <!-- 标签页列表显示 -->
+    <div class="test-section">
+      <h2>标签页列表</h2>
+      <div id="tabList" class="tab-list">
+        <!-- 标签页列表将在这里动态显示 -->
+      </div>
+    </div>
+
+    <!-- 测试结果区域 -->
+    <div class="test-section">
+      <h2>测试结果</h2>
+      <div id="testResult" class="result">等待测试...</div>
+    </div>
+
+    <!-- 日志区域 -->
+    <div class="test-section">
+      <h2>操作日志</h2>
+      <div id="log" class="log"></div>
+      <div class="button-group">
+        <button onclick="clearLog()">清空日志</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 引入必要的JavaScript文件 -->
+  <script src="local://page/common/persenterFactory.js"></script>
+  <script src="local://page/common/tab.js"></script>
+  
+  <script>
+    // 日志记录函数
+    function log(message, type = 'info') {
+      const logElement = document.getElementById('log')
+      const timestamp = new Date().toLocaleTimeString()
+      const logEntry = document.createElement('div')
+      logEntry.innerHTML = `<span style="color: #666;">[${timestamp}]</span> <span style="color: ${getColorByType(type)}">${message}</span>`
+      logElement.appendChild(logEntry)
+      logElement.scrollTop = logElement.scrollHeight
+    }
+
+    function getColorByType(type) {
+      switch(type) {
+        case 'error': return '#dc3545'
+        case 'success': return '#28a745'
+        case 'warning': return '#ffc107'
+        default: return '#007bff'
+      }
+    }
+
+    // 更新测试结果
+    function updateResult(message, isSuccess = true) {
+      const resultElement = document.getElementById('testResult')
+      resultElement.textContent = message
+      resultElement.className = isSuccess ? 'result status success' : 'result status error'
+    }
+
+    // 更新系统状态
+    function updateStatus(message, type = 'info') {
+      const statusElement = document.getElementById('systemStatus')
+      statusElement.textContent = message
+      statusElement.className = `status ${type}`
+    }
+
+    // 清空日志
+    function clearLog() {
+      document.getElementById('log').innerHTML = ''
+      log('日志已清空', 'info')
+    }
+
+    // 更新标签页列表显示
+    async function updateTabList() {
+      try {
+        const tabs = await TabManager.getTabs()
+        const tabListElement = document.getElementById('tabList')
+        const currentTabId = await TabManager.getCurrentTabId()
+        
+        tabListElement.innerHTML = ''
+        
+        tabs.forEach(tab => {
+          const tabElement = document.createElement('div')
+          tabElement.className = `tab-item ${tab.id === currentTabId ? 'active' : ''}`
+          tabElement.innerHTML = `
+            <strong>${tab.title || '无标题'}</strong><br>
+            <small>ID: ${tab.id}</small><br>
+            <small>URL: ${tab.url || '无URL'}</small>
+          `
+          tabElement.onclick = () => selectTab(tab.id)
+          tabListElement.appendChild(tabElement)
+        })
+        
+        log(`标签页列表已更新，共 ${tabs.length} 个标签页`, 'success')
+      } catch (error) {
+        log(`更新标签页列表失败: ${error.message}`, 'error')
+      }
+    }
+
+    // 选择标签页
+    async function selectTab(tabId) {
+      try {
+        await TabManager.actionTab('activate', { tabId })
+        log(`已选择标签页: ${tabId}`, 'success')
+        await updateTabList()
+      } catch (error) {
+        log(`选择标签页失败: ${error.message}`, 'error')
+      }
+    }
+
+    // === 系统状态测试 ===
+    async function checkInitialization() {
+      try {
+        await TabManager._ensureInitialized()
+        updateStatus('TabManager 已初始化完成', 'success')
+        updateResult('初始化状态检查成功', true)
+        log('初始化状态检查完成', 'success')
+      } catch (error) {
+        updateStatus('初始化检查失败', 'error')
+        updateResult(`初始化检查失败: ${error.message}`, false)
+        log(`初始化检查失败: ${error.message}`, 'error')
+      }
+    }
+
+    async function getCurrentTabId() {
+      try {
+        const tabId = await TabManager.getCurrentTabId()
+        // debugger
+        updateResult(`当前标签页ID: ${tabId}`, true)
+        log(`获取当前标签页ID: ${tabId}`, 'success')
+      } catch (error) {
+        updateResult(`获取当前标签页ID失败: ${error.message}`, false)
+        log(`获取当前标签页ID失败: ${error.message}`, 'error')
+      }
+    }
+
+    async function getAllTabs() {
+      try {
+        const tabs = await TabManager.getTabs()
+        updateResult(`共 ${tabs.length} 个标签页:\n${JSON.stringify(tabs, null, 2)}`, true)
+        log(`获取所有标签页成功，共 ${tabs.length} 个`, 'success')
+        await updateTabList()
+      } catch (error) {
+        updateResult(`获取所有标签页失败: ${error.message}`, false)
+        log(`获取所有标签页失败: ${error.message}`, 'error')
+      }
+    }
+
+    // === 标签页创建测试 ===
+    async function createBlankTab() {
+      try {
+        const tabId = await TabManager.createTab('https://www.baidu.com',{})
+        updateResult(`创建空白标签页成功，ID: ${tabId}`, true)
+        log(`创建空白标签页成功，ID: ${tabId}`, 'success')
+        await updateTabList()
+      } catch (error) {
+        updateResult(`创建空白标签页失败: ${error.message}`, false)
+        log(`创建空白标签页失败: ${error.message}`, 'error')
+      }
+    }
+
+    async function createHomeTab() {
+      try {
+        const tabId = await TabManager.createTab('index.html')
+        updateResult(`创建首页标签页成功，ID: ${tabId}`, true)
+        log(`创建首页标签页成功，ID: ${tabId}`, 'success')
+        await updateTabList()
+      } catch (error) {
+        updateResult(`创建首页标签页失败: ${error.message}`, false)
+        log(`创建首页标签页失败: ${error.message}`, 'error')
+      }
+    }
+
+    async function createLocalFileTab() {
+      try {
+        const tabId = await TabManager.createTab('file:///C:/test.html')
+        updateResult(`创建本地文件标签页成功，ID: ${tabId}`, true)
+        log(`创建本地文件标签页成功，ID: ${tabId}`, 'success')
+        await updateTabList()
+      } catch (error) {
+        updateResult(`创建本地文件标签页失败: ${error.message}`, false)
+        log(`创建本地文件标签页失败: ${error.message}`, 'error')
+      }
+    }
+
+    async function createCustomTab() {
+      try {
+        const url = document.getElementById('customUrl').value.trim()
+        if (!url) {
+          updateResult('请输入有效的URL', false)
+          return
+        }
+        const tabId = await TabManager.createTab(url)
+        updateResult(`创建自定义标签页成功，ID: ${tabId}`, true)
+        log(`创建自定义标签页成功，URL: ${url}, ID: ${tabId}`, 'success')
+        await updateTabList()
+      } catch (error) {
+        updateResult(`创建自定义标签页失败: ${error.message}`, false)
+        log(`创建自定义标签页失败: ${error.message}`, 'error')
+      }
+    }
+
+    // === 标签页操作测试 ===
+    async function reloadCurrentTab() {
+      try {
+        TabManager.actionTab('reload')
+        updateResult('刷新当前标签页成功', true)
+        log('刷新当前标签页成功', 'success')
+      } catch (error) {
+        updateResult(`刷新当前标签页失败: ${error.message}`, false)
+        log(`刷新当前标签页失败: ${error.message}`, 'error')
+      }
+    }
+
+    async function goBack() {
+      try {
+        TabManager.actionTab('goBack')
+        updateResult('后退操作成功', true)
+        log('后退操作成功', 'success')
+      } catch (error) {
+        updateResult(`后退操作失败: ${error.message}`, false)
+        log(`后退操作失败: ${error.message}`, 'error')
+      }
+    }
+
+    async function goForward() {
+      try {
+        TabManager.actionTab('goForward')
+        updateResult('前进操作成功', true)
+        log('前进操作成功', 'success')
+      } catch (error) {
+        updateResult(`前进操作失败: ${error.message}`, false)
+        log(`前进操作失败: ${error.message}`, 'error')
+      }
+    }
+
+    async function jumpBaidu() {
+      try {
+        TabManager.actionTab('navigate', { url: 'https://www.baidu.com' })
+        updateResult('跳转成功', true)
+        log('跳转成功', 'success')
+      } catch (error) {
+        updateResult(`跳转失败: ${error.message}`, false)
+        log(`跳转失败: ${error.message}`, 'error')
+      }
+    }
+
+    // === 新增标签页操作方法测试 ===
+    async function closeSpecificTab() {
+      try {
+        const tabId = parseInt(document.getElementById('tabIdInput').value)
+        if (isNaN(tabId) || tabId <= 0) {
+          updateResult('请输入有效的标签页ID', false)
+          return
+        }
+        // debugger
+        await TabManager.closeTab(tabId)
+        // debugger
+        updateResult(`关闭标签页 ${tabId} 成功`, true)
+        log(`关闭标签页 ${tabId} 成功`, 'success')
+        await updateTabList()
+      } catch (error) {
+        updateResult(`关闭标签页失败: ${error.message}`, false)
+        log(`关闭标签页失败: ${error.message}`, 'error')
+      }
+    }
+
+    async function switchToTab() {
+      try {
+        const tabId = parseInt(document.getElementById('tabIdInput').value)
+        if (isNaN(tabId) || tabId <= 0) {
+          updateResult('请输入有效的标签页ID', false)
+          return
+        }
+        await TabManager.switchTab(tabId)
+        updateResult(`切换到标签页 ${tabId} 成功`, true)
+        log(`切换到标签页 ${tabId} 成功`, 'success')
+        await updateTabList()
+      } catch (error) {
+        updateResult(`切换标签页失败: ${error.message}`, false)
+        log(`切换标签页失败: ${error.message}`, 'error')
+      }
+    }
+
+    async function closeAllTabs() {
+      try {
+        await TabManager.closeTabs()
+        updateResult('关闭所有标签页成功', true)
+        log('关闭所有标签页成功', 'success')
+        await updateTabList()
+      } catch (error) {
+        updateResult(`关闭所有标签页失败: ${error.message}`, false)
+        log(`关闭所有标签页失败: ${error.message}`, 'error')
+      }
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      log('Tab测试页面已加载', 'success')
+      updateStatus('页面已就绪，等待测试...', 'info')
+      
+      // 检查TabManager是否可用
+      if (typeof TabManager !== 'undefined') {
+        log('TabManager已加载', 'success')
+      } else {
+        log('TabManager未加载，请检查文件引入', 'error')
+      }
+    })
+  </script>
+</body>
+</html>

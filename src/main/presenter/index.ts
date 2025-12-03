@@ -150,6 +150,7 @@ export class Presenter implements IPresenter {
     // 设置 WindowPresenter 和 TabPresenter 到 EventBus
     eventBus.setWindowPresenter(this.windowPresenter)
     eventBus.setTabPresenter(this.tabPresenter)
+    eventBus.setHideWebConPresenter(this.hideWebConPresenter)
 
     // 设置特殊事件的处理逻辑
     this.setupSpecialEventHandlers()

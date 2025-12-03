@@ -176,7 +176,7 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
   /**
    * 根据ID获取WebContentsView实例
    */
-  getHiddenWebContents(id: number): WebContentsView | undefined {
+  async getHiddenWebContents(id: number): Promise<WebContentsView | undefined> {
     return this.hiddenWebContents.get(id)
   }
 
@@ -449,16 +449,25 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
       // 获取目标WebContents对应的Tab ID
       const tabId = this.tabPresenter.getTabIdByWebContentsId(targetWebContentsId)
       if (!tabId) {
-        console.warn(`No tab found for WebContents ID: ${targetWebContentsId}`)
-        return false
+        const hiddenId = this.hiddenWebContents.get(targetWebContentsId)?.webContents.id
+        if (hiddenId) {
+          eventBus.sendToHiddenWebCon(hiddenId, this.COMMUNICATION_EVENTS.RECEIVE_MESSAGE, {
+            // fromWebContentsId: targetWebContentsId,
+            payload,
+            timestamp: Date.now()
+          })
+        } else {
+          console.warn(`No tab found for WebContents ID: ${targetWebContentsId}`)
+          return false
+        }
+      } else {
+        // 使用eventBus发送消息到指定Tab
+        eventBus.sendToTab(tabId, this.COMMUNICATION_EVENTS.RECEIVE_MESSAGE, {
+          // fromWebContentsId: targetWebContentsId,
+          payload,
+          timestamp: Date.now()
+        })
       }
-
-      // 使用eventBus发送消息到指定Tab
-      eventBus.sendToTab(tabId, this.COMMUNICATION_EVENTS.RECEIVE_MESSAGE, {
-        fromWebContentsId: targetWebContentsId,
-        payload,
-        timestamp: Date.now()
-      })
 
       console.log(`Message sent to WebContents ${targetWebContentsId} (Tab ${tabId})`)
       return true
