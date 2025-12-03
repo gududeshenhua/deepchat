@@ -1,4 +1,4 @@
-appId: com.wefonk.deepchat
+appId: com.wefonk.AiWork
 productName: AiWork
 directories:
   buildResources: build
@@ -61,11 +61,11 @@ electronLanguages:
   - pt-BR
   - pt
 win:
-  executableName: DeepChat
+  executableName: AiWork
 nsis:
   artifactName: ${name}-${version}-windows-${arch}.${ext}
-  shortcutName: ${productName}
-  uninstallDisplayName: ${productName}
+  shortcutName: AiWork
+  uninstallDisplayName: AiWork
   createDesktopShortcut: always
   allowToChangeInstallationDirectory: true
   oneClick: false

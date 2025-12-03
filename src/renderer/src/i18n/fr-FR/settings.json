@@ -38,8 +38,8 @@
     "closeToQuit": "Quitter l'application lors de la fermeture de la fenêtre",
     "contentProtection": "Protection de l'écran",
     "contentProtectionDialogTitle": "Confirmer le changement de protection de l'écran",
-    "contentProtectionEnableDesc": "L'activation de la protection de l'écran empêche les logiciels de partage d'écran de capturer la fenêtre DeepChat, protégeant ainsi la confidentialité de votre contenu. Notez que cette fonctionnalité ne masquera pas complètement toutes les interfaces. Veuillez utiliser cette fonctionnalité de manière responsable et conformément aux réglementations. De plus, tous les logiciels de partage d'écran ne prennent pas en charge cette fonctionnalité. Certains environnements peuvent laisser une fenêtre noire.",
-    "contentProtectionDisableDesc": "La désactivation de la protection de l'écran permettra aux logiciels de partage d'écran de capturer la fenêtre DeepChat.",
+    "contentProtectionEnableDesc": "L'activation de la protection de l'écran empêche les logiciels de partage d'écran de capturer la fenêtre AiWork, protégeant ainsi la confidentialité de votre contenu. Notez que cette fonctionnalité ne masquera pas complètement toutes les interfaces. Veuillez utiliser cette fonctionnalité de manière responsable et conformément aux réglementations. De plus, tous les logiciels de partage d'écran ne prennent pas en charge cette fonctionnalité. Certains environnements peuvent laisser une fenêtre noire.",
+    "contentProtectionDisableDesc": "La désactivation de la protection de l'écran permettra aux logiciels de partage d'écran de capturer la fenêtre AiWork.",
     "contentProtectionRestartNotice": "La modification de ce paramètre redémarrera l'application. Voulez-vous continuer ?",
     "soundEnabled": "Activer le son",
     "copyWithCotEnabled": "Copier les infos COT",
@@ -58,7 +58,7 @@
       "title": "Paramètres des raccourcis clavier"
     },
     "notifications": "Notifications système",
-    "notificationsDesc": "Quand DeepChat est en arrière‑plan, envoyer une notification à la fin d’une réponse",
+    "notificationsDesc": "Quand AiWork est en arrière‑plan, envoyer une notification à la fin d’une réponse",
     "traceDebugEnabled": "Suivi des appels"
   },
   "data": {
@@ -366,7 +366,7 @@
     "githubCopilotNotConnected": "GitHub Copilot non connecté",
     "loginWithGitHub": "Se connecter avec GitHub",
     "loggingIn": "Connexion en cours...",
-    "githubCopilotLoginTip": "Autorisez DeepChat à accéder à votre abonnement GitHub Copilot. Les autorisations 'read:user' et 'read:org' sont requises pour accéder à l'API Copilot.",
+    "githubCopilotLoginTip": "Autorisez AiWork à accéder à votre abonnement GitHub Copilot. Les autorisations 'read:user' et 'read:org' sont requises pour accéder à l'API Copilot.",
     "loginSuccess": "Connexion réussie",
     "loginFailed": "Échec de la connexion",
     "tokenValid": "Le jeton est valide",
@@ -470,7 +470,7 @@
     "operationSuccess": "L'opération est réussie",
     "settingsApplied": "Paramètres appliqués",
     "bedrockLimitTip": "* Prend uniquement en charge Anthropic Claude (y compris les modèles Opus, Sonnet, Haiku)",
-    "bedrockVerifyTip": "DeepChat utilise Claude 3.5 Sonnet pour la vérification. Si vous n'avez pas l'autorisation de l'invoquer, la vérification échouera. Cela n'affectera pas l'utilisation des autres modèles."
+    "bedrockVerifyTip": "AiWork utilise Claude 3.5 Sonnet pour la vérification. Si vous n'avez pas l'autorisation de l'invoquer, la vérification échouera. Cela n'affectera pas l'utilisation des autres modèles."
   },
   "knowledgeBase": {
     "title": "Paramètres de la base de connaissances",

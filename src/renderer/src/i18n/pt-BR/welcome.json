@@ -2,7 +2,7 @@
   "steps": {
     "welcome": {
       "title": "Bem-vindo",
-      "description": "Vamos começar a configurar o DeepChat"
+      "description": "Vamos começar a configurar o MyApp"
     },
     "provider": {
       "title": "Provedor",
@@ -17,7 +17,7 @@
       "description": "Tudo configurado e pronto para começar!"
     }
   },
-  "title": "Bem-vindo ao DeepChat",
+  "title": "Bem-vindo ao MyApp",
   "description": "Vamos guiá-lo através da configuração.",
   "provider": {
     "select": "Selecione um Provedor",

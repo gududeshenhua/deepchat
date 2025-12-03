@@ -503,7 +503,8 @@ function main() {
   log('')
   log('💡 提示: 如果需要恢复原始配置，请使用 git checkout 命令')
 }
-
+console.log(import.meta.url)
+console.log(`file://${process.argv[1]}`)
 // 运行
 if (import.meta.url === `file://${process.argv[1]}`) {
   main()

@@ -143,7 +143,7 @@
   "title": "Configurações MCP",
   "inmemory": {
     "Artifacts": {
-      "desc": "Produzir Artifacts mais ricos no DeepChat",
+      "desc": "Produzir Artifacts mais ricos no AiWork",
       "name": "Artifacts"
     },
     "bochaSearch": {
@@ -151,11 +151,11 @@
       "name": "Pesquisa Bocha"
     },
     "buildInFileSystem": {
-      "desc": "Permitir que o DeepChat interaja com o sistema de arquivos local.",
+      "desc": "Permitir que o AiWork interaja com o sistema de arquivos local.",
       "name": "Sistema de Arquivos"
     },
     "imageServer": {
-      "desc": "Permite que qualquer modelo no DeepChat entenda e gere imagens.",
+      "desc": "Permite que qualquer modelo no AiWork entenda e gere imagens.",
       "name": "Serviço de Imagem"
     },
     "braveSearch": {
@@ -179,11 +179,11 @@
       "desc": "Serviço de pesquisa da base de conhecimento FastGPT, pode pesquisar conteúdo da base de conhecimento FastGPT"
     },
     "deepchat-inmemory/custom-prompts-server": {
-      "desc": "Serviço de prompts personalizados integrado ao DeepChat",
+      "desc": "Serviço de prompts personalizados integrado ao AiWork",
       "name": "Prompts Personalizados"
     },
     "deepchat-inmemory/deep-research-server": {
-      "desc": "Pesquisa profunda integrada ao DeepChat alimentada pela Pesquisa Bocha. Modelos de contexto longo são recomendados.",
+      "desc": "Pesquisa profunda integrada ao AiWork alimentada pela Pesquisa Bocha. Modelos de contexto longo são recomendados.",
       "name": "DeepResearch"
     },
     "deepchat-inmemory/auto-prompting-server": {
@@ -192,15 +192,15 @@
     },
     "deepchat-inmemory/conversation-search-server": {
       "name": "Pesquisa no Histórico de Conversas",
-      "desc": "Pesquisa integrada ao DeepChat para histórico de conversas e mensagens anteriores."
+      "desc": "Pesquisa integrada ao AiWork para histórico de conversas e mensagens anteriores."
     },
     "builtinKnowledge": {
-      "desc": "Pesquisa na base de conhecimento integrada do DeepChat para documentação e guias.",
+      "desc": "Pesquisa na base de conhecimento integrada do AiWork para documentação e guias.",
       "name": "Pesquisa na base de conhecimento integrada"
     },
     "deepchat-inmemory/meeting-server": {
       "name": "Reuniões Multi-Agente",
-      "desc": "Reuniões integradas ao DeepChat para hospedar discussões multi-agente."
+      "desc": "Reuniões integradas ao AiWork para hospedar discussões multi-agente."
     },
     "deepchat/apple-server": {
       "desc": "Permite que os modelos operem aplicativos do macOS como Calendário, Contatos, Mail, Mapas, Notas e Lembretes.",

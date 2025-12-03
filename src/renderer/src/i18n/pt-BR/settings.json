@@ -37,8 +37,8 @@
     "themeSystem": "Seguir o sistema",
     "closeToQuit": "Sair do aplicativo ao fechar a janela",
     "contentProtectionDialogTitle": "Confirmar Mudança na Proteção de Tela",
-    "contentProtectionEnableDesc": "Evita que aplicativos de compartilhamento de tela capturem a janela do DeepChat para ajudar a proteger sua privacidade. Nem todos os aplicativos respeitam essa configuração; em alguns ambientes, uma janela preta pode permanecer.",
-    "contentProtectionDisableDesc": "Permite que aplicativos de compartilhamento de tela capturem a janela do DeepChat.",
+    "contentProtectionEnableDesc": "Evita que aplicativos de compartilhamento de tela capturem a janela do AiWork para ajudar a proteger sua privacidade. Nem todos os aplicativos respeitam essa configuração; em alguns ambientes, uma janela preta pode permanecer.",
+    "contentProtectionDisableDesc": "Permite que aplicativos de compartilhamento de tela capturem a janela do AiWork.",
     "contentProtectionRestartNotice": "Alterar esta configuração reiniciará o aplicativo. Deseja continuar?",
     "soundEnabled": "Habilitar Efeitos Sonoros",
     "copyWithCotEnabled": "Copiar Detalhes COT",
@@ -57,7 +57,7 @@
       "title": "Configurações de tecla de atalho"
     },
     "notifications": "Notificações do Sistema",
-    "notificationsDesc": "Quando o DeepChat não estiver em primeiro plano, se uma sessão for gerada, uma notificação do sistema será enviada",
+    "notificationsDesc": "Quando o AiWork não estiver em primeiro plano, se uma sessão for gerada, uma notificação do sistema será enviada",
     "contentProtection": "Proteção contra captura de tela",
     "traceDebugEnabled": "Rastreamento de Chamadas"
   },
@@ -140,7 +140,7 @@
       },
       "description": "Observe que esta configuração é válida apenas para o modelo atual e não afetará outros modelos. Modifique com cautela. Parâmetros incorretos podem fazer com que o modelo não funcione corretamente.",
       "functionCall": {
-        "description": "Se o modelo suporta chamadas de função nativamente (o DeepChat simulará automaticamente chamadas de função após desativar esta opção)",
+        "description": "Se o modelo suporta chamadas de função nativamente (o AiWork simulará automaticamente chamadas de função após desativar esta opção)",
         "label": "Chamadas de Função"
       },
       "maxTokens": {
@@ -366,7 +366,7 @@
     "githubCopilotNotConnected": "GitHub Copilot Não Conectado",
     "loginWithGitHub": "Entrar com GitHub",
     "loggingIn": "Entrando...",
-    "githubCopilotLoginTip": "Autorize o DeepChat a acessar sua assinatura do GitHub Copilot. As permissões 'read:user' e 'read:org' são necessárias para acessar a API do Copilot.",
+    "githubCopilotLoginTip": "Autorize o AiWork a acessar sua assinatura do GitHub Copilot. As permissões 'read:user' e 'read:org' são necessárias para acessar a API do Copilot.",
     "loginSuccess": "Login bem-sucedido",
     "loginFailed": "Falha no login",
     "tokenValid": "Token é válido",
@@ -442,7 +442,7 @@
     "anthropicApiKeyTip": "Por favor, vá para o Console Anthropic para obter sua Chave da API",
     "anthropicConnected": "Anthropic conectado",
     "anthropicNotConnected": "Anthropic não conectado",
-    "anthropicOAuthTip": "Clique para autorizar o DeepChat a acessar sua conta Anthropic",
+    "anthropicOAuthTip": "Clique para autorizar o AiWork a acessar sua conta Anthropic",
     "oauthLogin": "Login OAuth",
     "authMethod": "Método de Autenticação",
     "authMethodPlaceholder": "Selecionar método de autenticação",
@@ -470,7 +470,7 @@
     "operationSuccess": "Operação bem-sucedida",
     "settingsApplied": "Configurações aplicadas",
     "bedrockLimitTip": "* Apenas Anthropic Claude suportado (incluindo modelos Opus, Sonnet, Haiku)",
-    "bedrockVerifyTip": "O DeepChat usa Claude 3.5 Sonnet para verificação. Se você não tiver permissão para invocar, a verificação falhará. Isso não afetará o uso de outros modelos."
+    "bedrockVerifyTip": "O AiWork usa Claude 3.5 Sonnet para verificação. Se você não tiver permissão para invocar, a verificação falhará. Isso não afetará o uso de outros modelos."
   },
   "knowledgeBase": {
     "title": "Configurações da Base de Conhecimento",
