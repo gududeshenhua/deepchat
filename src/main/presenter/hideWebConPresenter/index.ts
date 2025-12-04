@@ -441,6 +441,7 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
    */
   async sendMessageToWebContents(targetWebContentsId: number, payload: any): Promise<boolean> {
     try {
+      console.log(`Sending message to WebContents ${targetWebContentsId}:`)
       if (!this.tabPresenter) {
         console.warn('TabPresenter not available, cannot send message')
         return false

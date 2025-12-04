@@ -402,121 +402,78 @@
       }
     }
 
-    /**
-     * 发送消息并等待响应（请求-响应模式）
-     * @param {number} targetWebContentsId - 目标WebContents ID
-     * @param {any} payload - 消息负载
-     * @param {number} timeout - 超时时间（毫秒），默认5000
-     * @returns {Promise<any>} 响应数据
-     */
-    async sendMessageAndWaitForResponse(targetWebContentsId, payload, timeout = 5000) {
-      return new Promise((resolve, reject) => {
-        const messageId = Date.now() + Math.random().toString(36).substr(2, 9)
+    // /**
+    //  * 发送消息并等待响应（请求-响应模式）
+    //  * @param {number} targetWebContentsId - 目标WebContents ID
+    //  * @param {any} payload - 消息负载
+    //  * @param {number} timeout - 超时时间（毫秒），默认5000
+    //  * @returns {Promise<any>} 响应数据
+    //  */
+    // async sendMessageAndWaitForResponse(targetWebContentsId, payload, timeout = 5000) {
+    //   return new Promise((resolve, reject) => {
+    //     const messageId = Date.now() + Math.random().toString(36).substr(2, 9)
         
-        // 设置超时
-        const timeoutId = setTimeout(() => {
-          unsubscribe()
-          reject(new Error(`Message response timeout after ${timeout}ms`))
-        }, timeout)
+    //     // 设置超时
+    //     const timeoutId = setTimeout(() => {
+    //       unsubscribe()
+    //       reject(new Error(`Message response timeout after ${timeout}ms`))
+    //     }, timeout)
 
-        // 监听响应
-        const unsubscribe = this.onMessageReceived((data) => {
-          if (data.messageId === messageId && data.type === 'response') {
-            clearTimeout(timeoutId)
-            unsubscribe()
-            resolve(data.response)
-          }
-        })
+    //     // 监听响应
+    //     const unsubscribe = this.onMessageReceived((data) => {
+    //       if (data.messageId === messageId && data.type === 'response') {
+    //         clearTimeout(timeoutId)
+    //         unsubscribe()
+    //         resolve(data.response)
+    //       }
+    //     })
 
-        // 发送请求消息
-        this.sendMessageToWebContents(targetWebContentsId, {
-          type: 'request',
-          messageId,
-          payload,
-          timestamp: Date.now()
-        }).catch(reject)
-      })
-    }
-
-    /**
-     * 注册消息处理器（用于处理请求-响应模式）
-     * @param {function} handler - 消息处理函数
-     */
-    registerMessageHandler(handler) {
-      if (typeof handler !== 'function') {
-        throw new TypeError('Handler must be a function')
-      }
-
-      return this.onMessageReceived(async (data) => {
-        if (data.type === 'request' && data.messageId) {
-          try {
-            const response = await handler(data.payload)
-            
-            // 发送响应
-            await this.sendMessageToWebContents(data.fromWebContentsId, {
-              type: 'response',
-              messageId: data.messageId,
-              response,
-              timestamp: Date.now()
-            })
-          } catch (error) {
-            console.error('Error handling message:', error)
-            
-            // 发送错误响应
-            await this.sendMessageToWebContents(data.fromWebContentsId, {
-              type: 'error',
-              messageId: data.messageId,
-              error: error.message,
-              timestamp: Date.now()
-            })
-          }
-        }
-      })
-    }
+    //     // 发送请求消息
+    //     this.sendMessageToWebContents(targetWebContentsId, {
+    //       type: 'request',
+    //       messageId,
+    //       payload,
+    //       timestamp: Date.now()
+    //     }).catch(reject)
+    //   })
+    // }
 
     // /**
-    //  * 演示通信功能的示例方法
+    //  * 注册消息处理器（用于处理请求-响应模式）
+    //  * @param {function} handler - 消息处理函数
     //  */
-    // async demonstrateCommunication() {
-    //   console.log('Starting communication demonstration...')
-      
-    //   try {
-    //     // 获取所有可通信的WebContents
-    //     const webContentsIds = await this.getCommunicableWebContentsIds()
-        
-    //     if (webContentsIds.length === 0) {
-    //       console.log('No communicable WebContents found')
-    //       return
-    //     }
-
-    //     console.log(`Found ${webContentsIds.length} communicable WebContents:`, webContentsIds)
-
-    //     // 发送测试消息到第一个WebContents
-    //     if (webContentsIds.length > 0) {
-    //       const targetId = webContentsIds[0]
-    //       const success = await this.sendMessageToWebContents(targetId, {
-    //         type: 'test',
-    //         message: 'Hello from communication demo!',
-    //         timestamp: Date.now()
-    //       })
-          
-    //       console.log(`Test message sent to WebContents ${targetId}: ${success}`)
-    //     }
-
-    //     // 广播测试消息
-    //     const broadcastCount = await this.broadcastMessage({
-    //       type: 'broadcast',
-    //       message: 'This is a broadcast message!',
-    //       timestamp: Date.now()
-    //     })
-        
-    //     console.log(`Broadcast message sent to ${broadcastCount} WebContents`)
-
-    //     console.log('Communication demonstration completed')
-    //   } catch (error) {
-    //     console.error('Communication demonstration failed:', error)
+    // registerMessageHandler(handler) {
+    //   if (typeof handler !== 'function') {
+    //     throw new TypeError('Handler must be a function')
     //   }
+
+    //   return this.onMessageReceived(async (data) => {
+    //     if (data.type === 'request' && data.messageId) {
+    //       try {
+    //         const response = await handler(data.payload)
+            
+    //         // 发送响应
+    //         await this.sendMessageToWebContents(data.fromWebContentsId, {
+    //           type: 'response',
+    //           messageId: data.messageId,
+    //           response,
+    //           timestamp: Date.now()
+    //         })
+    //       } catch (error) {
+    //         console.error('Error handling message:', error)
+            
+    //         // 发送错误响应
+    //         await this.sendMessageToWebContents(data.fromWebContentsId, {
+    //           type: 'error',
+    //           messageId: data.messageId,
+    //           error: error.message,
+    //           timestamp: Date.now()
+    //         })
+    //       }
+    //     }
+    //   })
     // }
+
     
   }
 
