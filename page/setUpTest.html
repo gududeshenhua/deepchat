@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Setup Manager 测试页面</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      
+      .container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      
+      .section {
+        margin-bottom: 30px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+      }
+      
+      .section h2 {
+        color: #555;
+        margin-top: 0;
+      }
+      
+      .button-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+      }
+      
+      button {
+        padding: 8px 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      
+      button:hover {
+        background-color: #0056b3;
+      }
+      
+      button:disabled {
+        background-color: #6c757d;
+        cursor: not-allowed;
+      }
+      
+      .input-group {
+        margin-bottom: 15px;
+      }
+      
+      .input-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      
+      .input-group input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      
+      .result {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 10px;
+        border-left: 4px solid #007bff;
+        white-space: pre-wrap;
+        font-family: monospace;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      
+      .status {
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 10px;
+      }
+      
+      .status.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      
+      .status.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+      
+      .data-display {
+        background-color: #e9ecef;
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Setup Manager 测试页面</h1>
+      
+      <div id="status" class="status"></div>
+      
+      <div class="section">
+        <h2>基础操作</h2>
+        <div class="button-group">
+          <button onclick="syncFromMain()">同步数据</button>
+          <button onclick="getAllValues()">获取所有值</button>
+          <button onclick="getAllKeys()">获取所有键</button>
+          <button onclick="getSize()">获取大小</button>
+          <button onclick="getStorePath()">获取存储路径</button>
+          <button onclick="clearAll()">清空所有数据</button>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>键值操作</h2>
+        <div class="input-group">
+          <label for="keyInput">键名:</label>
+          <input type="text" id="keyInput" placeholder="输入键名" value="test-key">
+        </div>
+        <div class="input-group">
+          <label for="valueInput">值:</label>
+          <input type="text" id="valueInput" placeholder="输入值" value="test-value">
+        </div>
+        <div class="button-group">
+          <button onclick="setValue()">设置值</button>
+          <button onclick="getValue()">获取值</button>
+          <button onclick="hasKey()">检查键是否存在</button>
+          <button onclick="deleteValue()">删除值</button>
+        </div>
+      </div>
+      
+      
+      <div class="section">
+        <h2>当前数据</h2>
+        <div class="data-display" id="currentData">
+          数据加载中...
+        </div>
+        <button onclick="refreshData()">刷新数据</button>
+      </div>
+      
+      <div class="section">
+        <h2>测试结果</h2>
+        <div class="result" id="testResult">
+          测试结果将显示在这里...
+        </div>
+      </div>
+    </div>
+
+    <script src="local://page/common/persenterFactory.js"></script>
+    <script src="local://page/common/setUp.js"></script>
+    <script>
+      // 全局状态管理
+      let SetupManager = null;
+      
+      // 初始化
+      async function initialize() {
+        try {
+          // 等待SetupManager加载
+          if (typeof window.SetupManager === 'undefined') {
+            setTimeout(initialize, 100);
+            return;
+          }
+          
+          SetupManager = window.SetupManager;
+          updateStatus('Setup Manager 初始化成功', 'success');
+          await refreshData();
+        } catch (error) {
+          updateStatus('初始化失败: ' + error.message, 'error');
+        }
+      }
+      
+      // 更新状态显示
+      function updateStatus(message, type = 'success') {
+        const statusEl = document.getElementById('status');
+        statusEl.textContent = message;
+        statusEl.className = `status ${type}`;
+      }
+      
+      // 更新测试结果
+      function updateResult(result) {
+        const resultEl = document.getElementById('testResult');
+        resultEl.textContent = JSON.stringify(result, null, 2);
+      }
+      
+      // 刷新当前数据
+      async function refreshData() {
+        if (!SetupManager) return;
+        
+        const dataEl = document.getElementById('currentData');
+        const currentData = await SetupManager.getAllValues();
+        const keys = await SetupManager.getAllKeys();
+        const size = await SetupManager.getSize();
+        // debugger
+        dataEl.innerHTML = `
+          <strong>当前数据大小:</strong> ${size} 个键值对<br>
+          <strong>当前键列表:</strong> ${keys.join(', ') || '空'}<br>
+          <strong>完整数据:</strong><br>
+          <pre>${JSON.stringify(currentData, null, 2)}</pre>
+        `;
+      }
+      
+      // 基础操作方法
+      async function syncFromMain() {
+        try {
+          updateStatus('正在同步数据...');
+          const result = await SetupManager.syncFromMain();
+          updateResult(result);
+          updateStatus('数据同步成功', 'success');
+          await refreshData();
+        } catch (error) {
+          updateStatus('同步失败: ' + error.message, 'error');
+          updateResult({ error: error.message });
+        }
+      }
+      
+      async function getAllValues() {
+        try {
+          updateStatus('正在获取所有值...');
+          const result = await SetupManager.getAllValues();
+          updateResult(result);
+          updateStatus('获取所有值成功', 'success');
+          await refreshData();
+        } catch (error) {
+          updateStatus('获取失败: ' + error.message, 'error');
+          updateResult({ error: error.message });
+        }
+      }
+      
+      async function getAllKeys() {
+        try {
+          updateStatus('正在获取所有键...');
+          const result = await SetupManager.getAllKeys();
+          updateResult(result);
+          updateStatus('获取所有键成功', 'success');
+        } catch (error) {
+          updateStatus('获取失败: ' + error.message, 'error');
+          updateResult({ error: error.message });
+        }
+      }
+      
+      async function getSize() {
+        try {
+          updateStatus('正在获取存储大小...');
+          const result = await SetupManager.getSize();
+          updateResult({ size: result });
+          updateStatus(`存储大小: ${result} 个键值对`, 'success');
+        } catch (error) {
+          updateStatus('获取失败: ' + error.message, 'error');
+          updateResult({ error: error.message });
+        }
+      }
+      
+      async function getStorePath() {
+        try {
+          updateStatus('正在获取存储路径...');
+          const result = await SetupManager.getStorePath();
+          updateResult({ storePath: result });
+          updateStatus('获取存储路径成功', 'success');
+        } catch (error) {
+          updateStatus('获取失败: ' + error.message, 'error');
+          updateResult({ error: error.message });
+        }
+      }
+      
+      async function clearAll() {
+        if (!confirm('确定要清空所有数据吗？此操作不可撤销！')) {
+          return;
+        }
+        
+        try {
+          updateStatus('正在清空所有数据...');
+          await SetupManager.clearAll();
+          updateResult({ message: '所有数据已清空' });
+          updateStatus('数据清空成功', 'success');
+          await refreshData();
+        } catch (error) {
+          updateStatus('清空失败: ' + error.message, 'error');
+          updateResult({ error: error.message });
+        }
+      }
+      
+      // 键值操作方法
+      async function setValue() {
+        const key = document.getElementById('keyInput').value.trim();
+        const value = document.getElementById('valueInput').value.trim();
+        
+        if (!key) {
+          updateStatus('请输入键名', 'error');
+          return;
+        }
+        
+        try {
+          updateStatus(`正在设置键值: ${key} = ${value}`);
+          await SetupManager.setValue(key, value);
+          updateResult({ 
+            message: '设置成功', 
+            key: key, 
+            value: value 
+          });
+          updateStatus('设置成功', 'success');
+          await refreshData();
+        } catch (error) {
+          updateStatus('设置失败: ' + error.message, 'error');
+          updateResult({ error: error.message });
+        }
+      }
+      
+      async function getValue() {
+        const key = document.getElementById('keyInput').value.trim();
+        
+        if (!key) {
+          updateStatus('请输入键名', 'error');
+          return;
+        }
+        
+        try {
+          updateStatus(`正在获取键值: ${key}`);
+          const result = await SetupManager.getValue(key);
+          updateResult({ 
+            key: key, 
+            value: result 
+          });
+          updateStatus('获取成功', 'success');
+        } catch (error) {
+          updateStatus('获取失败: ' + error.message, 'error');
+          updateResult({ error: error.message });
+        }
+      }
+      
+      async function hasKey() {
+        const key = document.getElementById('keyInput').value.trim();
+        
+        if (!key) {
+          updateStatus('请输入键名', 'error');
+          return;
+        }
+        
+        try {
+          updateStatus(`正在检查键是否存在: ${key}`);
+          const result = await SetupManager.hasKey(key);
+          updateResult({ 
+            key: key, 
+            exists: result 
+          });
+          updateStatus(`键 ${key} ${result ? '存在' : '不存在'}`, 'success');
+        } catch (error) {
+          updateStatus('检查失败: ' + error.message, 'error');
+          updateResult({ error: error.message });
+        }
+      }
+      
+      async function deleteValue() {
+        const key = document.getElementById('keyInput').value.trim();
+        
+        if (!key) {
+          updateStatus('请输入键名', 'error');
+          return;
+        }
+        
+        if (!confirm(`确定要删除键 "${key}" 吗？`)) {
+          return;
+        }
+        
+        try {
+          updateStatus(`正在删除键: ${key}`);
+          await SetupManager.deleteValue(key);
+          updateResult({ 
+            message: '删除成功', 
+            key: key 
+          });
+          updateStatus('删除成功', 'success');
+          await refreshData();
+        } catch (error) {
+          updateStatus('删除失败: ' + error.message, 'error');
+          updateResult({ error: error.message });
+        }
+      }
+      
+   
+      
+      // 页面加载完成后初始化
+      document.addEventListener('DOMContentLoaded', initialize);
+    </script>
+  </body>
+</html>
