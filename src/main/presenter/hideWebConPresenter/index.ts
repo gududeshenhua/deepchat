@@ -134,9 +134,23 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
       eventBus.sendToMain(HIDDEN_WEB_CONTENTS_EVENTS.CREATED, id)
 
       if (options.visible) {
-        const win = new BrowserWindow({ width: 800, height: 600 })
+        const win = new BrowserWindow({
+          width: 800,
+          height: 600
+        })
+
         win.contentView.addChildView(view)
-        view.setBounds({ x: 0, y: 0, width: 800, height: 600 })
+
+        const resizeView = () => {
+          const { width, height } = win.getContentBounds()
+          view.setBounds({ x: 0, y: 0, width, height })
+        }
+
+        resizeView()
+        win.on('resize', resizeView)
+
+        // 自动最大化
+        win.maximize()
       }
       return id
     } catch (error) {
