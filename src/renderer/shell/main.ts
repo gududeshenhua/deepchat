@@ -2,6 +2,7 @@ import '@/assets/main.css'
 import { addCollection } from '@iconify/vue'
 import lucideIcons from '@iconify-json/lucide/icons.json'
 import vscodeIcons from '@iconify-json/vscode-icons/icons.json'
+import mdiIcons from '@iconify-json/mdi/icons.json'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 import App from './App.vue'
@@ -18,6 +19,7 @@ const i18n = createI18n({
 // Add icon collections to local registry
 addCollection(lucideIcons)
 addCollection(vscodeIcons)
+addCollection(mdiIcons)
 const pinia = createPinia()
 
 const app = createApp(App)

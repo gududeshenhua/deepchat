@@ -32,6 +32,9 @@ importers:
       '@google/genai':
         specifier: ^1.29.0
         version: 1.31.0(@modelcontextprotocol/sdk@1.21.1)
+      '@iconify-json/mdi':
+        specifier: ^1.2.3
+        version: 1.2.3
       '@jxa/run':
         specifier: ^1.4.0
         version: 1.4.0
@@ -1086,6 +1089,9 @@ packages:
 
   '@iconify-json/lucide@1.2.78':
     resolution: {integrity: sha512-TqIzEzBCjs1IOUre/NBKhg29DkL6+Vqh93SD9V189TwIEl5Kl2dBSL7OZ0pjjF1ru8HQ1bllBo/oS0YYVUTPgA==}
+
+  '@iconify-json/mdi@1.2.3':
+    resolution: {integrity: sha512-O3cLwbDOK7NNDf2ihaQOH5F9JglnulNDFV7WprU2dSoZu3h3cWH//h74uQAB87brHmvFVxIOkuBX2sZSzYhScg==}
 
   '@iconify-json/vscode-icons@1.2.37':
     resolution: {integrity: sha512-HLRdU6nZks4N8x3JYz6j+b3+hcUCvYvlTLwGzM3xyXfTJyDSA2cAdWcEXfoA4hQMJGA+zCDSPAWFelFptH5Kbw==}
@@ -7284,6 +7290,10 @@ snapshots:
       is-negated-glob: 1.0.0
 
   '@iconify-json/lucide@1.2.78':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/mdi@1.2.3':
     dependencies:
       '@iconify/types': 2.0.0
 
