@@ -82,10 +82,12 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
   private initBusHandlers(): void {
     // 监听隐藏WebContents相关事件
     eventBus.on(HIDDEN_WEB_CONTENTS_EVENTS.CREATED, (id: number) => {
+      // this.logPresenter?.info(`Hidden web contents created: ${id}`)
       console.log(`Hidden web contents created: ${id}`)
     })
 
     eventBus.on(HIDDEN_WEB_CONTENTS_EVENTS.CLOSED, (id: number) => {
+      // this.logPresenter?.info(`Hidden web contents closed: ${id}`)
       console.log(`Hidden web contents closed: ${id}`)
     })
   }
@@ -152,8 +154,10 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
         // 自动最大化
         win.maximize()
       }
+      // this.logPresenter?.info(`Hidden web contents created: ${id}`)
       return id
     } catch (error) {
+      // this.logPresenter?.info(`Failed to create hidden web contents:`, error)
       console.error('Failed to create hidden web contents:', error)
       throw error
     }

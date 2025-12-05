@@ -433,6 +433,7 @@ export interface IPresenter {
   knowledgePresenter: IKnowledgePresenter
   scriptPresenter: IScriptPresenter
   setupPresenter: ISetupPresenter
+  logPresenter: ILoggerPresenter
   init(): void
   destroy(): void
 }
@@ -2067,4 +2068,31 @@ export interface HookExecutionResult {
   success: boolean
   result?: void | boolean
   error?: Error
+}
+
+/**
+ * Logger Presenter interface
+ * 用于管理应用程序日志记录
+ */
+export interface ILoggerPresenter {
+  // 错误级别日志
+  error(...params: unknown[]): void
+
+  // 警告级别日志
+  warn(...params: unknown[]): void
+
+  // 信息级别日志
+  info(...params: unknown[]): void
+
+  // 详细级别日志
+  verbose(...params: unknown[]): void
+
+  // 调试级别日志
+  debug(...params: unknown[]): void
+
+  // 冗余级别日志
+  silly(...params: unknown[]): void
+
+  // 通用日志方法（等同于 info）
+  log(...params: unknown[]): void
 }

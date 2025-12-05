@@ -41,10 +41,10 @@ const currentTabId = computed(() => tabStore.currentTabId)
 
 const menus = [
   { label: '首页', icon: 'mdi:home-outline', url: 'home://chat' },
-  { label: '应用', icon: 'mdi:view-grid-outline', url: 'local://page/test1.html' },
+  { label: '应用', icon: 'mdi:view-grid-outline', url: 'local://page/tabTest.html' },
   { label: '数据', icon: 'mdi:chart-bar', url: 'local://page/sqliteTest.html' },
   { label: '工具', icon: 'mdi:briefcase-outline', url: 'local://page/hideWebTest.html' },
-  { label: '消息', icon: 'mdi:message-processing-outline', url: 'local://page/test1.html' },
+  { label: '消息', icon: 'mdi:message-processing-outline', url: 'local://page/loggerTest.html' },
   { label: '设置', icon: 'mdi:cog-outline', url: 'home://setup' },
   { label: '脚本', icon: 'mdi:script-text-outline', url: 'home://script' }
 ]

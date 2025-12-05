@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日志功能测试页面</title>
+  <script src="local://page/common/persenterFactory.js"></script>
+  <script src="local://page/common/logger.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background: #f9f9f9;
+    }
+    .test-section h3 {
+      margin-top: 0;
+      color: #555;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      margin: 5px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .log {
+      background: #333;
+      color: #0f0;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .status {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .status.info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>日志功能测试</h1>
+    
+    <div class="test-section">
+      <h3>1. 基础日志测试</h3>
+      <button onclick="testBasicLogs()">测试基础日志</button>
+      <div id="basicStatus"></div>
+      <div id="basicLog" class="log"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>2. 不同级别日志测试</h3>
+      <button onclick="testLogLevels()">测试不同级别日志</button>
+      <div id="levelsStatus"></div>
+      <div id="levelsLog" class="log"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>3. 错误日志测试</h3>
+      <button onclick="testErrorLogs()">测试错误日志</button>
+      <div id="errorStatus"></div>
+      <div id="errorLog" class="log"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>4. 性能日志测试</h3>
+      <button onclick="testPerformanceLogs()">测试性能日志</button>
+      <div id="performanceStatus"></div>
+      <div id="performanceLog" class="log"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>5. 清理日志</h3>
+      <button onclick="clearLogs()">清空日志</button>
+      <div id="clearStatus"></div>
+    </div>
+  </div>
+
+  <script>
+    // 日志函数
+    function logToElement(elementId, message, type = 'info') {
+      const element = document.getElementById(elementId);
+      if (element) {
+        const timestamp = new Date().toLocaleTimeString();
+        element.innerHTML += `[${timestamp}] ${message}\n`;
+        element.scrollTop = element.scrollHeight;
+      }
+      console.log(`[${type.toUpperCase()}] ${message}`);
+    }
+
+    function updateStatus(elementId, message, type = 'info') {
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.innerHTML = `<div class="status ${type}">${message}</div>`;
+      }
+    }
+
+    // 1. 基础日志测试
+    async function testBasicLogs() {
+      const logId = 'basicLog';
+      const statusId = 'basicStatus';
+      
+      try {
+        updateStatus(statusId, '开始基础日志测试...', 'info');
+        logToElement(logId, '=== 开始基础日志测试 ===');
+
+        // 测试基本日志功能
+        logToElement(logId, '调用 LoggerManager.log 方法...');
+        await LoggerManager.log('这是一条普通日志', { test: true, timestamp: Date.now() });
+
+        logToElement(logId, '调用 LoggerManager.info 方法...');
+        await LoggerManager.info('这是一条信息日志', { userId: 123, action: 'login' });
+
+        updateStatus(statusId, '基础日志测试完成！', 'success');
+        logToElement(logId, '=== 基础日志测试完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `基础日志测试失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // 2. 不同级别日志测试
+    async function testLogLevels() {
+      const logId = 'levelsLog';
+      const statusId = 'levelsStatus';
+      
+      try {
+        updateStatus(statusId, '开始不同级别日志测试...', 'info');
+        logToElement(logId, '=== 开始不同级别日志测试 ===');
+
+        // 测试各种级别的日志
+        logToElement(logId, '调用 LoggerManager.debug 方法...');
+        await LoggerManager.debug('这是一条调试日志', { debug: true, value: 42 });
+
+        logToElement(logId, '调用 LoggerManager.info 方法...');
+        await LoggerManager.info('这是一条信息日志', { module: 'LoggerTest', version: '1.0' });
+
+        logToElement(logId, '调用 LoggerManager.warn 方法...');
+        await LoggerManager.warn('这是一条警告日志', { warning: 'Test warning', code: 1001 });
+
+        logToElement(logId, '调用 LoggerManager.log 方法...');
+        await LoggerManager.log('这是一条通用日志', { type: 'generic', data: [1, 2, 3] });
+
+        updateStatus(statusId, '不同级别日志测试完成！', 'success');
+        logToElement(logId, '=== 不同级别日志测试完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `不同级别日志测试失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // 3. 错误日志测试
+    async function testErrorLogs() {
+      const logId = 'errorLog';
+      const statusId = 'errorStatus';
+      
+      try {
+        updateStatus(statusId, '开始错误日志测试...', 'info');
+        logToElement(logId, '=== 开始错误日志测试 ===');
+
+        // 测试错误日志
+        logToElement(logId, '调用 LoggerManager.error 方法...');
+        await LoggerManager.error('这是一条错误日志', { 
+          error: 'Test error', 
+          code: 500, 
+          stack: 'Error: Test error\n    at testErrorLogs (loggerTest.html:123:15)' 
+        });
+
+        // 模拟一个实际错误
+        logToElement(logId, '模拟应用程序错误...');
+        try {
+          throw new Error('模拟的应用程序错误');
+        } catch (err) {
+          await LoggerManager.error('应用程序发生异常', {
+            message: err.message,
+            stack: err.stack,
+            url: window.location.href
+          });
+        }
+
+        updateStatus(statusId, '错误日志测试完成！', 'success');
+        logToElement(logId, '=== 错误日志测试完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `错误日志测试失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // 4. 性能日志测试
+    async function testPerformanceLogs() {
+      const logId = 'performanceLog';
+      const statusId = 'performanceStatus';
+      
+      try {
+        updateStatus(statusId, '开始性能日志测试...', 'info');
+        logToElement(logId, '=== 开始性能日志测试 ===');
+
+        // 测试带有性能数据的日志
+        const startTime = Date.now();
+        logToElement(logId, '执行耗时操作...');
+        
+        // 模拟一些耗时操作
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        const endTime = Date.now();
+        const duration = endTime - startTime;
+        
+        logToElement(logId, `操作完成，耗时 ${duration} ms`);
+        await LoggerManager.info('性能测试完成', {
+          operation: 'delayTest',
+          duration: duration,
+          startTime: startTime,
+          endTime: endTime
+        });
+
+        // 测试大量数据日志
+        logToElement(logId, '记录大量数据...');
+        const largeData = Array.from({length: 100}, (_, i) => ({
+          id: i,
+          value: Math.random(),
+          timestamp: Date.now() + i
+        }));
+        
+        await LoggerManager.debug('大量数据记录', {
+          count: largeData.length,
+          data: largeData.slice(0, 5), // 只记录前5项以避免日志过大
+          total: largeData.length
+        });
+
+        updateStatus(statusId, '性能日志测试完成！', 'success');
+        logToElement(logId, '=== 性能日志测试完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `性能日志测试失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // 5. 清理日志
+    function clearLogs() {
+      const logElements = document.querySelectorAll('.log');
+      logElements.forEach(el => {
+        el.innerHTML = '';
+      });
+      
+      const statusElements = document.querySelectorAll('.status');
+      statusElements.forEach(el => {
+        el.innerHTML = '';
+      });
+      
+      updateStatus('clearStatus', '所有日志已清空！', 'success');
+    }
+  </script>
+</body>
+</html>

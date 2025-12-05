@@ -26,7 +26,8 @@ import {
   IScriptPresenter,
   ISetupPresenter,
   ICustomSQLitePresenter,
-  IHiddenWebContentsPresenter
+  IHiddenWebContentsPresenter,
+  ILoggerPresenter
 } from '@shared/presenter'
 import { eventBus } from '@/eventbus'
 import { LLMProviderPresenter } from './llmProviderPresenter'
@@ -48,6 +49,7 @@ import { ScriptPresenter } from './scriptPresenter'
 import { SetupPresenter } from './setupPresenter'
 import { CustomSqlitePresenter } from './customSqlitePresenter'
 import { HiddenWebContentsPresenter } from './hideWebConPresenter'
+import { LoggerPresenter } from './loggerPresenter'
 // IPC调用上下文接口
 interface IPCCallContext {
   tabId?: number
@@ -91,12 +93,15 @@ export class Presenter implements IPresenter {
   setupPresenter: ISetupPresenter
   customSqlitePresenter: ICustomSQLitePresenter
   hideWebConPresenter: IHiddenWebContentsPresenter
+  logPresenter: ILoggerPresenter
 
   private constructor(lifecycleManager: ILifecycleManager) {
     // Store lifecycle manager reference for component access
     // If the initialization is successful, there should be no null here
+
     this.lifecycleManager = lifecycleManager
     const context = lifecycleManager.getLifecycleContext()
+    this.logPresenter = new LoggerPresenter()
     this.configPresenter = context.config as IConfigPresenter
     this.sqlitePresenter = context.database as ISQLitePresenter
 
@@ -125,6 +130,7 @@ export class Presenter implements IPresenter {
     this.setupPresenter = new SetupPresenter()
     this.customSqlitePresenter = new CustomSqlitePresenter()
     this.hideWebConPresenter = new HiddenWebContentsPresenter(this.tabPresenter)
+
     // Define dbDir for knowledge presenter
     const dbDir = path.join(app.getPath('userData'), 'app_db')
     this.knowledgePresenter = new KnowledgePresenter(
