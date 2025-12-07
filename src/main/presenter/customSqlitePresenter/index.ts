@@ -87,6 +87,7 @@ export class CustomSqlitePresenter implements ICustomSQLitePresenter {
 
     if (!row) {
       const createSql = `CREATE TABLE ${tableName} (${schema})`
+      console.info(createSql)
       this.db.prepare(createSql).run()
     } else {
       this.modifyTable(tableName, schema)
@@ -183,6 +184,30 @@ export class CustomSqlitePresenter implements ICustomSQLitePresenter {
   /** 查询数据 */
   public query(sql: string, params: any[] = []): any[] {
     return this.db.prepare(sql).all(...params)
+  }
+
+  /** 更新全表数据，覆盖所有现有数据 */
+  public updateAll(tableName: string, data: Record<string, any>[]): void {
+    if (!Array.isArray(data)) {
+      throw new Error('Data must be an array of objects.')
+    }
+
+    if (data.length === 0) {
+      // 如果没有数据，清空表
+      this.truncateTable(tableName)
+      return
+    }
+
+    // 使用事务确保数据一致性
+    const transaction = this.db.transaction(() => {
+      // 删除表中的所有现有数据
+      this.truncateTable(tableName)
+
+      // 插入新数据
+      this.batchInsert(tableName, data)
+    })
+
+    transaction()
   }
 
   /** 删除表 */

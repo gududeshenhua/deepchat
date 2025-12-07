@@ -185,6 +185,65 @@
         }
       }
 
+      async function testUpdateAll() {
+        try {
+          console.log('=== 测试更新全表数据 ===')
+
+          // 创建测试表
+          const testSchema = `
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT,
+          age INTEGER
+        `
+          await sqliteManager.createTable('update_all_test_table', testSchema)
+          console.log('测试表创建成功')
+
+          // 插入初始数据
+          await sqliteManager.batchInsert('update_all_test_table', [
+            { name: '原始数据1', age: 20 },
+            { name: '原始数据2', age: 25 },
+            { name: '原始数据3', age: 30 }
+          ])
+          console.log('初始数据插入成功')
+          // return
+          // 验证初始数据
+          const initialData = await sqliteManager.getAllData('update_all_test_table')
+          console.log('初始数据:', initialData)
+
+          // 使用updateAll方法更新全表数据
+          const newData = [
+            { name: '新数据66', age: 35 },
+            { name: '新数据', age: 40 }
+          ]
+          await sqliteManager.updateAll('update_all_test_table', newData)
+          console.log('全表数据更新完成')
+
+          // 验证更新后的数据
+          const updatedData = await sqliteManager.getAllData('update_all_test_table')
+          console.log('更新后的数据:', updatedData)
+
+          // 检查数据是否正确更新
+          // if (updatedData.length === 2 && 
+          //     updatedData[0].name === '新数据1' && 
+          //     updatedData[1].age === 40) {
+          //   console.log('全表数据更新测试通过')
+          // } else {
+          //   console.error('全表数据更新测试失败')
+          // }
+
+          // // 测试清空数据
+          // await sqliteManager.updateAll('update_all_test_table', [])
+          // const emptyData = await sqliteManager.getAllData('update_all_test_table')
+          // if (emptyData.length === 0) {
+          //   console.log('清空数据测试通过')
+          // } else {
+          //   console.error('清空数据测试失败')
+          // }
+        } catch (error) {
+          console.error('更新全表数据测试失败:', error)
+        }
+      }
+
       // 综合测试函数
       async function runAllTests() {
         try {
@@ -193,6 +252,7 @@
           await testModifyTable()
           // await testDropTable()
           // await testTruncateTable()
+          // await testUpdateAll()
 
           console.log('所有测试完成!')
         } catch (error) {

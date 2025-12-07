@@ -102,6 +102,21 @@
     }
 
     /**
+     * 更新全表数据，覆盖所有现有数据
+     * @param {string} tableName - 表名
+     * @param {Array} data - 要更新的数据数组
+     */
+    async updateAll(tableName, data) {
+      try {
+        await this.sqlitePresenter.updateAll(tableName, data)
+        console.log(`Update all data completed for ${tableName}`)
+      } catch (error) {
+        console.error(`Failed to update all data in ${tableName}:`, error)
+        throw error
+      }
+    }
+
+    /**
      * 修改单条数据
      * @param {string} tableName - 表名
      * @param {Object} idObj - 主键对象，如 {id: 1}
