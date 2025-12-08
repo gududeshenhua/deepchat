@@ -1,6 +1,7 @@
 import ElectronStore from 'electron-store'
-import { app, dialog } from 'electron'
+import { app, dialog, shell } from 'electron'
 import path from 'path'
+import fs from 'fs'
 import { ISetupPresenter } from '@shared/presenter'
 // Define setup settings interface
 interface ISetupSettings {
@@ -24,7 +25,8 @@ export class SetupPresenter implements ISetupPresenter {
         'isc-username': '',
         'isc-password': '',
         'download-directory': path.join(this.userDataPath, 'setup-downloads'), // Default download directory
-        'prompt-save-dialog': true
+        'prompt-save-dialog': true,
+        'not-show-modal-list': []
       }
     })
 
@@ -38,6 +40,20 @@ export class SetupPresenter implements ISetupPresenter {
   private syncToGlobal(): void {
     const allData = this.store.store
     this.globalSetupData = { ...allData }
+  }
+
+  // Open folder
+  async openDownloadDirectory(): Promise<void> {
+    const downloadDirectoryPath =
+      this.getValue<string>('download-directory') || path.join(this.userDataPath, 'setup-downloads')
+    console.log('Open folder', downloadDirectoryPath)
+    // If folder doesn't exist, create it first
+    if (!fs.existsSync(downloadDirectoryPath)) {
+      fs.mkdirSync(downloadDirectoryPath, { recursive: true })
+    }
+
+    // Open folder
+    await shell.openPath(downloadDirectoryPath)
   }
 
   async selectDownloadDirectory(): Promise<string | null> {

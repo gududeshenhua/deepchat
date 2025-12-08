@@ -3,7 +3,7 @@
  * Sets up application event listeners and browser window event handlers
  */
 
-import { app } from 'electron'
+import { app, session } from 'electron'
 import { optimizer } from '@electron-toolkit/utils'
 import { LifecycleHook, LifecycleContext } from '@shared/presenter'
 import { eventBus } from '@/eventbus'
@@ -11,7 +11,7 @@ import { WINDOW_EVENTS, TRAY_EVENTS, FLOATING_BUTTON_EVENTS } from '@/events'
 import { handleShowHiddenWindow } from '@/utils'
 import { presenter } from '@/presenter'
 import { LifecyclePhase } from '@shared/lifecycle'
-
+import { handleFileDownload } from '../../FileDownLoadHandle'
 export const eventListenerSetupHook: LifecycleHook = {
   name: 'event-listener-setup',
   phase: LifecyclePhase.READY,
@@ -105,6 +105,8 @@ export const eventListenerSetupHook: LifecycleHook = {
         }
       }, 50) // 50ms delay
     })
+
+    session.defaultSession.on('will-download', handleFileDownload)
 
     console.log('eventListenerSetupHook: Application event listeners set up successfully')
   }

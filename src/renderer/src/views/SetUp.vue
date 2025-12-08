@@ -1,4 +1,5 @@
 <template>
+  <div class="w-full overflow-y-auto">
   <div class="container">
     <div class="card">
       <h2>ISC信息</h2>
@@ -88,8 +89,54 @@
           </button>
         </div>
       </div>
+
+      <!-- Not Show Modal List Section -->
+      <div class="input-group">
+        <label>静默文件列表：</label>
+        <div class="array-items-container">
+          <div 
+            v-for="(item, index) in notShowModalList" 
+            :key="index" 
+            class="array-item"
+          >
+            <span class="array-item-tag">
+              {{ item }}
+              <button 
+                class="remove-button"
+                @click="removeArrayItem('notShowModalList', index)"
+              >
+                ×
+              </button>
+            </span>
+          </div>
+         
+        </div>
+         <div class="array-actions">
+            <input
+              type="text"
+              v-model="newNotShowModalItem"
+              placeholder="输入文件名称"
+              class="new-item-input"
+            />
+            <button 
+              class="add-button"
+              @click="addArrayItem('notShowModalList', newNotShowModalItem)"
+              :disabled="!newNotShowModalItem.trim()"
+            >
+              添加
+            </button>
+            <button
+              v-if="changedFields.notShowModalList"
+              class="save-button-small"
+              @click="saveField('notShowModalList', notShowModalList)"
+            >
+              保存
+            </button>
+          </div>
+      </div>
     </div>
   </div>
+  </div>  
 </template>
 
 <script setup lang="ts">
@@ -103,13 +150,16 @@ const iscUsername = ref('')
 const iscPassword = ref('')
 const downloadDirectory = ref('')
 const promptSaveDialog = ref(false)
+const notShowModalList = ref<string[]>([])
+const newNotShowModalItem = ref('')
 
 // 跟踪已修改的字段
 const changedFields = reactive({
   iscUsername: false,
   iscPassword: false,
   downloadDirectory: false,
-  promptSaveDialog: false
+  promptSaveDialog: false,
+  notShowModalList: false
 })
 
 // 字段配置映射
@@ -117,13 +167,19 @@ const fieldConfig = {
   iscUsername: 'isc-username',
   iscPassword: 'isc-password',
   downloadDirectory: 'download-directory',
-  promptSaveDialog: 'prompt-save-dialog'
+  promptSaveDialog: 'prompt-save-dialog',
+  notShowModalList: 'not-show-modal-list'
 }
 
 // 输入变化处理
 const onInputChange = (fieldName: keyof typeof changedFields) => {
   changedFields[fieldName] = true
 }
+
+// // 数组项变化处理
+// const onArrayItemChange = (fieldName: keyof typeof changedFields) => {
+//   changedFields[fieldName] = true
+// }
 
 // 保存单个字段
 const saveField = async (fieldName: keyof typeof changedFields, value: any) => {
@@ -134,6 +190,35 @@ const saveField = async (fieldName: keyof typeof changedFields, value: any) => {
     console.log(`字段 ${fieldName} 保存成功`)
   } catch (error) {
     console.error(`保存字段 ${fieldName} 失败:`, error)
+  }
+}
+
+// 添加数组项
+const addArrayItem = async (fieldName: keyof typeof changedFields, newItem: string) => {
+  if (!newItem.trim()) return
+  
+  try {
+    // 添加到前端数组
+    if (fieldName === 'notShowModalList') {
+      notShowModalList.value.push(newItem)
+      newNotShowModalItem.value = '' // 清空输入框
+      changedFields[fieldName] = true
+    }
+  } catch (error) {
+    console.error(`添加数组项失败:`, error)
+  }
+}
+
+// 删除数组项
+const removeArrayItem = async (fieldName: keyof typeof changedFields, index: number) => {
+  try {
+    // 从前端数组中删除
+    if (fieldName === 'notShowModalList') {
+      notShowModalList.value.splice(index, 1)
+      changedFields[fieldName] = true
+    }
+  } catch (error) {
+    console.error(`删除数组项失败:`, error)
   }
 }
 
@@ -163,6 +248,10 @@ const initData = async () => {
     iscPassword.value = (await setupStore.getValue(fieldConfig.iscPassword)) || ''
     downloadDirectory.value = (await setupStore.getValue(fieldConfig.downloadDirectory)) || ''
     promptSaveDialog.value = (await setupStore.getValue(fieldConfig.promptSaveDialog)) || false
+    
+    // 加载数组字段
+    const modalList = await setupStore.getValue(fieldConfig.notShowModalList) || []
+    notShowModalList.value = Array.isArray(modalList) ? modalList : []
 
     // 重置修改状态
     Object.keys(changedFields).forEach((key) => {
@@ -328,9 +417,7 @@ onMounted(() => {
   height: 36px;
   box-sizing: border-box;
   background-color: #f9f9f9;
-}
-
-.select-button {
+}.select-button {
   padding: 0 12px;
   background-color: #2196f3;
   color: white;
@@ -346,5 +433,95 @@ onMounted(() => {
 
 .select-button:hover {
   background-color: #0b7dda;
+}
+
+/* Array field styles */
+.array-items-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.array-item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.array-item-tag {
+  padding: 4px 24px 4px 8px;
+  background-color: #ecf5ff;
+  border: 1px solid #d9ecff;
+  border-radius: 4px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  color: #409eff;
+  height: 24px;
+  position: relative;
+}
+
+.remove-button {
+  padding: 0;
+  background-color: transparent;
+  color: #409eff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: all 0.2s;
+}
+
+.remove-button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #f44336;
+}
+
+.array-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.new-item-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  min-height: 36px;
+}
+
+.add-button {
+  padding: 6px 12px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  white-space: nowrap;
+  height: 36px;
+  transition: background-color 0.2s;
+}
+
+.add-button:hover {
+  background-color: #45a049;
+}
+
+.add-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 </style>

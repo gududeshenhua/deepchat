@@ -12,6 +12,10 @@ export const useSetupStore = defineStore('setup', () => {
   // 响应式数据存储当前setup数据
   const setupData = ref<Record<string, unknown>>({})
 
+  const openDownloadDirectory = async (): Promise<void> => {
+    console.log('Open download directory')
+    await setupP.openDownloadDirectory()
+  }
   /**
    * 选择下载目录
    */
@@ -200,6 +204,7 @@ export const useSetupStore = defineStore('setup', () => {
     clearAll,
     getGlobalSetupData,
     getSize,
-    getStorePath
+    getStorePath,
+    openDownloadDirectory
   }
 })

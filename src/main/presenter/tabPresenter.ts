@@ -680,7 +680,8 @@ export class TabPresenter implements ITabPresenter {
       // 使用系统默认浏览器打开链接
       // shell.openExternal(url)
       // 在当前窗口加载URL
-      webContents.loadURL(url)
+      // webContents.loadURL(url)
+      this.createTab(windowId, url)
       return { action: 'deny' }
     })
 

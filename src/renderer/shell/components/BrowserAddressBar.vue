@@ -45,6 +45,9 @@
       autocomplete="off"
       class="flex-1 h-6 bg-muted rounded-xl px-3 text-sm text-foreground/80 outline-none"
     />
+    
+    <!-- Download Icon -->
+    <DownloadIcon />
   </div>
 </template>
 
@@ -55,6 +58,7 @@ import { TAB_EVENTS } from '../lib/events'
 const { ipcRenderer } = window.electron
 import { useTabStore } from '@shell/stores/tab'
 import { Button } from '@shadcn/components/ui/button'
+import DownloadIcon from './DownloadIcon.vue'
 
 const tabStore = useTabStore()
 

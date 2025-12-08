@@ -2016,6 +2016,8 @@ export interface IScriptPresenter {
 
 export interface ISetupPresenter {
   /** 选择下载目录 */
+  openDownloadDirectory(): Promise<void>
+  /** 选择下载目录 */
   selectDownloadDirectory(): Promise<string | null>
   /** Get value by custom key */
   getValue<T>(key: string): T | undefined
