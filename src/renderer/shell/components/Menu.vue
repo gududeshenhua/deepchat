@@ -33,13 +33,17 @@
 import { Icon } from '@iconify/vue'
 import { ref, computed, onMounted } from 'vue'
 import { useTabStore } from '@shell/stores/tab'
+import { useSetupStore } from '@/stores/setup'
+
 const { ipcRenderer } = window.electron
 import { TAB_EVENTS } from '../lib/events'
 
 const tabStore = useTabStore()
+const setupStore = useSetupStore()
 const currentTabId = computed(() => tabStore.currentTabId)
 
-const menus = [
+// 默认菜单数据
+const defaultMenus = [
   { label: '首页', icon: 'mdi:home-outline', url: 'home://chat' },
   { label: '应用', icon: 'mdi:view-grid-outline', url: 'local://page/tabTest.html' },
   { label: '数据', icon: 'mdi:chart-bar', url: 'local://page/sqliteTest.html' },
@@ -48,6 +52,25 @@ const menus = [
   { label: '设置', icon: 'mdi:cog-outline', url: 'home://setup' },
   { label: '脚本', icon: 'mdi:script-text-outline', url: 'home://script' }
 ]
+
+// 从 setupStore 获取菜单数据
+const menus = ref(defaultMenus)
+
+// 初始化菜单数据
+const initMenus = async () => {
+  try {
+    const menuList = await setupStore.getValue('menu-list')
+    if (Array.isArray(menuList) && menuList.length > 0) {
+      menus.value = menuList
+    } else {
+      // 如果没有菜单数据，则使用默认数据并保存
+      await setupStore.setValue('menu-list', defaultMenus)
+    }
+  } catch (error) {
+    console.error('Failed to load menu list:', error)
+    menus.value = defaultMenus
+  }
+}
 
 const active = ref('首页')
 
@@ -59,7 +82,10 @@ const navigateToUrl = (item) => {
   // 这里可以做真正的跳转逻辑
 }
 
-onMounted(() => {
+onMounted(async () => {
+  // 初始化菜单数据
+  await initMenus()
+  
   ipcRenderer.on(TAB_EVENTS.CURRENT_ACTIVE_TAB_UPDATED, (event, tab) => {
     // debugger;
     console.log('currentMunu', tab)

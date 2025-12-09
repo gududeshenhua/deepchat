@@ -63,7 +63,7 @@
               <!-- Edit -->
               <Button variant="outline" size="sm" @click="editMatch(s)">
                 <Icon icon="material-symbols:edit" class="w-4 h-4 mr-1" />
-                编辑
+                编辑规则
               </Button>
 
               <!-- Details -->
@@ -74,7 +74,7 @@
 
               <!-- Delete -->
               <Button variant="destructive" size="sm" @click="remove(s)">
-                <Icon icon="material-symbols:delete-outline" class="w-4 h-4" />
+                <Icon icon="mdi:delete-outline" class="w-4 h-4" />
               </Button>
             </div>
           </div>

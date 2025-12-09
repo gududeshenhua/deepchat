@@ -22,6 +22,7 @@ export class ScriptInjector {
       'getScriptPath'
     )
   }
+
   getOriginUrlFromArguments() {
     const args = process.argv
     for (const arg of args) {
@@ -60,7 +61,6 @@ export class ScriptInjector {
     try {
       const filePath = path.join(this.scriptsPath, script.entry)
       // const code = fs.readFileSync(filePath, 'utf-8')
-
       // 创建 iframe
       // this.runInSandbox(code, script.name)
       this.sandboxes[script.name] = true

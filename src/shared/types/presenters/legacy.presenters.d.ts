@@ -335,6 +335,21 @@ export interface ICustomSQLitePresenter {
    * 关闭数据库连接
    */
   close(): void
+  createTable(tableName: string, schema: string): void
+  insert(tableName: string, data: Record<string, any>): number
+  batchInsert(tableName: string, dataArray: Record<string, any>[]): void
+  query(sql: string, params?: any[]): any[]
+  updateAllInsert(tableName: string, data: Record<string, any>[], primaryKey?: string): void
+  updateAll(tableName: string, data: Record<string, any>[]): void
+  dropTable(tableName: string): void
+  truncateTable(tableName: string): void
+  updateFieldsById(
+    tableName: string,
+    idObj: Record<string, any>,
+    updates: Record<string, any>
+  ): boolean
+  deleteById(tableName: string, idObj: Record<string, any>): void
+  getAllData(tableName: string): any[]
 }
 
 export interface ISQLitePresenter {
@@ -434,10 +449,30 @@ export interface IPresenter {
   scriptPresenter: IScriptPresenter
   setupPresenter: ISetupPresenter
   logPresenter: ILoggerPresenter
+  whitelistPresenter: IIpWhitelistPresenter
+  customSqlitePresenter: ICustomSQLitePresenter
   init(): void
   destroy(): void
 }
+export interface IIpWhitelistPresenter {
+  // 初始化数据库表
+  init(): Promise<void>
 
+  // 添加 IP（支持普通和 Base64）
+  addIP(ipString: string): Promise<string>
+
+  // 删除 IP
+  removeIP(ip: string): Promise<void>
+
+  // 获取白名单列表
+  getWhitelist(): Promise<string[]>
+
+  // 检查本地 IP 是否在白名单中
+  checkLocalIP(): Promise<boolean>
+
+  // 销毁资源
+  destroy(): void
+}
 export interface INotificationPresenter {
   showNotification(options: { id: string; title: string; body: string; silent?: boolean }): void
   clearNotification(id: string): void

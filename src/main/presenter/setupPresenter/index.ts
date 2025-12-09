@@ -26,7 +26,12 @@ export class SetupPresenter implements ISetupPresenter {
         'isc-password': '',
         'download-directory': path.join(this.userDataPath, 'setup-downloads'), // Default download directory
         'prompt-save-dialog': true,
-        'not-show-modal-list': []
+        'not-show-modal-list': [],
+        'menu-list': [
+          { label: '首页', icon: 'mdi:home-outline', url: 'home://chat' },
+          { label: '设置', icon: 'mdi:cog-outline', url: 'home://setup' },
+          { label: '脚本', icon: 'mdi:script-text-outline', url: 'home://script' }
+        ]
       }
     })
 

@@ -27,7 +27,8 @@ import {
   ISetupPresenter,
   ICustomSQLitePresenter,
   IHiddenWebContentsPresenter,
-  ILoggerPresenter
+  ILoggerPresenter,
+  IIpWhitelistPresenter
 } from '@shared/presenter'
 import { eventBus } from '@/eventbus'
 import { LLMProviderPresenter } from './llmProviderPresenter'
@@ -50,6 +51,7 @@ import { SetupPresenter } from './setupPresenter'
 import { CustomSqlitePresenter } from './customSqlitePresenter'
 import { HiddenWebContentsPresenter } from './hideWebConPresenter'
 import { LoggerPresenter } from './loggerPresenter'
+import { IpWhitelistPresenter } from './whitelistPresenter'
 // IPC调用上下文接口
 interface IPCCallContext {
   tabId?: number
@@ -94,6 +96,7 @@ export class Presenter implements IPresenter {
   customSqlitePresenter: ICustomSQLitePresenter
   hideWebConPresenter: IHiddenWebContentsPresenter
   logPresenter: ILoggerPresenter
+  whitelistPresenter: IIpWhitelistPresenter
 
   private constructor(lifecycleManager: ILifecycleManager) {
     // Store lifecycle manager reference for component access
@@ -130,6 +133,7 @@ export class Presenter implements IPresenter {
     this.setupPresenter = new SetupPresenter()
     this.customSqlitePresenter = new CustomSqlitePresenter()
     this.hideWebConPresenter = new HiddenWebContentsPresenter(this.tabPresenter)
+    this.whitelistPresenter = new IpWhitelistPresenter(this.customSqlitePresenter)
 
     // Define dbDir for knowledge presenter
     const dbDir = path.join(app.getPath('userData'), 'app_db')
@@ -194,6 +198,9 @@ export class Presenter implements IPresenter {
 
     // 初始化悬浮按钮
     this.initializeFloatingButton()
+
+    // 初始化白名单处理器
+    // this.whitelistPresenter.init()
   }
 
   // 初始化悬浮按钮
@@ -235,6 +242,7 @@ export class Presenter implements IPresenter {
     this.syncPresenter.destroy() // 销毁同步相关资源
     this.notificationPresenter.clearAllNotifications() // 清除所有通知
     this.knowledgePresenter.destroy() // 释放所有数据库连接
+    // this.whitelistPresenter.destroy() // 关闭白名单处理器
     // 注意: trayPresenter.destroy() 在 main/index.ts 的 will-quit 事件中处理
     // 此处不销毁 trayPresenter，其生命周期由 main/index.ts 管理
   }

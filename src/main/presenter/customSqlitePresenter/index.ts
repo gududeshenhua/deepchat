@@ -148,7 +148,15 @@ export class CustomSqlitePresenter implements ICustomSQLitePresenter {
     const sql = `INSERT INTO ${tableName} (${columns}) VALUES (${placeholders})`
     const stmt = this.db.prepare(sql)
     const insertMany = this.db.transaction((rows: Record<string, any>[]) => {
-      for (const data of rows) stmt.run(...Object.values(data))
+      // for (const data of rows) stmt.run(...Object.values(data))
+      for (const data of rows) {
+        const sanitizedValues = Object.values(data).map((v) => {
+          if (v === undefined) return null
+          if (typeof v === 'boolean') return v ? 1 : 0
+          return v
+        })
+        stmt.run(...sanitizedValues)
+      }
     })
     insertMany(dataArray)
   }

@@ -12,7 +12,7 @@ import { ScriptInjector } from './script-injector'
 // Cache variables
 let cachedWindowId: number | undefined = undefined
 let cachedWebContentsId: number | undefined = undefined
-
+// console.log('Preload: Initialized----------------')
 // Custom APIs for renderer
 const api = {
   copyText: (text: string) => {

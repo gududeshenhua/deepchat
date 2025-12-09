@@ -12,7 +12,7 @@
       console.log(window)
       // debugger
       const sqliteManager = window.SQLiteManager
-      // sqliteManager.demoStudentOperations()
+      
       async function demoStudentOperations() {
         const studentSchema = `
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -21,41 +21,41 @@
           major TEXT,
           address TEXT,
           maritalStatus TEXT,
-          graduated BOOLEAN DEFAULT 0
+          graduated BOOLEAN
         `
         await sqliteManager.createTable('students', studentSchema)
 
         // 插入单个学生
-        const studentId = await sqliteManager.insert('students', {
-          name: '张三',
-          age: 20,
-          major: '计算机科学',
-          address: '北京市',
-          maritalStatus: 'single',
-          graduated: false ? 1 : 0
-        })
-        console.log('插入的学生ID:', studentId)
+        // const studentId = await sqliteManager.insert('students', {
+        //   name: '张三',
+        //   age: 20,
+        //   major: '计算机科学',
+        //   address: '北京市',
+        //   maritalStatus: 'single',
+        //   graduated: false ? 1 : 0
+        // })
+        // console.log('插入的学生ID:', studentId)
 
-        // // 批量插入学生
-        // const students = [
-        //   {
-        //     name: '李四',
-        //     age: 22,
-        //     major: '软件工程',
-        //     address: '上海市',
-        //     maritalStatus: 'single',
-        //      graduated: false ? 1 : 0
-        //   },
-        //   {
-        //     name: '王五',
-        //     age: 21,
-        //     major: '人工智能',
-        //     address: '深圳市',
-        //     maritalStatus: 'single',
-        //      graduated: false ? 1 : 0
-        //   }
-        // ]
-        // await sqliteManager.batchInsert('students', students)
+        // 批量插入学生
+        const students = [
+          {
+            name: '李四',
+            age: 22,
+            major: '软件工程',
+            address: '上海市',
+            maritalStatus: 'single',
+            graduated: false
+          },
+          {
+            name: '王五',
+            age: 21,
+            major: '人工智能',
+            address: '深圳市',
+            maritalStatus: 'single',
+            graduated: false 
+          }
+        ]
+        await sqliteManager.batchInsert('students', students)
 
         // // 查询所有学生
         // const allStudents = await sqliteManager.getAllData('students')
@@ -248,8 +248,8 @@
       async function runAllTests() {
         try {
           console.log('开始SQLite功能测试...')
-
-          await testModifyTable()
+          demoStudentOperations()
+          // await testModifyTable()
           // await testDropTable()
           // await testTruncateTable()
           // await testUpdateAll()
