@@ -178,19 +178,19 @@
         <div class="array-actions menu-actions">
           <input
             type="text"
-            v-model="newMenuItem.label"
+            v-model.trim="newMenuItem.label"
             placeholder="菜单名称"
             class="new-item-input"
           />
           <input
             type="text"
-            v-model="newMenuItem.icon"
+            v-model.trim="newMenuItem.icon"
             placeholder="图标 (如: mdi:home-outline)"
             class="new-item-input"
           />
           <input
             type="text"
-            v-model="newMenuItem.url"
+            v-model.trim="newMenuItem.url"
             placeholder="链接地址"
             class="new-item-input"
           />
