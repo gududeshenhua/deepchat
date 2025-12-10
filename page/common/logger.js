@@ -126,4 +126,4 @@
 
   // 实例化并暴露
   global.LoggerManager = new LoggerManager()
-})(this)
+})(globalThis)

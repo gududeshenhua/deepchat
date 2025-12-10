@@ -107,6 +107,21 @@ export const eventListenerSetupHook: LifecycleHook = {
     })
 
     session.defaultSession.on('will-download', handleFileDownload)
+    // session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
+    //   details.requestHeaders['Cache-Control'] = 'no-cache, no-store';
+    //   callback({ requestHeaders: details.requestHeaders });
+    // });
+    // session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    //   const headers:any = details.responseHeaders;
+
+    //   // 删除所有 CSP header（不同大小写）
+    //   delete headers['Content-Security-Policy'];
+    //   delete headers['content-security-policy'];
+    //   delete headers['Content-security-policy'];
+
+    //   callback({ cancel: false, responseHeaders: headers });
+
+    // });
 
     console.log('eventListenerSetupHook: Application event listeners set up successfully')
   }

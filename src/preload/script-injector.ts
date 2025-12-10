@@ -1,7 +1,14 @@
 import { ScriptItem } from '@shared/types'
-import { ipcRenderer } from 'electron'
+import { ipcRenderer, webFrame, contextBridge } from 'electron'
 import path from 'path'
 import { matchUrlWithExclude } from '@shared/utils'
+import fs from 'fs'
+import { PresenterFactory } from './commonInjector/persenterFactory'
+import HiddenWebContentsManager from './commonInjector/hideWebCon'
+import LoggerManager from './commonInjector/logger'
+import TabManager from './commonInjector/tab'
+import SetupManager from './commonInjector/setup'
+import SQLiteManager from './commonInjector/sqlite'
 export class ScriptInjector {
   private scriptList: ScriptItem[] = []
   private scriptsPath = ''
@@ -9,9 +16,69 @@ export class ScriptInjector {
   private sandboxes: Record<string, any> = {}
   private originUrl: string = ''
   private api: any
+  // private commonJSDirPath = ''
   constructor(api: any) {
     this.api = api
     // this.listenHotReload()
+    this.initCommonJS()
+  }
+
+  transClassToObj(Manager: any) {
+    const manager = new Manager()
+    const proto = Object.getPrototypeOf(manager)
+    const methodNames = Object.getOwnPropertyNames(proto).filter(
+      (name) => name !== 'constructor' && typeof manager[name] === 'function'
+    )
+    const api: Record<string, (...args: any[]) => any> = {}
+    for (const name of methodNames) {
+      api[name] = manager[name].bind(manager)
+    }
+    return api
+  }
+
+  async initCommonJS() {
+    console.log('init common js')
+    // console.log(globalThis.PresenterFactory)
+    contextBridge.exposeInMainWorld('PresenterFactory', PresenterFactory)
+    contextBridge.exposeInMainWorld(
+      'HiddenWebContentsManager',
+      this.transClassToObj(HiddenWebContentsManager)
+    )
+    contextBridge.exposeInMainWorld('LoggerManager', this.transClassToObj(LoggerManager))
+    contextBridge.exposeInMainWorld('sqliteManager', this.transClassToObj(SQLiteManager))
+    contextBridge.exposeInMainWorld('TabManager', this.transClassToObj(TabManager))
+    contextBridge.exposeInMainWorld('SetupManager', this.transClassToObj(SetupManager))
+    // this.commonJSDirPath = await ipcRenderer.invoke(
+    //   'presenter:call',
+    //   'scriptPresenter',
+    //   'getCommonJSDirPath'
+    // )
+    // let comonjs = ['persenterFactory.js', 'hideWebCon.js', 'logger.js','setUp.js','sqlite.js','tab.js']
+    // // let commonjs = []
+    // comonjs.forEach(async (file) => {
+    //   // await require(path.join(this.commonJSDirPath, file))
+    //   const filePath = path.join(this.commonJSDirPath, file)
+    //   const code = fs.readFileSync(filePath, 'utf8')
+
+    //   // 转为 Blob URL
+    //   const blobURL = URL.createObjectURL(
+    //     new Blob([code], { type: 'text/javascript' })
+    //   )
+
+    //   webFrame.executeJavaScript(`
+    //     (function() {
+    //       // document.querySelectorAll('meta[http-equiv="Content-Security-Policy"]').forEach(e => e.remove());
+    //       // console.log("删除CSP")
+    //       // setTimeout(() => {
+    //       const s = document.createElement("script");
+    //       s.src = "${blobURL}";
+    //       s.type = "text/javascript";
+    //       document.head.appendChild(s);
+    //       console.log("[公用脚本] 注入脚本 blob:", "${filePath}");
+    //       // },2000)
+    //     })();
+    //   `)
+    // })
   }
 
   async loadScriptsFromMain() {
@@ -21,6 +88,9 @@ export class ScriptInjector {
       'scriptPresenter',
       'getScriptPath'
     )
+    // ['presenterFactory.js','hideWebCoon.js','common.js'].forEach((file) => {
+    //   require(path.join(this.commonJSDirPath, file))
+    // })
   }
 
   getOriginUrlFromArguments() {
@@ -64,7 +134,22 @@ export class ScriptInjector {
       // 创建 iframe
       // this.runInSandbox(code, script.name)
       this.sandboxes[script.name] = true
-      require(filePath)
+      // require(filePath)
+      // 注入 script 标签
+      // 转换为 URL
+      const code = fs.readFileSync(filePath, 'utf8')
+
+      // 转为 Blob URL
+      const blobURL = URL.createObjectURL(new Blob([code], { type: 'text/javascript' }))
+      webFrame.executeJavaScript(`
+        (function() {
+          const s = document.createElement("script");
+          s.src = "${blobURL}";
+          s.type = "text/javascript";
+          document.head.appendChild(s);
+          console.log("[ScriptInjector] 注入脚本 blob:", "${filePath}");
+        })();
+      `)
       console.log('[ScriptInjector] 注入脚本:', script.name)
     } catch (err) {
       console.error('[ScriptInjector] 注入失败:', script.name, err)

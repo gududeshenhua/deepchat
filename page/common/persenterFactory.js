@@ -1,3 +1,7 @@
+console.log("---PresenterFactory---")
+// console.log(globalThis)
+// console.log(window)
+// window.testaa = 123
 ;(function (global) {
   // ========== WebContentsId 缓存 ==========
   var cachedWebContentsId = null
@@ -7,6 +11,7 @@
       return cachedWebContentsId
     }
     try {
+      console.log(global.api)
       cachedWebContentsId = global.api.getWebContentsId()
       return cachedWebContentsId
     } catch (error) {
@@ -78,7 +83,7 @@
                     functionName
                 )
               }
-
+              console.log(global.electron.ipcRenderer)
               return global.electron.ipcRenderer
                 .invoke('presenter:call', presenterName, functionName, ...rawPayloads)
                 .catch(function (e) {
@@ -95,7 +100,7 @@
                 })
             } catch (error) {
               console.warn('error on payload serialization', functionName, error)
-
+              console.log(global.electron.ipcRenderer)
               return global.electron.ipcRenderer
                 .invoke('presenter:call', presenterName, functionName, ...rawPayloads)
                 .catch(function (e) {
@@ -125,4 +130,8 @@
       return presentersProxy[name]
     }
   }
-})(this)
+  console.log("-----------")
+  console.log(global.electron.ipcRenderer)
+  console.log("-----------")
+})(globalThis)
+// console.log(globalThis.electron)

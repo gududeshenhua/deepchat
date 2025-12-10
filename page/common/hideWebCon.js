@@ -347,11 +347,11 @@
       }
 
       // 注册事件监听器
-      window.electron?.ipcRenderer?.on('webcontents-receive-message', messageHandler)
+      global.electron?.ipcRenderer?.on('webcontents-receive-message', messageHandler)
       
       // 返回取消监听函数
       return () => {
-        window.electron?.ipcRenderer?.removeListener('webcontents-receive-message', messageHandler)
+        global.electron?.ipcRenderer?.removeListener('webcontents-receive-message', messageHandler)
       }
     }
 
@@ -473,10 +473,13 @@
     //     }
     //   })
     // }
-
     
   }
 
   // 实例化并暴露
   global.HiddenWebContentsManager = new HiddenWebContentsManager()
-})(this)
+})(globalThis)
+
+// console.log("---HiddenWebContentsManager---")
+// console.log(this)
+// console.log(window)

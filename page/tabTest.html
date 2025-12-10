@@ -178,10 +178,12 @@
   </div>
 
   <!-- 引入必要的JavaScript文件 -->
-  <script src="local://page/common/persenterFactory.js"></script>
-  <script src="local://page/common/tab.js"></script>
+  <!-- <script src="local://page/common/persenterFactory.js"></script>
+  <script src="local://page/common/tab.js"></script> -->
   
   <script>
+    console.log("----tabTest---")
+    console.log(TabManager.getTabs())
     // 日志记录函数
     function log(message, type = 'info') {
       const logElement = document.getElementById('log')
@@ -276,7 +278,7 @@
     async function getCurrentTabId() {
       try {
         const tabId = await TabManager.getCurrentTabId()
-        // debugger
+        debugger
         updateResult(`当前标签页ID: ${tabId}`, true)
         log(`获取当前标签页ID: ${tabId}`, 'success')
       } catch (error) {

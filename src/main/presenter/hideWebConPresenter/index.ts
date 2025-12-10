@@ -101,6 +101,8 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
         webPreferences: {
           preload: join(__dirname, '../preload/index.mjs'),
           sandbox: false,
+          // contextIsolation: false,
+          // nodeIntegration: true,
           devTools: true,
           ...options.webPreferences
         }

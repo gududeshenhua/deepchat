@@ -287,4 +287,4 @@
 
   // 实例化并暴露
   global.SQLiteManager = new SQLiteManager()
-})(this)
+})(globalThis)

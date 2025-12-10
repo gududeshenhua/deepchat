@@ -153,4 +153,4 @@
 
   // 实例化并暴露
   global.SetupManager = new SetupManager()
-})(this)
+})(globalThis)

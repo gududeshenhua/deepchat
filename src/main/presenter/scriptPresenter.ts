@@ -17,6 +17,7 @@ export class ScriptPresenter implements IScriptPresenter {
   private configPath: string
   private scriptsDirPath: string
   private scriptList: ScriptItem[] = []
+  private commonJSDirPath: string = path.join(app.getAppPath(), 'page', 'common')
 
   constructor() {
     this.configPath = is.dev
@@ -52,6 +53,10 @@ export class ScriptPresenter implements IScriptPresenter {
 
   getScriptPath() {
     return this.scriptsDirPath
+  }
+
+  getCommonJSDirPath() {
+    return this.commonJSDirPath
   }
 
   /**

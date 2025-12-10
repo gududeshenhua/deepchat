@@ -702,6 +702,19 @@ export class WindowPresenter implements IWindowPresenter {
     this.updateContentProtection(shellWindow, contentProtectionEnabled)
 
     // --- 窗口事件监听 ---
+    // const ses = ;
+
+    // shellWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+    //   const headers:any = details.responseHeaders;
+
+    //   delete headers["content-security-policy"];
+    //   delete headers["Content-Security-Policy"];
+
+    //   callback({
+    //     cancel: false,
+    //     responseHeaders: headers
+    //   });
+    // });
 
     // 窗口准备就绪时显示
     shellWindow.on('ready-to-show', () => {

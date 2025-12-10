@@ -43,9 +43,9 @@ const api = {
     return shell.openExternal(url)
   }
 }
+globalThis.api = api
 exposeElectronAPI()
-const scriptInjector = new ScriptInjector(api)
-scriptInjector.listenHotReload()
+// window.electron只能在render里面拿到
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
 // just add to the DOM global.
@@ -59,6 +59,12 @@ if (process.contextIsolated) {
   // @ts-ignore (define in dts)
   window.api = api
 }
+// globalThis.api = api
+// window.mama = '132132'
+const scriptInjector = new ScriptInjector(api)
+scriptInjector.listenHotReload()
+console.log('Preload: DOMContentLoaded')
+console.log(window)
 window.addEventListener('DOMContentLoaded', async () => {
   // console.log('Preload: DOMContentLoaded',window.location.href)
   cachedWebContentsId = ipcRenderer.sendSync('get-web-contents-id')
@@ -71,6 +77,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   )
   // await scriptInjector.loadScriptsFromMain()
   // scriptInjector.injectScripts()
+  // scriptInjector.initCommonJS()
   webFrame.setVisualZoomLevelLimits(1, 1) // Disable trackpad zooming
   webFrame.setZoomFactor(1)
 })

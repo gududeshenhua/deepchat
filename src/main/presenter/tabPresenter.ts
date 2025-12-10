@@ -179,6 +179,8 @@ export class TabPresenter implements ITabPresenter {
       webPreferences: {
         preload: join(__dirname, '../preload/index.mjs'),
         sandbox: false,
+        // contextIsolation: false,
+        // nodeIntegration: true,
         // devTools: is.dev
         devTools: true
         // additionalArguments: [
@@ -739,6 +741,16 @@ export class TabPresenter implements ITabPresenter {
       }
     })
 
+    // // 给它专属 session 设置 CSP 拦截
+    // webContents.session.webRequest.onHeadersReceived((details, callback) => {
+    //   const headers:any = details.responseHeaders;
+
+    //   delete headers['Content-Security-Policy'];
+    //   delete headers['content-security-policy'];
+
+    //   callback({ cancel: false, responseHeaders: headers });
+    // });
+
     // 导航完成
     webContents.on('did-navigate', (_event, url) => {
       const state = this.tabState.get(tabId)
@@ -766,6 +778,9 @@ export class TabPresenter implements ITabPresenter {
           }
           this.notifyWindowTabsUpdate(windowId).catch(console.error) // Call async function, handle potential rejection
         }
+        // webContents.executeJavaScript(`
+        //   document.querySelectorAll('meta[http-equiv="Content-Security-Policy"]').forEach(e => e.remove());
+        // `);
 
         eventBus.sendToRenderer('scripts:reload-now', SendTarget.ALL_WINDOWS, {
           originUrl: state.originUrl,

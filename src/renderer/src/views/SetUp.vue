@@ -91,7 +91,7 @@
       </div>
 
       <!-- Not Show Modal List Section -->
-      <div class="input-group">
+      <div class="input-group" v-if="false">
         <label>静默文件列表：</label>
         <div class="array-items-container">
           <div 

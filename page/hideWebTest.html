@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>隐藏WebContents测试页面</title>
-  <script src="local://page/common/persenterFactory.js"></script>
-  <script src="local://page/common/hideWebCon.js"></script>
-  <script src="local://page/common/tab.js"></script>
+  <!-- <script src="local://page/common/persenterFactory.js"></script> -->
+  <!-- <script src="local://page/common/hideWebCon.js"></script> -->
+  <!-- <script src="local://page/common/tab.js"></script> -->
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -102,7 +102,7 @@
     <div class="test-section">
       <h3>2. DOM操作测试</h3>
       <button onclick="testDOMOperations()">测试DOM操作</button>
-      <button onclick="testFormOperations()">测试表单操作</button>
+      <!-- <button onclick="testFormOperations()">测试表单操作</button> -->
       <div id="domStatus"></div>
       <div id="domLog" class="log"></div>
     </div>
@@ -453,11 +453,11 @@
             (async () => {
               console.log("开始加载脚本...");
 
-              await loadScript("local://page/common/persenterFactory.js");
-              console.log("persenterFactory.js 加载完成");
+              // await loadScript("local://page/common/persenterFactory.js");
+              // console.log("persenterFactory.js 加载完成");
 
-              await loadScript("local://page/common/hideWebCon.js");
-              console.log("hideWebCon.js 加载完成");
+              // await loadScript("local://page/common/hideWebCon.js");
+              // console.log("hideWebCon.js 加载完成");
 
               console.log("window 检查：", window);
 

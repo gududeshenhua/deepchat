@@ -1,7 +1,7 @@
 [
   {
     "name": "export-news2 - 副本",
-    "enabled": false,
+    "enabled": true,
     "match": [
       "*://*/*"
     ],

@@ -88,4 +88,4 @@
 
   // 实例化并暴露
   global.TabManager = new TabManager()
-})(this)
+})(globalThis)
