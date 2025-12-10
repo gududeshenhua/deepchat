@@ -752,11 +752,44 @@ export class TabPresenter implements ITabPresenter {
     // });
 
     // 导航完成
+    webContents.on('did-navigate-in-page', (_event, url) => {
+      const state = this.tabState.get(tabId)
+      if (!state) return
+
+      console.log('-----------did-navigate-in-page----------')
+      console.log(url)
+      if (state.originUrl && !state.originUrl.startsWith('home://')) {
+        state.originUrl = url
+      }
+      state.url = url
+
+      if (!state.title || state.title === 'Untitled') {
+        state.title = url
+        const window = BrowserWindow.fromId(windowId)
+        if (window && !window.isDestroyed()) {
+          window.webContents.send(TAB_EVENTS.TITLE_UPDATED, {
+            tabId,
+            title: state.title,
+            windowId
+          })
+
+          if (state.isActive) {
+            window.webContents.send(TAB_EVENTS.CURRENT_ACTIVE_TAB_UPDATED, state)
+          }
+        }
+        this.notifyWindowTabsUpdate(windowId).catch(console.error)
+      }
+
+      eventBus.sendToRenderer('scripts:reload-now', SendTarget.ALL_WINDOWS, {
+        originUrl: state.originUrl,
+        tabId
+      })
+    })
     webContents.on('did-navigate', (_event, url) => {
       const state = this.tabState.get(tabId)
       if (state) {
-        // console.log('-----------did-navigate----------')
-        // console.log(url)
+        console.log('-----------did-navigate----------')
+        console.log(url)
         if (state.originUrl && !state.originUrl.startsWith('home://')) {
           state.originUrl = url
         }

@@ -122,18 +122,18 @@ export class ScriptInjector {
     // debugger;
     if (!url) return
     if (!script.enabled) {
-      this.unloadScript(script.name)
+      this.unloadScript(script.name + '-' + url)
       return
     }
     if (!this.matchUrl(url, script.match)) return
-    if (this.sandboxes[script.name]) return
+    if (this.sandboxes[script.name + '-' + url]) return
 
     try {
       const filePath = path.join(this.scriptsPath, script.entry)
       // const code = fs.readFileSync(filePath, 'utf-8')
       // 创建 iframe
       // this.runInSandbox(code, script.name)
-      this.sandboxes[script.name] = true
+      this.sandboxes[script.name + '-' + url] = true
       // require(filePath)
       // 注入 script 标签
       // 转换为 URL
