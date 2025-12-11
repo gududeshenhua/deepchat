@@ -61,7 +61,7 @@ const initMenus = async () => {
   try {
     const menuList = await setupStore.getValue('menu-list')
     if (Array.isArray(menuList) && menuList.length > 0) {
-      menus.value = menuList
+      menus.value = menuList.filter(item => item.visible !== false)
     } else {
       // 如果没有菜单数据，则使用默认数据并保存
       await setupStore.setValue('menu-list', defaultMenus)

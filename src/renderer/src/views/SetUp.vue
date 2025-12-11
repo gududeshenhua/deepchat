@@ -148,6 +148,9 @@
               <span class="menu-item-label">{{ item.label }}</span>
               <span class="menu-item-icon">{{ item.icon }}</span>
               <span class="menu-item-url">{{ item.url }}</span>
+              <span class="menu-item-visible" :class="{ 'hidden-item': item.visible===false }">
+                {{ item.visible || item.visible === undefined ? '显示' : '隐藏' }}
+              </span>
             </div>
             <div class="menu-item-actions">
               <button 
@@ -167,9 +170,17 @@
               <button 
                 class="move-button"
                 @click="removeMenuItem(index)"
-                :disabled="menuList.length === 1 || item.url === 'home://setup' || item.url === 'home://script'"
+                :disabled="menuList.length === 1 || item.url === 'home://setup' || item.url === 'home://script' || item.url === 'home://home'"
               >
                 ×
+              </button>
+              <button 
+                class="move-button visibility-toggle"
+                @click="toggleMenuItemVisibility(index)"
+                :disabled="item.url === 'home://setup' || item.url === 'home://script' || item.url === 'home://home'"
+                :title="item.visible ? '点击隐藏' : '点击显示'"
+              >
+                {{ item.visible ? '🚫' : '👁' }}
               </button>
             </div>
           </div>
@@ -194,7 +205,14 @@
             placeholder="链接地址"
             class="new-item-input"
           />
-         
+          <div class="checkbox-container">
+            <input
+              type="checkbox"
+              id="new-menu-visible"
+              v-model="newMenuItem.visible"
+            />
+            <label for="new-menu-visible">显示</label>
+          </div>
         </div>
          <div style="display: flex;justify-content: flex-end;gap: 10px;margin-top: 10px;">
             <button 
@@ -262,11 +280,12 @@ const downloadDirectory = ref('')
 const promptSaveDialog = ref(false)
 const notShowModalList = ref<string[]>([])
 const newNotShowModalItem = ref('')
-const menuList = ref<Array<{label: string, icon: string, url: string}>>([])
+const menuList = ref<Array<{label: string, icon: string, url: string, visible: boolean}>>([])
 const newMenuItem = reactive({
   label: '',
   icon: '',
-  url: ''
+  url: '',
+  visible: true
 })
 
 // 对话框控制
@@ -392,6 +411,17 @@ const moveMenuItem = async (index: number, direction: 'up' | 'down') => {
     }
   } catch (error) {
     console.error(`移动菜单项失败:`, error)
+  }
+}
+
+// 切换菜单项显示/隐藏状态
+const toggleMenuItemVisibility = async (index: number) => {
+  try {
+    // 切换可见性状态
+    menuList.value[index].visible = !menuList.value[index].visible
+    changedFields.menuList = true
+  } catch (error) {
+    console.error(`切换菜单项显示状态失败:`, error)
   }
 }
 
@@ -533,6 +563,7 @@ onMounted(() => {
   align-items: center;
   gap: 8px;
   margin-bottom: 20px;
+  justify-content: flex-start;
 }
 
 .checkbox-container label {
@@ -676,7 +707,7 @@ onMounted(() => {
 
 .array-actions {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   margin-top: 10px;
 }
@@ -747,6 +778,22 @@ onMounted(() => {
   text-decoration: underline;
 }
 
+.menu-item-visible {
+  color: #67c23a;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background-color: #f0f9ec;
+  border: 1px solid #d1edc4;
+}
+
+.menu-item-visible.hidden-item {
+  color: #909399;
+  background-color: #f4f4f5;
+  border-color: #e9e9eb;
+}
+
 .menu-item-actions {
   display: flex;
   gap: 4px;
@@ -792,3 +839,8 @@ onMounted(() => {
   border-radius: 4px;
 }
 </style>
+
+
+
+
+
