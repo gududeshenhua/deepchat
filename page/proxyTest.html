@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proxy Test Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .result {
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-top: 10px;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      font-family: monospace;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .test-section {
+      margin-bottom: 30px;
+      padding: 15px;
+      border: 1px solid #eee;
+      border-radius: 4px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      box-sizing: border-box;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Proxy Test Page</h1>
+  
+  <div class="container">
+    <h2>Proxy HTTP Test</h2>
+    <div class="test-section">
+      <label for="httpUrl">Target URL:</label>
+      <input type="text" id="httpUrl" placeholder="https://jsonplaceholder.typicode.com/posts/1" value="https://jsonplaceholder.typicode.com/posts/1">
+      
+      <label for="httpMethod">Method:</label>
+      <select id="httpMethod">
+        <option value="GET">GET</option>
+        <option value="POST">POST</option>
+        <option value="PUT">PUT</option>
+        <option value="DELETE">DELETE</option>
+      </select>
+      
+      <label for="httpHeaders">Headers (JSON):</label>
+      <textarea id="httpHeaders" rows="3">{}</textarea>
+      
+      <label for="httpBody">Body (JSON):</label>
+      <textarea id="httpBody" rows="4">{}</textarea>
+      
+      <button onclick="testProxyHttp()">Test Proxy HTTP</button>
+      <div id="httpResult" class="result">Click "Test Proxy HTTP" to see results</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2>Proxy SSE Test</h2>
+    <div class="test-section">
+      <label for="sseUrl">SSE URL:</label>
+      <input type="text" id="sseUrl" placeholder="https://stream.wikimedia.org/v2/stream/recentchange" value="https://stream.wikimedia.org/v2/stream/recentchange">
+      
+      <label for="sseHeaders">Headers (JSON):</label>
+      <textarea id="sseHeaders" rows="3">{}</textarea>
+      
+      <button onclick="testProxySse()">Test Proxy SSE</button>
+      <button onclick="stopProxySse()" id="stopSseBtn" disabled>Stop SSE</button>
+      <div id="sseResult" class="result">Click "Test Proxy SSE" to see results</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2>Mock SSE Test</h2>
+    <div class="test-section">
+      <button onclick="testMockSse()">Test Mock SSE</button>
+      <button onclick="stopMockSse()" id="stopMockSseBtn" disabled>Stop Mock SSE</button>
+      <div id="mockSseResult" class="result">Click "Test Mock SSE" to see results</div>
+    </div>
+  </div>
+
+  <script>
+    let sseEventSource = null;
+    let mockSseEventSource = null;
+
+    // Utility function to display results
+    function displayResult(elementId, result) {
+      document.getElementById(elementId).textContent = typeof result === 'object' ? JSON.stringify(result, null, 2) : result;
+    }
+
+    // Utility function to get JSON from textarea
+    function getJsonFromTextarea(textareaId) {
+      try {
+        const text = document.getElementById(textareaId).value;
+        return text ? JSON.parse(text) : {};
+      } catch (e) {
+        console.error('Invalid JSON in ' + textareaId, e);
+        return {};
+      }
+    }
+
+    // Test Proxy HTTP
+    async function testProxyHttp() {
+      const url = document.getElementById('httpUrl').value;
+      const method = document.getElementById('httpMethod').value;
+      const headers = getJsonFromTextarea('httpHeaders');
+      const body = getJsonFromTextarea('httpBody');
+
+      if (!url) {
+        displayResult('httpResult', 'Please enter a URL');
+        return;
+      }
+
+      displayResult('httpResult', 'Loading...');
+
+      try {
+        // debugger
+        const response = await fetch('http://127.0.0.1:8021/scripts/proxy/http', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            url: url,
+            method: method,
+            headers: headers,
+            body: method !== 'GET' ? body : undefined
+          })
+        });
+
+        const contentType = response.headers.get('content-type');
+        let result;
+
+        if (contentType && contentType.includes('application/json')) {
+          result = await response.json();
+        } else {
+          result = await response.text();
+        }
+
+        displayResult('httpResult', {
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries()),
+          data: result
+        });
+      } catch (error) {
+        displayResult('httpResult', 'Error: ' + error.message);
+      }
+    }
+
+    // Test Proxy SSE
+    async function testProxySse() {
+      const url = document.getElementById('sseUrl').value;
+      const headers = getJsonFromTextarea('sseHeaders');
+
+      const res = await fetch('http://127.0.0.1:8021/scripts/proxy/sse', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ url, method: 'GET', headers })
+      });
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        console.log('chunk:', decoder.decode(value));
+        const currentText = document.getElementById('sseResult').textContent;
+        document.getElementById('sseResult').textContent = currentText + 'Received: ' + decoder.decode(value) + '\n';
+      }
+      // const url = document.getElementById('sseUrl').value;
+      // const headers = getJsonFromTextarea('sseHeaders');
+
+      // if (!url) {
+      //   displayResult('sseResult', 'Please enter a URL');
+      //   return;
+      // }
+
+      // if (sseEventSource) {
+      //   sseEventSource.close();
+      // }
+
+      // displayResult('sseResult', 'Connecting...\n');
+
+      // try {
+      //   // Using EventSource for SSE
+      //   sseEventSource = new EventSource(`http://127.0.0.1:8021/scripts/proxy/sse?url=${encodeURIComponent(url)}&headers=${encodeURIComponent(JSON.stringify(headers))}`);
+
+      //   sseEventSource.onmessage = function(event) {
+      //     const currentText = document.getElementById('sseResult').textContent;
+      //     document.getElementById('sseResult').textContent = currentText + 'Received: ' + event.data + '\n';
+      //   };
+
+      //   sseEventSource.onerror = function(error) {
+      //     const currentText = document.getElementById('sseResult').textContent;
+      //     document.getElementById('sseResult').textContent = currentText + 'Error: ' + error.message + '\n';
+      //     stopProxySse();
+      //   };
+
+      //   document.getElementById('stopSseBtn').disabled = false;
+      // } catch (error) {
+      //   displayResult('sseResult', 'Error: ' + error.message);
+      // }
+    }
+
+    // Stop Proxy SSE
+    function stopProxySse() {
+      if (sseEventSource) {
+        sseEventSource.close();
+        sseEventSource = null;
+      }
+      document.getElementById('stopSseBtn').disabled = true;
+      const currentText = document.getElementById('sseResult').textContent;
+      document.getElementById('sseResult').textContent = currentText + 'SSE connection closed.\n';
+    }
+
+    // Test Mock SSE
+    function testMockSse() {
+      if (mockSseEventSource) {
+        mockSseEventSource.close();
+      }
+
+      displayResult('mockSseResult', 'Connecting to mock SSE...\n');
+
+      try {
+        // Using EventSource for mock SSE
+        mockSseEventSource = new EventSource('http://127.0.0.1:8021/scripts/proxy/mock/sse');
+
+        mockSseEventSource.onmessage = function(event) {
+          const currentText = document.getElementById('mockSseResult').textContent;
+          try {
+            const data = JSON.parse(event.data);
+            document.getElementById('mockSseResult').textContent = currentText + 'Step ' + data.index + ': ' + data.content + '\n';
+          } catch (e) {
+            document.getElementById('mockSseResult').textContent = currentText + 'Received: ' + event.data + '\n';
+          }
+        };
+
+        mockSseEventSource.onerror = function(error) {
+           const currentText = document.getElementById('mockSseResult').textContent;
+          document.getElementById('mockSseResult').textContent =
+              currentText + 'SSE connection lost\n';
+          stopMockSse();
+        };
+
+        document.getElementById('stopMockSseBtn').disabled = false;
+      } catch (error) {
+        displayResult('mockSseResult', 'Error: ' + error.message);
+      }
+    }
+
+    // Stop Mock SSE
+    function stopMockSse() {
+      if (mockSseEventSource) {
+        mockSseEventSource.close();
+        mockSseEventSource = null;
+      }
+      document.getElementById('stopMockSseBtn').disabled = true;
+      const currentText = document.getElementById('mockSseResult').textContent;
+      document.getElementById('mockSseResult').textContent = currentText + 'Mock SSE connection closed.\n';
+    }
+
+    // Clean up connections when page unloads
+    window.addEventListener('beforeunload', function() {
+      if (sseEventSource) {
+        sseEventSource.close();
+      }
+      if (mockSseEventSource) {
+        mockSseEventSource.close();
+      }
+    });
+  </script>
+</body>
+</html>
