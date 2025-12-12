@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文件管理功能测试页面</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background: #f9f9f9;
+    }
+    .test-section h3 {
+      margin-top: 0;
+      color: #555;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      margin: 5px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .log {
+      background: #333;
+      color: #0f0;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .status {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .status.info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      box-sizing: border-box;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>文件管理功能测试</h1>
+    
+    <div class="test-section">
+      <h3>1. 确保基础目录存在</h3>
+      <button onclick="testEnsureBaseDir()">确保存储目录</button>
+      <div id="ensureBaseDirStatus"></div>
+      <div id="ensureBaseDirLog" class="log"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>2. 写入文件测试</h3>
+      <div class="form-group">
+        <label for="writeFilePath">文件路径:</label>
+        <input type="text" id="writeFilePath" value="test-file.txt">
+      </div>
+      <div class="form-group">
+        <label for="writeFileContent">文件内容:</label>
+        <textarea id="writeFileContent" rows="4">这是测试文件的内容
+Line 2: 测试换行符
+Line 3: 特殊字符测试: !@#$%^&*()</textarea>
+      </div>
+      <button onclick="testWriteFile()">写入文件</button>
+      <div id="writeFileStatus"></div>
+      <div id="writeFileLog" class="log"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>3. 读取文件测试</h3>
+      <div class="form-group">
+        <label for="readFilePath">文件路径:</label>
+        <input type="text" id="readFilePath" value="test-file.txt">
+      </div>
+      <button onclick="testReadFile()">读取文件</button>
+      <div id="readFileStatus"></div>
+      <div id="readFileLog" class="log"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>4. 删除文件测试</h3>
+      <div class="form-group">
+        <label for="deleteFilePath">文件路径:</label>
+        <input type="text" id="deleteFilePath" value="test-file.txt">
+      </div>
+      <button onclick="testDeleteFile()">删除文件</button>
+      <div id="deleteFileStatus"></div>
+      <div id="deleteFileLog" class="log"></div>
+    </div>
+
+    <!-- <div class="test-section">
+      <h3>5. 路径解析测试</h3>
+      <div class="form-group">
+        <label for="resolvePathInput">输入路径:</label>
+        <input type="text" id="resolvePathInput" value="./test-file.txt">
+      </div>
+      <button onclick="testResolvePath()">解析路径</button>
+      <div id="resolvePathStatus"></div>
+      <div id="resolvePathLog" class="log"></div>
+    </div> -->
+
+    <div class="test-section">
+      <h3>6. 综合测试</h3>
+      <button onclick="testAllFunctions()">综合测试所有功能</button>
+      <div id="allFunctionsStatus"></div>
+      <div id="allFunctionsLog" class="log"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>7. 清理日志</h3>
+      <button onclick="clearLogs()">清空日志</button>
+      <div id="clearStatus"></div>
+    </div>
+  </div>
+
+  <script src="local://page/common/persenterFactory.js"></script>
+  <script src="local://page/common/commonFile.js"></script>
+  <script>
+    // 日志函数
+    function logToElement(elementId, message, type = 'info') {
+      const element = document.getElementById(elementId);
+      if (element) {
+        const timestamp = new Date().toLocaleTimeString();
+        element.innerHTML += `[${timestamp}] ${message}\n`;
+        element.scrollTop = element.scrollHeight;
+      }
+      console.log(`[${type.toUpperCase()}] ${message}`);
+    }
+
+    function updateStatus(elementId, message, type = 'info') {
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.innerHTML = `<div class="status ${type}">${message}</div>`;
+      }
+    }
+
+    // 1. 确保基础目录存在
+    async function testEnsureBaseDir() {
+      const logId = 'ensureBaseDirLog';
+      const statusId = 'ensureBaseDirStatus';
+      
+      try {
+        updateStatus(statusId, '开始确保存储目录...', 'info');
+        logToElement(logId, '=== 开始确保存储目录 ===');
+
+        logToElement(logId, '调用 CommonFileManager.ensureBaseDir() 方法...');
+        await CommonFileManager.ensureBaseDir();
+
+        updateStatus(statusId, '确保存储目录完成！', 'success');
+        logToElement(logId, '=== 确保存储目录完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `确保存储目录失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // 2. 写入文件测试
+    async function testWriteFile() {
+      const logId = 'writeFileLog';
+      const statusId = 'writeFileStatus';
+      const filePath = document.getElementById('writeFilePath').value;
+      const content = document.getElementById('writeFileContent').value;
+      
+      try {
+        updateStatus(statusId, '开始写入文件...', 'info');
+        logToElement(logId, '=== 开始写入文件 ===');
+        logToElement(logId, `文件路径: ${filePath}`);
+
+        logToElement(logId, '调用 CommonFileManager.fileWrite() 方法...');
+        const result = await CommonFileManager.fileWrite(filePath, content);
+        logToElement(logId, `写入结果: ${JSON.stringify(result)}`);
+
+        updateStatus(statusId, '文件写入完成！', 'success');
+        logToElement(logId, '=== 文件写入完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `文件写入失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // 3. 读取文件测试
+    async function testReadFile() {
+      const logId = 'readFileLog';
+      const statusId = 'readFileStatus';
+      const filePath = document.getElementById('readFilePath').value;
+      
+      try {
+        updateStatus(statusId, '开始读取文件...', 'info');
+        logToElement(logId, '=== 开始读取文件 ===');
+        logToElement(logId, `文件路径: ${filePath}`);
+
+        logToElement(logId, '调用 CommonFileManager.fileRead() 方法...');
+        const result = await CommonFileManager.fileRead(filePath);
+        logToElement(logId, `读取结果: ${JSON.stringify(result, null, 2)}`);
+
+        updateStatus(statusId, '文件读取完成！', 'success');
+        logToElement(logId, '=== 文件读取完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `文件读取失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // 4. 删除文件测试
+    async function testDeleteFile() {
+      const logId = 'deleteFileLog';
+      const statusId = 'deleteFileStatus';
+      const filePath = document.getElementById('deleteFilePath').value;
+      
+      try {
+        updateStatus(statusId, '开始删除文件...', 'info');
+        logToElement(logId, '=== 开始删除文件 ===');
+        logToElement(logId, `文件路径: ${filePath}`);
+
+        logToElement(logId, '调用 CommonFileManager.fileDelete() 方法...');
+        const result = await CommonFileManager.fileDelete(filePath);
+        logToElement(logId, `删除结果: ${JSON.stringify(result)}`);
+
+        updateStatus(statusId, '文件删除完成！', 'success');
+        logToElement(logId, '=== 文件删除完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `文件删除失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // // 5. 路径解析测试
+    // async function testResolvePath() {
+    //   const logId = 'resolvePathLog';
+    //   const statusId = 'resolvePathStatus';
+    //   const inputPath = document.getElementById('resolvePathInput').value;
+      
+    //   try {
+    //     updateStatus(statusId, '开始解析路径...', 'info');
+    //     logToElement(logId, '=== 开始解析路径 ===');
+    //     logToElement(logId, `输入路径: ${inputPath}`);
+
+    //     logToElement(logId, '调用 CommonFileManager.resolvePath() 方法...');
+    //     const result = CommonFileManager.resolvePath(inputPath);
+    //     logToElement(logId, `解析结果: ${result}`);
+
+    //     updateStatus(statusId, '路径解析完成！', 'success');
+    //     logToElement(logId, '=== 路径解析完成 ===');
+
+    //   } catch (error) {
+    //     updateStatus(statusId, `路径解析失败: ${error.message}`, 'error');
+    //     logToElement(logId, `错误: ${error.message}`, 'error');
+    //   }
+    // }
+
+    // 6. 综合测试所有功能
+    async function testAllFunctions() {
+      const logId = 'allFunctionsLog';
+      const statusId = 'allFunctionsStatus';
+      
+      try {
+        updateStatus(statusId, '开始综合测试...', 'info');
+        logToElement(logId, '=== 开始综合测试 ===');
+
+        // 确保基础目录存在
+        logToElement(logId, '1. 确保基础目录存在...');
+        await CommonFileManager.ensureBaseDir();
+
+        // 写入测试文件
+        const testFilePath = 'comprehensive-test.txt';
+        const testContent = '这是一个综合测试文件\n包含多行内容\n用于测试文件管理功能';
+        logToElement(logId, `2. 写入测试文件: ${testFilePath}`);
+        await CommonFileManager.fileWrite(testFilePath, testContent);
+
+        // 读取测试文件
+        logToElement(logId, `3. 读取测试文件: ${testFilePath}`);
+        const readResult = await CommonFileManager.fileRead(testFilePath);
+        logToElement(logId, `读取结果: ${JSON.stringify(readResult, null, 2)}`);
+
+        // 解析路径
+        logToElement(logId, `4. 解析路径: ${testFilePath}`);
+        const resolvedPath = CommonFileManager.resolvePath(testFilePath);
+        logToElement(logId, `解析结果: ${resolvedPath}`);
+
+        // 删除测试文件
+        // logToElement(logId, `5. 删除测试文件: ${testFilePath}`);
+        // await CommonFileManager.fileDelete(testFilePath);
+
+        updateStatus(statusId, '综合测试完成！', 'success');
+        logToElement(logId, '=== 综合测试完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `综合测试失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // 7. 清理日志
+    function clearLogs() {
+      const logElements = document.querySelectorAll('.log');
+      logElements.forEach(el => {
+        el.innerHTML = '';
+      });
+      
+      const statusElements = document.querySelectorAll('.status');
+      statusElements.forEach(el => {
+        el.innerHTML = '';
+      });
+      
+      updateStatus('clearStatus', '所有日志已清空！', 'success');
+    }
+  </script>
+</body>
+</html>

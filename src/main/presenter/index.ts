@@ -52,6 +52,7 @@ import { CustomSqlitePresenter } from './customSqlitePresenter'
 import { HiddenWebContentsPresenter } from './hideWebConPresenter'
 import { LoggerPresenter } from './loggerPresenter'
 import { IpWhitelistPresenter } from './whitelistPresenter'
+import { commonFileManager } from './commonFilePresenter'
 // IPC调用上下文接口
 interface IPCCallContext {
   tabId?: number
@@ -97,6 +98,7 @@ export class Presenter implements IPresenter {
   hideWebConPresenter: IHiddenWebContentsPresenter
   logPresenter: ILoggerPresenter
   whitelistPresenter: IIpWhitelistPresenter
+  commonFilePresenter: commonFileManager
 
   private constructor(lifecycleManager: ILifecycleManager) {
     // Store lifecycle manager reference for component access
@@ -134,6 +136,7 @@ export class Presenter implements IPresenter {
     this.customSqlitePresenter = new CustomSqlitePresenter()
     this.hideWebConPresenter = new HiddenWebContentsPresenter(this.tabPresenter)
     this.whitelistPresenter = new IpWhitelistPresenter(this.customSqlitePresenter)
+    this.commonFilePresenter = new commonFileManager()
 
     // Define dbDir for knowledge presenter
     const dbDir = path.join(app.getPath('userData'), 'app_db')

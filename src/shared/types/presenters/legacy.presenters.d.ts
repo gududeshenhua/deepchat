@@ -451,6 +451,7 @@ export interface IPresenter {
   logPresenter: ILoggerPresenter
   whitelistPresenter: IIpWhitelistPresenter
   customSqlitePresenter: ICustomSQLitePresenter
+  commonFilePresenter: ICommonFilePresenter
   init(): void
   destroy(): void
 }
@@ -2132,4 +2133,37 @@ export interface ILoggerPresenter {
 
   // 通用日志方法（等同于 info）
   log(...params: unknown[]): void
+}
+
+/**
+ * 通用文件管理Presenter接口
+ * 用于处理文件读写操作
+ */
+export interface ICommonFilePresenter {
+  /**
+   * 读取文件内容
+   */
+  fileRead(
+    filePath: string
+  ): Promise<{ success: boolean; type?: string; content?: any; mime?: string; message?: string }>
+
+  /**
+   * 写入文件内容
+   */
+  fileWrite(filePath: string, data: any): Promise<{ success: boolean; message?: string }>
+
+  /**
+   * 删除文件
+   */
+  fileDelete(_: any, filePath: string): Promise<{ success: boolean; message?: string }>
+
+  /**
+   * 解析文件路径
+   */
+  resolvePath(inputPath: string): string | null
+
+  /**
+   * 确保基础目录存在
+   */
+  ensureBaseDir(): Promise<void>
 }

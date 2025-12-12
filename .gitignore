@@ -16,6 +16,7 @@ build/macx64.json
 build/winarm.json
 build/winx64.json
 runtime/**/*
+resources/tempFile/*
 .eslintcache
 .env
 .env.local
