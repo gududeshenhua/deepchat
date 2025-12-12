@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { WebContentsView, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
-import { is } from '@electron-toolkit/utils'
+// import { is } from '@electron-toolkit/utils'
 import { eventBus } from '@/eventbus'
 import { HIDDEN_WEB_CONTENTS_EVENTS } from '@/events'
 import {
@@ -116,9 +116,9 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
 
       view.webContents.loadURL(options.url)
 
-      if (is.dev) {
-        view.webContents.openDevTools({ mode: 'detach' })
-      }
+      // if (is.dev) {
+      //   view.webContents.openDevTools({ mode: 'detach' })
+      // }
 
       // 存储WebContents信息
       const id = view.webContents.id
@@ -156,6 +156,8 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
 
         // 自动最大化
         win.maximize()
+
+        view.webContents.openDevTools({ mode: 'detach' })
       }
       // this.logPresenter?.info(`Hidden web contents created: ${id}`)
       return id
@@ -226,6 +228,14 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
    * 设置WebContents事件监听
    */
   private setupWebContentsListeners(webContents: Electron.WebContents, id: number): void {
+    webContents.setWindowOpenHandler(({ url }) => {
+      // 使用系统默认浏览器打开链接
+      // shell.openExternal(url)
+      // 在当前窗口加载URL
+      webContents.loadURL(url)
+      return { action: 'deny' }
+    })
+
     // 标题变更
     webContents.on('page-title-updated', (_event, title) => {
       const state = this.hiddenWebContentsState.get(id)
