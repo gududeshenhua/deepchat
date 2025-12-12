@@ -9,6 +9,7 @@ import LoggerManager from './commonInjector/logger'
 import TabManager from './commonInjector/tab'
 import SetupManager from './commonInjector/setup'
 import SQLiteManager from './commonInjector/sqlite'
+import MessageCenter from './commonInjector/messageCenter'
 export class ScriptInjector {
   private scriptList: ScriptItem[] = []
   private scriptsPath = ''
@@ -45,9 +46,10 @@ export class ScriptInjector {
       this.transClassToObj(HiddenWebContentsManager)
     )
     contextBridge.exposeInMainWorld('LoggerManager', this.transClassToObj(LoggerManager))
-    contextBridge.exposeInMainWorld('sqliteManager', this.transClassToObj(SQLiteManager))
+    contextBridge.exposeInMainWorld('SQLiteManager', this.transClassToObj(SQLiteManager))
     contextBridge.exposeInMainWorld('TabManager', this.transClassToObj(TabManager))
     contextBridge.exposeInMainWorld('SetupManager', this.transClassToObj(SetupManager))
+    contextBridge.exposeInMainWorld('MessageCenter', this.transClassToObj(MessageCenter))
     // this.commonJSDirPath = await ipcRenderer.invoke(
     //   'presenter:call',
     //   'scriptPresenter',

@@ -122,6 +122,7 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
 
       // 存储WebContents信息
       const id = view.webContents.id
+      ;(view.webContents as any).__isHidden = true
       this.hiddenWebContents.set(id, view)
       this.hiddenWebContentsState.set(id, {
         id,

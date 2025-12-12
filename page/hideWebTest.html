@@ -119,6 +119,7 @@
       <h3>4. WebContents通信测试</h3>
       <!-- <button onclick="testCommunication()">测试通信功能</button> -->
       <button onclick="testMessageSending()">测试窗口之间通信</button>
+      <button onclick="testDownloadMessage()">测试下载回调</button>
       <!-- <button onclick="testBroadcast()">测试广播消息</button> -->
       <!-- <button onclick="testRequestResponse()">测试请求-响应模式</button> -->
       <div id="communicationStatus"></div>
@@ -172,6 +173,7 @@
 
         // 创建隐藏WebContents
         logToElement(logId, '创建隐藏WebContents...');
+        // HiddenWebContentslanager
         const id = await HiddenWebContentsManager.createHiddenWebContents({
           url: "http://www.baidu.com",
           // 'http://localhost:4000/login'
@@ -476,6 +478,75 @@
               }
             })();
           `);
+        
+       
+        
+        updateStatus(statusId, '消息发送测试完成！', 'success');
+        logToElement(logId, '=== 消息发送测试完成 ===');
+        
+      } catch (error) {
+        updateStatus(statusId, `消息发送测试失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    async function testDownloadMessage() {
+      const logId = 'communicationLog';
+      const statusId = 'communicationStatus';
+      
+      try {
+        updateStatus(statusId, '开始消息发送测试...', 'info');
+        logToElement(logId, '=== 开始消息发送测试 ===');
+        const currentTabId = await TabManager.getCurrentTabId()
+        // 创建WebContents
+        const id1 = await HiddenWebContentsManager.createHiddenWebContents({
+          url: 'https://www.baidu.com',
+          visible: true
+        });
+        logToElement(logId, `创建WebContents1 (ID: ${id1})`);
+        // await HiddenWebContentsManager.sleep(2000);
+        // const id2 = await HiddenWebContentsManager.createHiddenWebContents({
+        //   url: 'https://www.google.com',
+        //   visible: false
+        // });
+        // 发送不同类型的消息
+        // 设置消息监听器
+        logToElement(logId, '设置消息监听器...');
+        let stopListen = MessageCenter.onMessageReceived((data) => {
+          logToElement(logId, `WebContents2 收到消息: ${JSON.stringify(data)}`);
+        });
+        await HiddenWebContentsManager.executeJavaScript(id1, `
+            MessageCenter.onFileDownloadCompleted(async (data)=>{
+              console.log(data)
+              const result = await MessageCenter.sendMessageToWebContents(${currentTabId}, data);
+              console.log(result)
+            });
+             // 模拟 JSON 数据
+            const data = {
+              name: "ChatGPT",
+              time:'132132',
+              items: [1, 2, 3, 4]
+            };
+
+            // 将 JSON 转成字符串
+            const jsonStr = JSON.stringify(data, null, 2);
+
+            // 创建 Blob
+            const blob = new Blob([jsonStr], { type: "application/json" });
+            console.log("--------bilob--------", blob);
+            // 生成下载链接
+            const url1 = URL.createObjectURL(blob);
+
+            // 创建 <a> 标签触发下载
+            const a = document.createElement("a");
+            a.href = url1;
+            a.download = "data.json";  // 下载的文件名
+            a.click();
+            console.log("--------down--------", blob);
+            // 释放 URL
+            URL.revokeObjectURL(url1);
+            
+       `);
         
        
         

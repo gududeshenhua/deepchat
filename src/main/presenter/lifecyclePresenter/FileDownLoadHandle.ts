@@ -14,20 +14,22 @@ export function handleFileDownload(_event, item, webContents) {
   const originalTitle = webContents.getTitle()
   console.log('originalTitle', originalTitle)
   const allSetUpData: any = presenter.setupPresenter.getAllValues()
-  const notShowModalList = allSetUpData['not-show-modal-list'] || []
+  // const notShowModalList = allSetUpData['not-show-modal-list'] || []
   const name = item.getFilename()
   console.log('-----go in download--------')
   const filename = `${Date.now()}-${name}`
   console.log('---- file name ----', name)
-  console.log('---- not list ----', notShowModalList)
-  console.log(notShowModalList.includes(name))
+  // console.log('---- not list ----', notShowModalList)
+  // console.log('---- webContents ----', webContents.id)
+  // console.log('---- webContents ----', (webContents as any).__isHidden)
+  // console.log(notShowModalList.includes(name))
 
   // 为每个下载项生成唯一ID
   const downloadId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
   if (
     (allSetUpData['download-directory'] && !allSetUpData['prompt-save-dialog']) ||
-    notShowModalList.includes(name)
+    (webContents as any).__isHidden
   ) {
     const downloadPath = path.join(allSetUpData['download-directory'], filename)
     console.log('downloadPath', downloadPath)
@@ -75,6 +77,12 @@ export function handleFileDownload(_event, item, webContents) {
       // 通知前端下载完成，包含下载ID
       eventBus.sendToRenderer('download-completed', SendTarget.ALL_WINDOWS, {
         downloadId: downloadId,
+        filename: name,
+        savePath: savePath,
+        state: state
+      })
+      webContents.send('file-download-completed', {
+        downloadId,
         filename: name,
         savePath: savePath,
         state: state
