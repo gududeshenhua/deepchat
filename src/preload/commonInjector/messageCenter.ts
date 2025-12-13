@@ -70,11 +70,11 @@ class MessageCenter {
     }
 
     // 注册事件监听器
-    ipcRenderer?.on('file-download-completed', downloadCompletedHandler)
+    ipcRenderer?.on('download-completed', downloadCompletedHandler)
 
     // 返回取消监听函数
     return () => {
-      ipcRenderer?.removeListener('file-download-completed', downloadCompletedHandler)
+      ipcRenderer?.removeListener('download-completed', downloadCompletedHandler)
     }
   }
 }

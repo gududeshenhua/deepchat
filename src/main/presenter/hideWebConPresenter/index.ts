@@ -213,8 +213,16 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
   /**
    * 获取所有隐藏的WebContentsView实例
    */
-  getAllHiddenWebContents(): Map<number, WebContentsView> {
-    return new Map(this.hiddenWebContents)
+  getAllHiddenWebContents(): any {
+    console.log(`getAllHiddenWebContents: ${this.hiddenWebContents}`)
+    if (!this.hiddenWebContents) return []
+
+    return Array.from(this.hiddenWebContents.entries()).map(([id, view]) => ({
+      id,
+      url: view.webContents.getURL(),
+      title: view.webContents.getTitle()
+    }))
+    // return new Map(this.hiddenWebContents)
   }
 
   /**
@@ -235,6 +243,16 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
       webContents.loadURL(url)
       return { action: 'deny' }
     })
+
+    // webContents.session.webRequest.onBeforeRedirect((details) => {
+    //     // 重定向完成
+    //    console.log('---------- redirect-finished ----------', details.url, details.redirectURL, details.statusCode)
+    //    webContents.send('redirect-finished', {
+    //     from: details.url,
+    //     to: details.redirectURL,
+    //     code: details.statusCode
+    //   });
+    // });
 
     // 标题变更
     webContents.on('page-title-updated', (_event, title) => {

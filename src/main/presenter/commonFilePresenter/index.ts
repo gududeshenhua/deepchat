@@ -10,6 +10,8 @@ const path = require('path')
 // const isDev = require('electron-is-dev');
 import { is } from '@electron-toolkit/utils'
 import { ICommonFilePresenter } from '@shared/presenter'
+const mammoth = require('mammoth')
+import pdfParse from 'pdf-parse-new'
 
 const mime = {
   '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -60,6 +62,75 @@ export class commonFileManager implements ICommonFilePresenter {
       if (['.txt', '.js'].includes(ext)) {
         const text = await fs.promises.readFile(realPath, 'utf8')
         return { success: true, type: 'text', content: text }
+      }
+
+      // ✅ DOCX → mammoth 提取文本
+      if (ext === '.docx') {
+        console.log('docx--------------', realPath)
+        const result = await mammoth.extractRawText({
+          path: realPath
+        })
+
+        return {
+          success: true,
+          type: 'docx-text',
+          content: result.value, // 纯文本
+          messages: result.messages // 可选：警告信息
+        }
+      }
+
+      // ✅ PDF → 提取文本
+      if (ext === '.pdf') {
+        const buffer = await fs.promises.readFile(realPath)
+        const pageTexts: string[] = []
+        const renderOptions = {
+          verbosityLevel: 0 as 0 | 5 | undefined,
+          pageTexts,
+          normalizeWhitespace: false,
+          disableCombineTextItems: false,
+          // Custom renderer to collect text by page
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          pagerender: function (pageData: any) {
+            // Get text content from current page
+            const renderOptions = {
+              normalizeWhitespace: false,
+              disableCombineTextItems: false
+            }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            return pageData.getTextContent(renderOptions).then(function (textContent: any) {
+              let lastY: number | null = null
+              let text = ''
+
+              // Process text items, try to preserve paragraph structure
+              for (const item of textContent.items) {
+                if (lastY === null || Math.abs(lastY - item.transform[5]) > 5) {
+                  if (text) text += '\n'
+                  lastY = item.transform[5]
+                } else if (text && !text.endsWith(' ')) {
+                  text += ' '
+                }
+                text += item.str
+              }
+
+              // Add current page text to page collection
+              pageTexts.push(text)
+              return text
+            })
+          }
+        }
+        const pdfData = await pdfParse(buffer, renderOptions)
+
+        console.log('pdf--------------', pdfData)
+
+        return {
+          success: true,
+          type: 'pdf-text',
+          content: pdfData.text // 提取的纯文本
+          // meta: {
+          //   pageCount: result.numpages,
+          //   info: result.info
+          // }
+        }
       }
 
       // Word / Excel / other binary files → read buffer

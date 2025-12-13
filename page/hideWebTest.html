@@ -176,11 +176,17 @@
         // HiddenWebContentslanager
         const id = await HiddenWebContentsManager.createHiddenWebContents({
           url: "http://www.baidu.com",
-          // 'http://localhost:4000/login'
+          // url:'http://localhost:4000/login',
           visible: true
         });
         currentWebContentsId = id;
         logToElement(logId, `WebContents创建成功，ID: ${id}`);
+        // await HiddenWebContentsManager.executeJavaScript(id, `
+        //   HiddenWebContentsManager.onRedirectFinished((data) => {
+        //     console.log('重定向完成:', data);
+        //   });
+        //   console.log('重定向完成事件监听注册成功');
+        // `);
         // // debugger
         // await HiddenWebContentsManager.executeJavaScript(id, `
         //   document.title = '测试页面 - ' + new Date().toLocaleString();
@@ -512,15 +518,16 @@
         // 发送不同类型的消息
         // 设置消息监听器
         logToElement(logId, '设置消息监听器...');
-        let stopListen = MessageCenter.onMessageReceived((data) => {
-          logToElement(logId, `WebContents2 收到消息: ${JSON.stringify(data)}`);
+        // let stopListen = MessageCenter.onMessageReceived((data) => {
+        // logToElement(logId, `WebContents2 收到消息: ${JSON.stringify(data)}`);
+        // });
+        // const result = await MessageCenter.sendMessageToWebContents(${currentTabId}, data);
+        // console.log(result)
+        MessageCenter.onFileDownloadCompleted(async (data)=>{
+          console.log(data)
         });
+        
         await HiddenWebContentsManager.executeJavaScript(id1, `
-            MessageCenter.onFileDownloadCompleted(async (data)=>{
-              console.log(data)
-              const result = await MessageCenter.sendMessageToWebContents(${currentTabId}, data);
-              console.log(result)
-            });
              // 模拟 JSON 数据
             const data = {
               name: "ChatGPT",

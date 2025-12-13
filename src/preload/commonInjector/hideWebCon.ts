@@ -100,7 +100,9 @@ class HiddenWebContentsManager {
         await globalThis.PresenterFactory.usePresenter(
           'hideWebConPresenter'
         ).getAllHiddenWebContents()
-      console.log(`Retrieved ${webContentsMap.size} hidden web contents`)
+      console.log(`Retrieved ${webContentsMap} hidden web contents`)
+      // debugger;
+      // console.log(`Retrieved ${webContentsMap.size} hidden web contents`)
       return webContentsMap
     } catch (error) {
       console.error('Failed to get all hidden web contents:', error)
@@ -407,6 +409,33 @@ class HiddenWebContentsManager {
       ipcRenderer?.removeListener('webcontents-receive-message', messageHandler)
     }
   }
+
+  // /**
+  //  * 监听重定向完成事件
+  //  * @param {function} callback - 重定向完成回调函数
+  //  */
+  // onRedirectFinished(callback) {
+  //   if (typeof callback !== 'function') {
+  //     throw new TypeError('Callback must be a function')
+  //   }
+
+  //   // 监听来自presenter的消息
+  //   const messageHandler = (_event, data) => {
+  //     try {
+  //       callback(data)
+  //     } catch (error) {
+  //       console.error('Error in redirect-finished callback:', error)
+  //     }
+  //   }
+
+  //   // 注册事件监听器
+  //   ipcRenderer?.on('redirect-finished', messageHandler)
+
+  //   // 返回取消监听函数
+  //   return () => {
+  //     ipcRenderer?.removeListener('redirect-finished', messageHandler)
+  //   }
+  // }
 
   /**
    * 获取WebContents的通信信息
