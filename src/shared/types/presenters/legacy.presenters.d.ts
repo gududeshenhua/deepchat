@@ -452,8 +452,33 @@ export interface IPresenter {
   whitelistPresenter: IIpWhitelistPresenter
   customSqlitePresenter: ICustomSQLitePresenter
   commonFilePresenter: ICommonFilePresenter
+  excelPresenter: IExcelPresenter
   init(): void
   destroy(): void
+}
+export interface IExcelPresenter {
+  /**
+   * 无模板导出
+   */
+  createExcel(options: {
+    sheets: Array<{
+      name: string
+      columns: Array<{ header: string; key: string; width?: number }>
+      rows?: any[][]
+    }>
+  }): Promise<Buffer>
+
+  /**
+   * 有模板导出
+   */
+  createByTemplate(options: {
+    templatePath: string
+    fill?: {
+      byCell?: Array<{ sheet: string; data: Record<string, any> }>
+      byKey?: Array<{ sheet: string; data: Record<string, any> }>
+    }
+    output?: 'buffer' | string
+  }): Promise<Buffer | string>
 }
 export interface IIpWhitelistPresenter {
   // 初始化数据库表

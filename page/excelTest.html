@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel功能测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        h2 {
+            color: #555;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            box-sizing: border-box;
+        }
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        select {
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .info {
+            background-color: #e2f0ff;
+            border-left: 4px solid #007bff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Excel功能测试页面</h1>
+        
+        <div class="info">
+            <p><strong>说明：</strong>此页面用于测试Electron应用中的Excel功能，包括无模板导出和有模板导出。</p>
+        </div>
+
+        <!-- 无模板导出测试 -->
+        <div class="test-section">
+            <h2>无模板导出测试</h2>
+            <p>创建一个新的Excel文件，不使用任何模板。</p>
+            <button id="createExcelBtn">创建Excel文件（无模板）</button>
+            <div id="createExcelResult" class="result"></div>
+        </div>
+
+        <!-- 有模板导出测试 -->
+        <div class="test-section">
+            <h2>有模板导出测试</h2>
+            <p>使用现有Excel文件作为模板，并填充数据。</p>
+            
+            <label for="templatePath">模板文件路径:</label>
+            <input type="text" id="templatePath" placeholder="请输入模板文件的绝对路径">
+            
+            <label for="fillData">填充数据 (JSON格式):</label>
+            <textarea id="fillData" placeholder='{
+  "byCell": [
+    {
+      "sheet": "Sheet1",
+      "data": {
+        "A1": "填充的数据"
+      }
+    }
+  ],
+  "byKey": [
+    {
+      "sheet": "Sheet1",
+      "data": {
+        "name": "张三",
+        "age": 25
+      }
+    }
+  ]
+}'></textarea>
+            
+            <label for="outputType">输出类型:</label>
+            <select id="outputType">
+                <option value="buffer">Buffer</option>
+                <option value="file">文件路径</option>
+            </select>
+            
+            <button id="createByTemplateBtn">创建Excel文件（有模板）</button>
+            <div id="createByTemplateResult" class="result"></div>
+        </div>
+
+        <!-- 日志显示区域 -->
+        <div class="test-section">
+            <h2>操作日志</h2>
+            <textarea id="logArea" readonly placeholder="操作日志将显示在这里..."></textarea>
+            <button id="clearLogBtn">清空日志</button>
+        </div>
+    </div>
+
+    <script>
+        // 日志记录函数
+        function log(message) {
+            const logArea = document.getElementById('logArea');
+            const timestamp = new Date().toLocaleTimeString();
+            logArea.value += `[${timestamp}] ${message}\n`;
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        // 显示结果函数
+        function showResult(elementId, message, isSuccess) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `result ${isSuccess ? 'success' : 'error'}`;
+            element.style.display = 'block';
+        }
+
+        // 清空日志
+        document.getElementById('clearLogBtn').addEventListener('click', () => {
+            document.getElementById('logArea').value = '';
+            log('日志已清空');
+        });
+
+        // 等待页面加载完成
+        window.addEventListener('DOMContentLoaded', () => {
+            log('页面加载完成');
+            
+            // 检查ExcelManager是否存在
+            if (typeof window.ExcelManager === 'undefined') {
+                log('警告: ExcelManager未定义，请确保preload脚本已正确加载');
+                showResult('createExcelResult', 'ExcelManager未定义，请确保preload脚本已正确加载', false);
+                return;
+            }
+            
+            log('ExcelManager已就绪');
+            
+            // 无模板导出测试
+            document.getElementById('createExcelBtn').addEventListener('click', async () => {
+                const btn = document.getElementById('createExcelBtn');
+                btn.disabled = true;
+                btn.textContent = '创建中...';
+                
+                try {
+                    log('开始创建无模板Excel文件...');
+                    
+                    const options = {
+                        sheets: [
+                            {
+                                name: '员工信息',
+                                columns: [
+                                    { header: '姓名', key: 'name', width: 20 },
+                                    { header: '年龄', key: 'age', width: 10 },
+                                    { header: '部门', key: 'department', width: 15 },
+                                    { header: '职位', key: 'position', width: 20 }
+                                ],
+                                rows: [
+                                    ['张三', 25, '技术部', '前端工程师'],
+                                    ['李四', 30, '技术部', '后端工程师'],
+                                    ['王五', 28, '设计部', 'UI设计师'],
+                                    ['赵六', 32, '产品部', '产品经理']
+                                ]
+                            },
+                            {
+                                name: '产品信息',
+                                columns: [
+                                    { header: '产品名称', key: 'productName', width: 20 },
+                                    { header: '价格', key: 'price', width: 10 },
+                                    { header: '库存', key: 'stock', width: 10 },
+                                    { header: '分类', key: 'category', width: 15 }
+                                ],
+                                rows: [
+                                    ['笔记本电脑', 5999, 50, '电子产品'],
+                                    ['智能手机', 3999, 100, '电子产品'],
+                                    ['平板电脑', 2999, 80, '电子产品'],
+                                    ['无线耳机', 299, 200, '电子产品']
+                                ]
+                            }
+                        ]
+                    };
+                    
+                    const result = await window.ExcelManager.createExcel(options);
+                    log(`无模板Excel创建成功，返回类型: ${typeof result}`);
+                    
+                    // 如果是Buffer，可以转换为Blob并下载
+                    if (result instanceof ArrayBuffer || result instanceof Uint8Array) {
+                        const arrayBuffer = result instanceof Uint8Array ? result.buffer : result;
+                        const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'excel_without_template.xlsx';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        log('无模板Excel文件已下载');
+                        showResult('createExcelResult', 'Excel文件创建成功并已下载', true);
+                    } else {
+                        showResult('createExcelResult', `返回结果类型: ${typeof result}`, true);
+                    }
+                } catch (error) {
+                    log(`无模板Excel创建失败: ${error.message}`);
+                    showResult('createExcelResult', `创建失败: ${error.message}`, false);
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = '创建Excel文件（无模板）';
+                }
+            });
+            
+            // 有模板导出测试
+            document.getElementById('createByTemplateBtn').addEventListener('click', async () => {
+                const btn = document.getElementById('createByTemplateBtn');
+                const templatePath = document.getElementById('templatePath').value;
+                const fillData = document.getElementById('fillData').value;
+                const outputType = document.getElementById('outputType').value;
+                
+                if (!templatePath) {
+                    showResult('createByTemplateResult', '请提供模板文件路径', false);
+                    log('错误: 未提供模板文件路径');
+                    return;
+                }
+                
+                let fillObj = {};
+                try {
+                    if (fillData.trim()) {
+                        fillObj = JSON.parse(fillData);
+                    }
+                } catch (e) {
+                    showResult('createByTemplateResult', `填充数据格式错误: ${e.message}`, false);
+                    log(`错误: 填充数据格式错误 - ${e.message}`);
+                    return;
+                }
+                
+                btn.disabled = true;
+                btn.textContent = '创建中...';
+                
+                try {
+                    log('开始创建有模板Excel文件...');
+                    
+                    const options = {
+                        templatePath: templatePath,
+                        fill: fillObj,
+                        output: outputType
+                    };
+                    
+                    const result = await window.ExcelManager.createByTemplate(options);
+                    log(`有模板Excel创建成功，返回类型: ${typeof result}`);
+                    
+                    if (outputType === 'buffer' && (result instanceof ArrayBuffer || result instanceof Uint8Array)) {
+                        const arrayBuffer = result instanceof Uint8Array ? result.buffer : result;
+                        const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'excel_with_template.xlsx';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        log('有模板Excel文件已下载');
+                        showResult('createByTemplateResult', 'Excel文件创建成功并已下载', true);
+                    } else if (typeof result === 'string') {
+                        showResult('createByTemplateResult', `文件已保存到: ${result}`, true);
+                        log(`文件已保存到: ${result}`);
+                    } else {
+                        showResult('createByTemplateResult', `返回结果类型: ${typeof result}`, true);
+                    }
+                } catch (error) {
+                    log(`有模板Excel创建失败: ${error.message}`);
+                    showResult('createByTemplateResult', `创建失败: ${error.message}`, false);
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = '创建Excel文件（有模板）';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

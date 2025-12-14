@@ -28,7 +28,9 @@ import {
   ICustomSQLitePresenter,
   IHiddenWebContentsPresenter,
   ILoggerPresenter,
-  IIpWhitelistPresenter
+  IIpWhitelistPresenter,
+  ICommonFilePresenter,
+  IExcelPresenter
 } from '@shared/presenter'
 import { eventBus } from '@/eventbus'
 import { LLMProviderPresenter } from './llmProviderPresenter'
@@ -53,6 +55,7 @@ import { HiddenWebContentsPresenter } from './hideWebConPresenter'
 import { LoggerPresenter } from './loggerPresenter'
 import { IpWhitelistPresenter } from './whitelistPresenter'
 import { commonFileManager } from './commonFilePresenter'
+import { excelPresenter } from './excelPresenter'
 // IPC调用上下文接口
 interface IPCCallContext {
   tabId?: number
@@ -98,7 +101,8 @@ export class Presenter implements IPresenter {
   hideWebConPresenter: IHiddenWebContentsPresenter
   logPresenter: ILoggerPresenter
   whitelistPresenter: IIpWhitelistPresenter
-  commonFilePresenter: commonFileManager
+  commonFilePresenter: ICommonFilePresenter
+  excelPresenter: IExcelPresenter
 
   private constructor(lifecycleManager: ILifecycleManager) {
     // Store lifecycle manager reference for component access
@@ -137,6 +141,7 @@ export class Presenter implements IPresenter {
     this.hideWebConPresenter = new HiddenWebContentsPresenter(this.tabPresenter)
     this.whitelistPresenter = new IpWhitelistPresenter(this.customSqlitePresenter)
     this.commonFilePresenter = new commonFileManager()
+    this.excelPresenter = new excelPresenter()
 
     // Define dbDir for knowledge presenter
     const dbDir = path.join(app.getPath('userData'), 'app_db')
