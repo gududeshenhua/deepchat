@@ -122,6 +122,17 @@
     </div>
   </div>
 
+  <div class="container">
+    <h2>File Stream and Upload Test</h2>
+    <div class="test-section">
+      <label for="filePath">File Path:</label>
+      <input type="text" id="filePath" placeholder="C:/Users/xxx/Desktop/test.wps" value="C:/Users/xxx/Desktop/test.wps">
+      
+      <button onclick="testFileStreamAndUpload()">Get File Stream and Upload</button>
+      <div id="fileStreamResult" class="result">Click "Get File Stream and Upload" to see results</div>
+    </div>
+  </div>
+
   <script>
     let sseEventSource = null;
     let mockSseEventSource = null;
@@ -302,6 +313,80 @@
       document.getElementById('stopMockSseBtn').disabled = true;
       const currentText = document.getElementById('mockSseResult').textContent;
       document.getElementById('mockSseResult').textContent = currentText + 'Mock SSE connection closed.\n';
+    }
+
+    // Test File Stream and Upload
+    async function testFileStreamAndUpload() {
+      const filePath = document.getElementById('filePath').value;
+
+      if (!filePath) {
+        displayResult('fileStreamResult', 'Please enter a file path');
+        return;
+      }
+
+      displayResult('fileStreamResult', 'Processing...');
+
+      try {
+        // Get file stream from proxy
+        const res = await fetch('http://127.0.0.1:8021/api/stream-wps', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            path: filePath
+          })
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        const blob = await res.blob();
+
+        // Create FormData and append the file
+        const formData = new FormData();
+        formData.append('file', blob, 'test.wps');
+        console.log(formData);
+
+        
+        // Here you would normally send the formData to your upload endpoint
+        // For demonstration purposes, we'll just show the formData details
+        displayResult('fileStreamResult', {
+          message: 'File stream retrieved and FormData created successfully',
+          fileName: 'test.wps',
+          fileSize: blob.size,
+          fileType: blob.type,
+          formDataEntries: Array.from(formData.entries()).map(([key, value]) => ({
+            key: key,
+            value: value instanceof File ? `${value.name} (${value.size} bytes)` : value
+          }))
+        });
+      //  let data =  await fetch('http://127.0.0.1:8021/api/upload-wps', {
+      //     method: 'POST',
+      //     body: formData
+      //   })
+      //   console.log(data)
+        // Example of how you would upload the file:
+        /*
+        const uploadRes = await fetch('YOUR_UPLOAD_ENDPOINT', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!uploadRes.ok) {
+          throw new Error(`Upload failed with status: ${uploadRes.status}`);
+        }
+
+        const uploadResult = await uploadRes.json();
+        displayResult('fileStreamResult', {
+          message: 'File uploaded successfully',
+          result: uploadResult
+        });
+        */
+      } catch (error) {
+        displayResult('fileStreamResult', 'Error: ' + error.message);
+      }
     }
 
     // Clean up connections when page unloads

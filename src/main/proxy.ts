@@ -3,12 +3,49 @@ import { net, session } from 'electron'
 // const fs = require("fs").promises;
 // const log = require('electron-log');
 // import { callScriptFile } from "./tools";
+import fs from 'fs'
+import path from 'path'
 
 export function createHttpServer() {
   //创建http服务
   const server = createServer(processHttpRequest)
   server.listen(8021, '127.0.0.1', () => {
     console.log('HTTP server running on 8021')
+  })
+}
+
+function handleUploadWps(request, response) {
+  const contentType = request.headers['content-type'] || ''
+
+  if (!contentType.includes('multipart/form-data')) {
+    response.writeHead(400)
+    response.end('Not multipart')
+    return
+  }
+
+  const match = contentType.match(/boundary=(.+)$/)
+  const boundary = Buffer.from('--' + match![1])
+
+  const chunks: Buffer[] = []
+  request.on('data', (chunk) => chunks.push(chunk))
+
+  request.on('end', () => {
+    const buffer = Buffer.concat(chunks)
+
+    const headerEnd = buffer.indexOf('\r\n\r\n')
+    const header = buffer.slice(0, headerEnd).toString()
+
+    const filename = header.match(/filename="([^"]+)"/)?.[1] ?? 'upload.wps'
+
+    const fileStart = headerEnd + 4
+    const fileEnd = buffer.indexOf(boundary, fileStart) - 2
+    const fileBuffer = buffer.slice(fileStart, fileEnd)
+
+    const savePath = `C:/Users/Administrator/Desktop/生图/${filename}`
+    fs.writeFileSync(savePath, fileBuffer)
+
+    response.writeHead(200, { 'Content-Type': 'application/json' })
+    response.end(JSON.stringify({ success: true, filename }))
   })
 }
 
@@ -28,7 +65,11 @@ async function processHttpRequest(request, response) {
   const urlObj = new URL(`http://localhost${url}`)
   const pathname = urlObj.pathname
   // const searchParams = urlObj.searchParams;
-
+  // ✅ 1️⃣ 上传接口：最先处理，直接 return
+  if (pathname === '/api/upload-wps') {
+    handleUploadWps(request, response)
+    return
+  }
   //  // 🚨 1. mock SSE 必须最先处理
   // if (pathname === '/scripts/proxy/mock/sse') {
   //     console.log("mock SSE start");
@@ -68,15 +109,20 @@ async function processHttpRequest(request, response) {
     bodyContent += chunk.toString()
   })
   request.on('end', async function () {
-    let postData: any = null
-    if (bodyContent.length > 0) {
-      try {
-        postData = JSON.parse(bodyContent)
-      } catch (err) {
-        console.log('bad json:', bodyContent)
-        response.writeHeader(400, { 'Content-Type': 'Application/json' })
-        response.end('Bad body:' + bodyContent)
-        return
+    const contentType = request.headers['content-type'] || ''
+    // ✅ multipart/form-data：不要 JSON.parse
+    let postData: any = {}
+    if (contentType.includes('multipart/form-data')) {
+    } else {
+      if (bodyContent.length > 0) {
+        try {
+          postData = JSON.parse(bodyContent)
+        } catch (err) {
+          console.log('bad json:', bodyContent)
+          response.writeHeader(400, { 'Content-Type': 'Application/json' })
+          response.end('Bad body:' + bodyContent)
+          return
+        }
       }
     }
     console.info('request:', url)
@@ -248,8 +294,54 @@ async function processHttpRequest(request, response) {
         })
         return
       }
-    }
+    } else if (pathname.startsWith('/api/stream-wps')) {
+      try {
+        const filePath = postData?.path
 
+        if (!filePath || typeof filePath !== 'string') {
+          response.writeHead(400, { 'Content-Type': 'application/json' })
+          response.end(JSON.stringify({ success: false, message: 'missing path' }))
+          return
+        }
+
+        const ext = path.extname(filePath).toLowerCase()
+        if (ext !== '.wps') {
+          response.writeHead(400, { 'Content-Type': 'application/json' })
+          response.end(JSON.stringify({ success: false, message: 'Not a wps file' }))
+          return
+        }
+
+        // 文件是否存在
+        if (!fs.existsSync(filePath)) {
+          response.writeHead(404, { 'Content-Type': 'application/json' })
+          response.end(JSON.stringify({ success: false, message: 'File not found' }))
+          return
+        }
+
+        // 👇 必须在所有校验通过后再写 header
+        response.writeHead(200, {
+          'Content-Type': 'application/octet-stream',
+          // 'Content-Disposition': `inline; filename="${path.basename(filePath)}"`,
+          'Access-Control-Allow-Origin': '*'
+        })
+
+        const stream = fs.createReadStream(filePath)
+
+        stream.on('error', (err) => {
+          console.error('wps stream error:', err)
+          try {
+            response.end(String(err))
+          } catch (_) {}
+        })
+
+        stream.pipe(response)
+        return
+      } catch (err: any) {
+        response.writeHead(500, { 'Content-Type': 'application/json' })
+        response.end(JSON.stringify({ success: false, message: err.message }))
+        return
+      }
+    }
     // if(pathname.endsWith(".js") && (pathname.startsWith("/scripts/") || pathname.startsWith("/src/data"))){
     //     const params = { ...Object.fromEntries(searchParams), ...(postData || {}) };
     //     const scriptPath = import.meta.env.MODE === 'production' ? `resources/app/${pathname.substring(1)}` : pathname.substring(1);

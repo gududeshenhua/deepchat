@@ -164,13 +164,24 @@ export class commonFileManager implements ICommonFilePresenter {
               })
               sheetData.columns = columns
 
-              // 获取行数据（从第二行开始）
+              // // 获取行数据（从第二行开始）
+              // for (let i = 2; i <= worksheet.rowCount; i++) {
+              //   const row = worksheet.getRow(i)
+              //   const rowData: any = []
+              //   row.eachCell((cell: any) => {
+              //     rowData.push(cell.value)
+              //   })
+              //   sheetData.rows.push(rowData)
+              // }
               for (let i = 2; i <= worksheet.rowCount; i++) {
                 const row = worksheet.getRow(i)
-                const rowData: any = []
-                row.eachCell((cell: any) => {
-                  rowData.push(cell.value)
-                })
+                const rowData: any[] = []
+
+                for (let col = 1; col <= worksheet.columnCount; col++) {
+                  const cell = row.getCell(col)
+                  rowData.push(cell.value ?? '') // 空值补 ""
+                }
+
                 sheetData.rows.push(rowData)
               }
             }
