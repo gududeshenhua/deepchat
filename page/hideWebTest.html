@@ -528,6 +528,10 @@
         });
         
         await HiddenWebContentsManager.executeJavaScript(id1, `
+            MessageCenter.onFileDownloadCompleted(async (data)=>{
+              console.log("--------downloadCompleted--------", data);
+              // console.log(data)
+            });
              // 模拟 JSON 数据
             const data = {
               name: "ChatGPT",

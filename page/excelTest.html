@@ -117,6 +117,13 @@
         <div class="test-section">
             <h2>无模板导出测试</h2>
             <p>创建一个新的Excel文件，不使用任何模板。</p>
+            
+            <label for="outputTypeNoTemplate">输出类型:</label>
+            <select id="outputTypeNoTemplate">
+                <option value="buffer">Buffer</option>
+                <option value="file">文件路径</option>
+            </select>
+            
             <button id="createExcelBtn">创建Excel文件（无模板）</button>
             <div id="createExcelResult" class="result"></div>
         </div>
@@ -147,7 +154,16 @@
         "age": 25
       }
     }
-  ]
+  ],
+  "byRows": [
+      {
+        sheet: "Sheet1",
+        startRow: 3,
+        rows: [
+          ["笔记本电脑", 5999, 50, "电子产品],
+        ]
+      }
+    ]
 }'></textarea>
             
             <label for="outputType">输出类型:</label>
@@ -203,10 +219,22 @@
             }
             
             log('ExcelManager已就绪');
+            document.getElementById('fillData').value = JSON.stringify({
+              "byRows": [
+                {
+                  sheet: "员工信息",
+                  startRow: 3,
+                  rows: [
+                    ["笔记本电脑", 5999, 50, "电子产品"]
+                  ]
+                }
+              ]
+            });
             
             // 无模板导出测试
             document.getElementById('createExcelBtn').addEventListener('click', async () => {
                 const btn = document.getElementById('createExcelBtn');
+                const outputTypeNoTemplate = document.getElementById('outputTypeNoTemplate').value;
                 btn.disabled = true;
                 btn.textContent = '创建中...';
                 
@@ -248,11 +276,18 @@
                         ]
                     };
                     
+                    // 如果选择了文件输出类型，则添加额外的参数
+                    if (outputTypeNoTemplate === 'file') {
+                        options.defaultName = 'excel_without_template.xlsx';
+                        options.output = 'file';
+                    } else {
+                        options.output = 'buffer';
+                    }
+                    
                     const result = await window.ExcelManager.createExcel(options);
                     log(`无模板Excel创建成功，返回类型: ${typeof result}`);
                     
-                    // 如果是Buffer，可以转换为Blob并下载
-                    if (result instanceof ArrayBuffer || result instanceof Uint8Array) {
+                    if (outputTypeNoTemplate === 'buffer' && (result instanceof ArrayBuffer || result instanceof Uint8Array)) {
                         const arrayBuffer = result instanceof Uint8Array ? result.buffer : result;
                         const blob = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
                         const url = URL.createObjectURL(blob);
@@ -265,6 +300,9 @@
                         URL.revokeObjectURL(url);
                         log('无模板Excel文件已下载');
                         showResult('createExcelResult', 'Excel文件创建成功并已下载', true);
+                    } else if (typeof result === 'string') {
+                        showResult('createExcelResult', `文件已保存到: ${result}`, true);
+                        log(`文件已保存到: ${result}`);
                     } else {
                         showResult('createExcelResult', `返回结果类型: ${typeof result}`, true);
                     }
@@ -309,9 +347,27 @@
                     
                     const options = {
                         templatePath: templatePath,
-                        fill: fillObj,
-                        output: outputType
+                        fill: fillObj || {
+                          byRows: [
+                            {
+                              sheet: '员工信息',
+                              startRow: 3,
+                              rows: [
+                                ['笔记本电脑', 5999, 50, '电子产品'],
+                                ['智能手机', 3999, 100, '电子产品'],
+                                ['平板电脑', 2999, 80, '电子产品'],
+                                ['无线耳机', 299, 200, '电子产品']
+                              ]
+                            }
+                          ]
+                        },
+                        output: outputType,
+                      
                     };
+
+                    if (outputType === 'file') {
+                        options.defaultName = 'excel_with_template.xlsx';
+                    }
                     
                     const result = await window.ExcelManager.createByTemplate(options);
                     log(`有模板Excel创建成功，返回类型: ${typeof result}`);

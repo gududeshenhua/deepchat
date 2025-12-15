@@ -81,7 +81,7 @@ export function handleFileDownload(_event, item, webContents) {
         savePath: savePath,
         state: state
       })
-      webContents.send('file-download-completed', {
+      webContents.send('download-completed', {
         downloadId,
         filename: name,
         savePath: savePath,
@@ -100,12 +100,26 @@ export function handleFileDownload(_event, item, webContents) {
         savePath: savePath,
         state: state
       })
+
+      webContents.send('download-cancelled', {
+        downloadId: downloadId,
+        filename: name,
+        savePath: savePath,
+        state: state
+      })
     } else if (!browserWindow.isDestroyed()) {
       console.error('download failed:', state)
       // browserWindow.setTitle(`${originalTitle} - 下载失败: ${state}`);
 
       // 通知前端下载失败，包含下载ID
       eventBus.sendToRenderer('download-failed', SendTarget.ALL_WINDOWS, {
+        downloadId: downloadId,
+        filename: name,
+        savePath: savePath,
+        state: state
+      })
+
+      webContents.send('download-failed', {
         downloadId: downloadId,
         filename: name,
         savePath: savePath,

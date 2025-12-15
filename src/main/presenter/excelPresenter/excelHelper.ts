@@ -55,6 +55,37 @@ export class ExcelHelper {
 
     return sheet
   }
+  /**
+   * 按行批量填充（二维数组）
+   * @param sheetName
+   * @param startRow 模板中数据起始行（通常是示例行）
+   * @param rows 二维数组
+   * @param duplicate 是否复制模板行
+   */
+  fillByRows(sheetName, startRow, rows = [], duplicate = true) {
+    this._checkLoaded()
+
+    const sheet = this.workbook.getWorksheet(sheetName)
+    if (!sheet) {
+      throw new Error(`Sheet 不存在：${sheetName}`)
+    }
+
+    if (!rows.length) return
+
+    // 1️⃣ 复制模板行（保留样式）
+    if (duplicate && rows.length > 1) {
+      sheet.duplicateRow(startRow, rows.length - 1, true)
+    }
+
+    // 2️⃣ 填充数据
+    rows.forEach((rowData: any, index) => {
+      const row = sheet.getRow(startRow + index)
+      rowData.forEach((value, colIndex) => {
+        row.getCell(colIndex + 1).value = value
+      })
+      row.commit?.()
+    })
+  }
 
   /**
    * 填充数据（按单元格）

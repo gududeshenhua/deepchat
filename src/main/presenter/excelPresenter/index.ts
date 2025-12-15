@@ -1,12 +1,12 @@
 // main/excel/ExcelService.js
 import { ExcelHelper } from './excelHelper'
 import { IExcelPresenter } from '@shared/presenter'
-
+import { dialog } from 'electron'
 export class excelPresenter implements IExcelPresenter {
   /**
    * 无模板导出
    */
-  async createExcel({ sheets }) {
+  async createExcel({ sheets, output = 'buffer', defaultName = 'export.xlsx' }) {
     const excel = new ExcelHelper() // ⭐ 每次 new，互不影响
     await excel.load()
 
@@ -19,14 +19,28 @@ export class excelPresenter implements IExcelPresenter {
         }
       }
     })
+    console.log('output', output)
+    console.log('defaultName', defaultName)
+    if (output === 'buffer') {
+      return await excel.toBuffer()
+    }
+    const { canceled, filePath } = await dialog.showSaveDialog({
+      title: '保存 Excel 文件',
+      defaultPath: defaultName,
+      filters: [{ name: 'Excel 文件', extensions: ['xlsx'] }]
+    })
 
-    return await excel.toBuffer()
+    if (canceled || !filePath) {
+      return null
+    }
+
+    return await excel.saveAs(filePath)
   }
 
   /**
    * 有模板导出
    */
-  async createByTemplate({ templatePath, fill, output = 'file' }) {
+  async createByTemplate({ templatePath, fill, output = 'file', defaultName = 'export.xlsx' }) {
     const excel = new ExcelHelper(templatePath)
     await excel.load()
 
@@ -41,11 +55,29 @@ export class excelPresenter implements IExcelPresenter {
         excel.fillByKey(item.sheet, item.data)
       })
     }
+    console.log(templatePath)
+    console.log(fill)
+    // ⭐ 新增：byRows
+    if (fill?.byRows) {
+      fill.byRows.forEach((item) => {
+        excel.fillByRows(item.sheet, item.startRow, item.rows, item.duplicate !== false)
+      })
+    }
 
     if (output === 'buffer') {
       return await excel.toBuffer()
     }
 
-    return await excel.saveAs(output)
+    const { canceled, filePath } = await dialog.showSaveDialog({
+      title: '保存 Excel 文件',
+      defaultPath: defaultName,
+      filters: [{ name: 'Excel 文件', extensions: ['xlsx'] }]
+    })
+
+    if (canceled || !filePath) {
+      return null
+    }
+
+    return await excel.saveAs(filePath)
   }
 }
