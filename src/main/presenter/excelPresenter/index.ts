@@ -60,7 +60,8 @@ export class excelPresenter implements IExcelPresenter {
     // ⭐ 新增：byRows
     if (fill?.byRows) {
       fill.byRows.forEach((item) => {
-        excel.fillByRows(item.sheet, item.startRow, item.rows, item.duplicate !== false)
+        // console.log("start fillByRows", item.sheet, item.startRow, item.rows, item.duplicate !== false)
+        excel.fillByRows(item.sheet, item.startRow, item.rows)
       })
     }
 

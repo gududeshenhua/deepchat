@@ -62,7 +62,7 @@ export class ExcelHelper {
    * @param rows 二维数组
    * @param duplicate 是否复制模板行
    */
-  fillByRows(sheetName, startRow, rows = [], duplicate = true) {
+  fillByRows(sheetName, startRow, rows = []) {
     this._checkLoaded()
 
     const sheet = this.workbook.getWorksheet(sheetName)
@@ -73,10 +73,11 @@ export class ExcelHelper {
     if (!rows.length) return
 
     // 1️⃣ 复制模板行（保留样式）
-    if (duplicate && rows.length > 1) {
-      sheet.duplicateRow(startRow, rows.length - 1, true)
-    }
-
+    // if (duplicate && rows.length > 1) {
+    //   sheet.duplicateRow(startRow, rows.length - 1, true)
+    // }
+    console.log('rows', rows)
+    if (!Array.isArray(rows) || rows.length === 0) return
     // 2️⃣ 填充数据
     rows.forEach((rowData: any, index) => {
       const row = sheet.getRow(startRow + index)

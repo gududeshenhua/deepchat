@@ -222,9 +222,13 @@
             document.getElementById('fillData').value = JSON.stringify({
               "byRows": [
                 {
-                  sheet: "员工信息",
-                  startRow: 3,
+                  sheet: "sheet1",
+                  startRow: 5,
                   rows: [
+                    ["笔记本电脑", 5999, 50, "电子产品"],
+                    ["笔记本电脑", 5999, 50, "电子产品"],
+                    ["笔记本电脑", 5999, 50, "电子产品"],
+                    ["笔记本电脑", 5999, 50, "电子产品"],
                     ["笔记本电脑", 5999, 50, "电子产品"]
                   ]
                 }
@@ -325,7 +329,7 @@
                 if (!templatePath) {
                     showResult('createByTemplateResult', '请提供模板文件路径', false);
                     log('错误: 未提供模板文件路径');
-                    return;
+                    return; 
                 }
                 
                 let fillObj = {};
