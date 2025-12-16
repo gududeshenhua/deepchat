@@ -33,6 +33,7 @@ import {
 export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
   // 存储隐藏的WebContentsView实例
   private hiddenWebContents: Map<number, WebContentsView> = new Map()
+  private hiddenWindows: Map<number, BrowserWindow> = new Map()
 
   // 存储隐藏WebContents的状态数据
   private hiddenWebContentsState: Map<number, HiddenWebContentsData> = new Map()
@@ -138,25 +139,30 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
       // 发送创建事件
       eventBus.sendToMain(HIDDEN_WEB_CONTENTS_EVENTS.CREATED, id)
 
-      if (options.visible) {
-        const win = new BrowserWindow({
-          width: 800,
-          height: 600
-        })
+      // if (options.visible) {
+      const win = new BrowserWindow({
+        width: options.width || 800,
+        height: options.height || 600,
+        frame: false,
+        show: options.visible ?? false
+      })
 
-        win.contentView.addChildView(view)
+      win.contentView.addChildView(view)
+      this.hiddenWindows.set(view.webContents.id, win) // 存储对应的窗口
 
-        const resizeView = () => {
-          const { width, height } = win.getContentBounds()
-          view.setBounds({ x: 0, y: 0, width, height })
-        }
+      const resizeView = () => {
+        const { width, height } = win.getContentBounds()
+        view.setBounds({ x: 0, y: 0, width, height })
+      }
 
-        resizeView()
-        win.on('resize', resizeView)
+      resizeView()
+      win.on('resize', resizeView)
 
-        // 自动最大化
-        win.maximize()
+      // 自动最大化
+      // win.maximize()
 
+      // }
+      if (options.openDevTools) {
         view.webContents.openDevTools({ mode: 'detach' })
       }
       // this.logPresenter?.info(`Hidden web contents created: ${id}`)
@@ -181,6 +187,12 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
 
       // 关闭WebContents
       view.webContents.close()
+      // 关闭对应的BrowserWindow（如果有的话）
+      const win = this.hiddenWindows.get(id)
+      if (win && !win.isDestroyed()) {
+        win.close()
+        this.hiddenWindows.delete(id)
+      }
 
       // 从存储中移除
       this.hiddenWebContents.delete(id)

@@ -266,6 +266,9 @@ export interface HiddenWebContentsOptions {
   url: string
   webPreferences?: Electron.WebPreferences
   visible?: boolean
+  openDevTools?: boolean
+  width?: number
+  height?: number
 }
 
 /**

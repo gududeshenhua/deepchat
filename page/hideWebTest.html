@@ -177,7 +177,10 @@
         const id = await HiddenWebContentsManager.createHiddenWebContents({
           url: "http://www.baidu.com",
           // url:'http://localhost:4000/login',
-          visible: true
+          width: 800,
+          height: 600,
+          visible: true,
+          openDevTools: true
         });
         currentWebContentsId = id;
         logToElement(logId, `WebContents创建成功，ID: ${id}`);

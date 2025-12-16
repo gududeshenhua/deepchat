@@ -114,7 +114,7 @@ export default function contextMenu(options: ContextMenuOptions): () => void {
                 fileName = `image.${ext === 'jpeg' ? 'jpg' : ext}`
               }
             }
-
+            // console.log('------------contextMenu-----------', fileName)
             // 打开保存对话框
             const { canceled, filePath } = await dialog.showSaveDialog({
               defaultPath: fileName,
