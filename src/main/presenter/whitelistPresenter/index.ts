@@ -3,27 +3,16 @@ import { ICustomSQLitePresenter } from '@shared/presenter'
 import os from 'os'
 import { IIpWhitelistPresenter } from '@shared/presenter'
 // 工具函数：判断字符串是否为 Base64
-function isBase64(str: string): boolean {
-  try {
-    return Buffer.from(str, 'base64').toString('base64') === str
-  } catch {
-    return false
-  }
-}
+// function isBase64(str: string): boolean {
+//   try {
+//     return Buffer.from(str, 'base64').toString('base64') === str
+//   } catch {
+//     return false
+//   }
+// }
 
 // 获取本机 IP 列表
-function getLocalIPs(): string[] {
-  const interfaces: any = os.networkInterfaces()
-  const ips: string[] = []
-  for (const name of Object.keys(interfaces)) {
-    for (const iface of interfaces[name]) {
-      if (iface.family === 'IPv4' && !iface.internal) {
-        ips.push(iface.address)
-      }
-    }
-  }
-  return ips
-}
+// function
 
 // IP 白名单 Presenter
 export class IpWhitelistPresenter implements IIpWhitelistPresenter {
@@ -50,12 +39,25 @@ export class IpWhitelistPresenter implements IIpWhitelistPresenter {
   async addIP(ipString: string): Promise<string> {
     let decoded = ipString
 
-    if (isBase64(ipString)) {
-      decoded = Buffer.from(ipString, 'base64').toString('utf-8')
-    }
+    // if (isBase64(ipString)) {
+    //   decoded = Buffer.from(ipString, 'base64').toString('utf-8')
+    // }
 
     await this.sqlitePresenter.insert(this.tableName, { ip: decoded })
     return decoded
+  }
+
+  getLocalIPs(): string[] {
+    const interfaces: any = os.networkInterfaces()
+    const ips: string[] = []
+    for (const name of Object.keys(interfaces)) {
+      for (const iface of interfaces[name]) {
+        if (iface.family === 'IPv4' && !iface.internal) {
+          ips.push(iface.address)
+        }
+      }
+    }
+    return ips
   }
 
   async removeIP(ip: string): Promise<void> {
@@ -70,7 +72,7 @@ export class IpWhitelistPresenter implements IIpWhitelistPresenter {
   // 判断当前机器 IP 是否在白名单里
   async checkLocalIP(): Promise<boolean> {
     const allowedIPs = await this.getWhitelist()
-    const localIPs = getLocalIPs()
+    const localIPs = this.getLocalIPs()
 
     let isValid = false
     for (const ip of localIPs) {

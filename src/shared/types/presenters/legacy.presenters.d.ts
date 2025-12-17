@@ -499,6 +499,9 @@ export interface IIpWhitelistPresenter {
   // 检查本地 IP 是否在白名单中
   checkLocalIP(): Promise<boolean>
 
+  // 获取本机 IP 列表
+  // getLocalIPs(): string[]
+
   // 销毁资源
   destroy(): void
 }

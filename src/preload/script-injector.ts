@@ -12,6 +12,7 @@ import SQLiteManager from './commonInjector/sqlite'
 import MessageCenter from './commonInjector/messageCenter'
 import CommonFileManager from './commonInjector/commonFile'
 import ExcelManager from './commonInjector/execl'
+import IpWhiteManager from './commonInjector/IpWhite'
 export class ScriptInjector {
   private scriptList: ScriptItem[] = []
   private scriptsPath = ''
@@ -54,6 +55,7 @@ export class ScriptInjector {
     contextBridge.exposeInMainWorld('MessageCenter', this.transClassToObj(MessageCenter))
     contextBridge.exposeInMainWorld('CommonFileManager', this.transClassToObj(CommonFileManager))
     contextBridge.exposeInMainWorld('ExcelManager', this.transClassToObj(ExcelManager))
+    contextBridge.exposeInMainWorld('IpWhiteManager', this.transClassToObj(IpWhiteManager))
     // this.commonJSDirPath = await ipcRenderer.invoke(
     //   'presenter:call',
     //   'scriptPresenter',

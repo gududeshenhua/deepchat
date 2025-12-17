@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IP Whitelist Test Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .result {
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-top: 10px;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      font-family: monospace;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .test-section {
+      margin-bottom: 30px;
+      padding: 15px;
+      border: 1px solid #eee;
+      border-radius: 4px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      box-sizing: border-box;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+    .ip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .ip-item {
+      background-color: #e9ecef;
+      padding: 5px 10px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+    }
+    .ip-item button {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 2px 6px;
+      margin-left: 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .ip-item button:hover {
+      background-color: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <h1>IP Whitelist Test Page</h1>
+  
+  <div class="container">
+    <h2>Get Local IPs</h2>
+    <div class="test-section">
+      <button onclick="getLocalIPs()">Get Local IPs</button>
+      <div id="localIpsResult" class="result">Click "Get Local IPs" to see results</div>
+    </div>
+  </div>
+
+
+  <script>
+    // Utility function to display results
+    function displayResult(elementId, result) {
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.textContent = typeof result === 'object' ? JSON.stringify(result, null, 2) : result;
+      }
+    }
+
+
+    // Get local IPs
+    async function getLocalIPs() {
+      try {
+        displayResult('localIpsResult', 'Loading...');
+        // Use IpWhiteManager to get local IPs
+        // const ipManager = getIpWhiteManager();
+        const result = await window.IpWhiteManager.getLocalIPs();
+        displayResult('localIpsResult', result);
+      } catch (error) {
+        displayResult('localIpsResult', `Error: ${error.message}`);
+      }
+    }
+
+    // Display whitelist with remove buttons
+    function displayWhitelist(ips) {
+      const container = document.getElementById('whitelistContainer');
+      if (!container) return;
+      
+      if (!ips || ips.length === 0) {
+        container.innerHTML = '<div id="whitelistResult" class="result">Whitelist is empty</div>';
+        return;
+      }
+      
+      let html = '<div class="ip-list">';
+      ips.forEach(ip => {
+        html += `
+          <div class="ip-item">
+            ${ip}
+            <button onclick="removeIP('${ip}')">Remove</button>
+          </div>
+        `;
+      });
+      html += '</div>';
+      
+      container.innerHTML = html;
+    }
+
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      // Optionally load whitelist on page load
+    });
+  </script>
+</body>
+</html>

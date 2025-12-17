@@ -4,7 +4,7 @@ import { net, session } from 'electron'
 // const log = require('electron-log');
 // import { callScriptFile } from "./tools";
 import fs from 'fs'
-import path from 'path'
+// import path from 'path'
 
 export function createHttpServer() {
   //创建http服务
@@ -294,7 +294,7 @@ async function processHttpRequest(request, response) {
         })
         return
       }
-    } else if (pathname.startsWith('/api/stream-wps')) {
+    } else if (pathname.startsWith('/api/stream-file')) {
       try {
         const filePath = postData?.path
 
@@ -304,12 +304,12 @@ async function processHttpRequest(request, response) {
           return
         }
 
-        const ext = path.extname(filePath).toLowerCase()
-        if (ext !== '.wps') {
-          response.writeHead(400, { 'Content-Type': 'application/json' })
-          response.end(JSON.stringify({ success: false, message: 'Not a wps file' }))
-          return
-        }
+        // const ext = path.extname(filePath).toLowerCase()
+        // if (ext !== '.wps') {
+        //   response.writeHead(400, { 'Content-Type': 'application/json' })
+        //   response.end(JSON.stringify({ success: false, message: 'Not a wps file' }))
+        //   return
+        // }
 
         // 文件是否存在
         if (!fs.existsSync(filePath)) {
