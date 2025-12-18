@@ -150,26 +150,63 @@ Line 3: 特殊字符测试: !@#$%^&*()</textarea>
       <div id="deleteFileLog" class="log"></div>
     </div>
 
-    <!-- <div class="test-section">
-      <h3>5. 路径解析测试</h3>
+    <div class="test-section">
+      <h3>5. 读取文件Buffer测试</h3>
       <div class="form-group">
-        <label for="resolvePathInput">输入路径:</label>
-        <input type="text" id="resolvePathInput" value="./test-file.txt">
+        <label for="readFileBufferPath">文件路径:</label>
+        <input type="text" id="readFileBufferPath" value="test-file.txt">
       </div>
-      <button onclick="testResolvePath()">解析路径</button>
-      <div id="resolvePathStatus"></div>
-      <div id="resolvePathLog" class="log"></div>
-    </div> -->
+      <button onclick="testReadFileBuffer()">读取文件Buffer</button>
+      <div id="readFileBufferStatus"></div>
+      <div id="readFileBufferLog" class="log"></div>
+    </div>
 
     <div class="test-section">
-      <h3>6. 综合测试</h3>
+      <h3>6. 列出目录文件测试</h3>
+      <div class="form-group">
+        <label for="listDirectoryPath">目录路径:</label>
+        <input type="text" id="listDirectoryPath" value=".">
+      </div>
+      <button onclick="testListDirectoryFiles()">列出目录文件</button>
+      <div id="listDirectoryStatus"></div>
+      <div id="listDirectoryLog" class="log"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>7. 选择文件或文件夹测试（参数二选一）</h3>
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="selectFolder"> 选择文件夹
+        </label>
+        <label>
+          <input type="checkbox" id="selectFile" checked> 选择文件
+        </label>
+        <label>
+          <input type="checkbox" id="multiSelections"> 多选
+        </label>
+      </div>
+      <div class="form-group">
+        <label for="dialogTitle">对话框标题:</label>
+        <input type="text" id="dialogTitle" value="请选择文件或文件夹">
+      </div>
+      <div class="form-group">
+        <label for="buttonLabel">按钮标签:</label>
+        <input type="text" id="buttonLabel" value="选择">
+      </div>
+      <button onclick="testSelectFileOrFolder()">选择文件或文件夹</button>
+      <div id="selectFileStatus"></div>
+      <div id="selectFileLog" class="log"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>8. 综合测试</h3>
       <button onclick="testAllFunctions()">综合测试所有功能</button>
       <div id="allFunctionsStatus"></div>
       <div id="allFunctionsLog" class="log"></div>
     </div>
 
     <div class="test-section">
-      <h3>7. 清理日志</h3>
+      <h3>9. 清理日志</h3>
       <button onclick="clearLogs()">清空日志</button>
       <div id="clearStatus"></div>
     </div>
@@ -290,31 +327,133 @@ Line 3: 特殊字符测试: !@#$%^&*()</textarea>
       }
     }
 
-    // // 5. 路径解析测试
-    // async function testResolvePath() {
-    //   const logId = 'resolvePathLog';
-    //   const statusId = 'resolvePathStatus';
-    //   const inputPath = document.getElementById('resolvePathInput').value;
+    function uint8ToBase64(uint8) {
+      let binary = ''
+      const chunkSize = 0x8000
+
+      for (let i = 0; i < uint8.length; i += chunkSize) {
+        binary += String.fromCharCode(
+          ...uint8.subarray(i, i + chunkSize)
+        )
+      }
+
+      return btoa(binary)
+    }
+
+    // 5. 读取文件Buffer测试
+    async function testReadFileBuffer() {
+      const logId = 'readFileBufferLog';
+      const statusId = 'readFileBufferStatus';
+      const filePath = document.getElementById('readFileBufferPath').value;
       
-    //   try {
-    //     updateStatus(statusId, '开始解析路径...', 'info');
-    //     logToElement(logId, '=== 开始解析路径 ===');
-    //     logToElement(logId, `输入路径: ${inputPath}`);
+      try {
+        updateStatus(statusId, '开始读取文件Buffer...', 'info');
+        logToElement(logId, '=== 开始读取文件Buffer ===');
+        logToElement(logId, `文件路径: ${filePath}`);
 
-    //     logToElement(logId, '调用 CommonFileManager.resolvePath() 方法...');
-    //     const result = CommonFileManager.resolvePath(inputPath);
-    //     logToElement(logId, `解析结果: ${result}`);
+        logToElement(logId, '调用 CommonFileManager.readFileBuffer() 方法...');
+        // const buffer = await CommonFileManager.readFileBuffer(filePath);
+        // console.log(uint8ToBase64(buffer.buffer));
+        const bufferBase64 = await CommonFileManager.readFileBuffer(filePath,true);
+        console.log('readFileBuffer 方法返回的 buffer:', bufferBase64);
+        
+        
+        // 显示buffer信息而不是内容
+        // logToElement(logId, `Buffer大小: ${buffer.length} 字节`);
+        // logToElement(logId, `Bufferbase64: ${str}`);
+        
+        // 如果是文本文件，可以尝试转换为字符串显示前100个字符
+        // if (buffer.length > 0) {
+        //   try {
+        //     const text = new TextDecoder('utf-8').decode(buffer.slice(0, Math.min(100, buffer.length)));
+        //     logToElement(logId, `前100个字符预览: ${text}${buffer.length > 100 ? '...' : ''}`);
+        //   } catch (e) {
+        //     logToElement(logId, `无法将buffer转换为文本: ${e.message}`);
+        //   }
+        // }
 
-    //     updateStatus(statusId, '路径解析完成！', 'success');
-    //     logToElement(logId, '=== 路径解析完成 ===');
+        updateStatus(statusId, '读取文件Buffer完成！', 'success');
+        logToElement(logId, '=== 读取文件Buffer完成 ===');
 
-    //   } catch (error) {
-    //     updateStatus(statusId, `路径解析失败: ${error.message}`, 'error');
-    //     logToElement(logId, `错误: ${error.message}`, 'error');
-    //   }
-    // }
+      } catch (error) {
+        updateStatus(statusId, `读取文件Buffer失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
 
-    // 6. 综合测试所有功能
+    // 6. 列出目录文件测试
+    async function testListDirectoryFiles() {
+      const logId = 'listDirectoryLog';
+      const statusId = 'listDirectoryStatus';
+      const dirPath = document.getElementById('listDirectoryPath').value;
+      
+      try {
+        updateStatus(statusId, '开始列出目录文件...', 'info');
+        logToElement(logId, '=== 开始列出目录文件 ===');
+        logToElement(logId, `目录路径: ${dirPath}`);
+
+        logToElement(logId, '调用 CommonFileManager.listDirectoryFiles() 方法...');
+        const files = await CommonFileManager.listDirectoryFiles(dirPath);
+        // debugger
+        logToElement(logId, `找到 ${files.files.length} 个项目:`);
+        files.files.forEach((file, index) => {
+          logToElement(logId, `${index + 1}. ${file.name} (${file.ext}) ${file.isDirectory ? '[目录]' : '[文件]'}`);
+        });
+
+        updateStatus(statusId, '列出目录文件完成！', 'success');
+        logToElement(logId, '=== 列出目录文件完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `列出目录文件失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // 7. 选择文件或文件夹测试
+    async function testSelectFileOrFolder() {
+      const logId = 'selectFileLog';
+      const statusId = 'selectFileStatus';
+      
+      // 获取选项
+      const selectFolder = document.getElementById('selectFolder').checked;
+      const selectFile = document.getElementById('selectFile').checked;
+      const multiSelections = document.getElementById('multiSelections').checked;
+      const title = document.getElementById('dialogTitle').value;
+      const buttonLabel = document.getElementById('buttonLabel').value;
+      
+      try {
+        updateStatus(statusId, '打开选择对话框...', 'info');
+        logToElement(logId, '=== 开始选择文件或文件夹 ===');
+        logToElement(logId, `选项: 文件夹=${selectFolder}, 文件=${selectFile}, 多选=${multiSelections}`);
+        logToElement(logId, `标题: ${title}`);
+        logToElement(logId, `按钮标签: ${buttonLabel}`);
+
+        logToElement(logId, '调用 CommonFileManager.selectFileOrFolder() 方法...');
+        const result = await CommonFileManager.selectFileOrFolder({
+          title,
+          buttonLabel,
+          selectFolder,
+          selectFile,
+          multiSelections
+        });
+        
+        if (result.canceled) {
+          logToElement(logId, '用户取消了选择');
+          updateStatus(statusId, '用户取消了选择', 'info');
+        } else {
+          logToElement(logId, `选择结果: ${JSON.stringify(result, null, 2)}`);
+          updateStatus(statusId, '文件或文件夹选择完成！', 'success');
+        }
+        
+        logToElement(logId, '=== 选择完成 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `选择失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // 8. 综合测试所有功能
     async function testAllFunctions() {
       const logId = 'allFunctionsLog';
       const statusId = 'allFunctionsStatus';
@@ -343,8 +482,29 @@ Line 3: 特殊字符测试: !@#$%^&*()</textarea>
         const resolvedPath = CommonFileManager.resolvePath(testFilePath);
         logToElement(logId, `解析结果: ${resolvedPath}`);
 
+        // 读取文件Buffer
+        logToElement(logId, `5. 读取文件Buffer: ${testFilePath}`);
+        const fileBuffer = await CommonFileManager.readFileBuffer(testFilePath);
+        logToElement(logId, `Buffer大小: ${fileBuffer.length} 字节`);
+
+        // 列出目录文件
+        logToElement(logId, `6. 列出当前目录文件:`);
+        const files = await CommonFileManager.listDirectoryFiles('.');
+        logToElement(logId, `找到 ${files.length} 个项目`);
+
+        // 测试选择文件或文件夹功能（仅测试方法调用，不实际打开对话框）
+        logToElement(logId, `7. 测试选择文件或文件夹方法调用:`);
+        try {
+          // 这里只是测试方法是否存在且可调用，不实际打开对话框
+          typeof CommonFileManager.selectFileOrFolder === 'function' 
+            ? logToElement(logId, 'selectFileOrFolder 方法存在且可调用')
+            : logToElement(logId, 'selectFileOrFolder 方法不存在', 'error');
+        } catch (e) {
+          logToElement(logId, `selectFileOrFolder 方法测试失败: ${e.message}`, 'error');
+        }
+
         // 删除测试文件
-        // logToElement(logId, `5. 删除测试文件: ${testFilePath}`);
+        // logToElement(logId, `8. 删除测试文件: ${testFilePath}`);
         // await CommonFileManager.fileDelete(testFilePath);
 
         updateStatus(statusId, '综合测试完成！', 'success');
@@ -356,7 +516,7 @@ Line 3: 特殊字符测试: !@#$%^&*()</textarea>
       }
     }
 
-    // 7. 清理日志
+    // 9. 清理日志
     function clearLogs() {
       const logElements = document.querySelectorAll('.log');
       logElements.forEach(el => {

@@ -2189,6 +2189,36 @@ export interface ICommonFilePresenter {
   fileDelete(_: any, filePath: string): Promise<{ success: boolean; message?: string }>
 
   /**
+   * 读取文件buffer
+   */
+  readFileBuffer(
+    filePath: string,
+    isBase64: boolean
+  ): Promise<{ success: boolean; buffer?: string | Buffer; message?: string }>
+
+  /**
+   * 读取目录下文件列表（文件名+文件类型）
+   */
+  listDirectoryFiles(
+    dirPath: string
+  ): Promise<{
+    success: boolean
+    files?: Array<{ name: string; ext: string; isDirectory: boolean }>
+    message?: string
+  }>
+
+  /**
+   * 打开对话框选择文件或文件夹
+   */
+  selectFileOrFolder(options?: {
+    title?: string
+    buttonLabel?: string
+    selectFolder?: boolean
+    selectFile?: boolean
+    multiSelections?: boolean
+  }): Promise<{ success: boolean; path?: string | string[]; canceled?: boolean; message?: string }>
+
+  /**
    * 解析文件路径
    */
   resolvePath(inputPath: string): string | null

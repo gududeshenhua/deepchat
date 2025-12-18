@@ -4,7 +4,7 @@
 // If absolute path → use directly
 // If relative path → use scriptsDirPath
 
-const { app } = require('electron')
+const { app, dialog } = require('electron')
 const fs = require('fs')
 const path = require('path')
 // const isDev = require('electron-is-dev');
@@ -259,6 +259,101 @@ export class commonFileManager implements ICommonFilePresenter {
       const realPath = this.resolvePath(filePath)
       await fs.promises.unlink(realPath)
       return { success: true }
+    } catch (err: any) {
+      return { success: false, message: err.message }
+    }
+  }
+
+  // Read file as buffer
+  async readFileBuffer(
+    filePath: string,
+    isBase64: boolean = true
+  ): Promise<{ success: boolean; buffer?: string; message?: string }> {
+    try {
+      const realPath = this.resolvePath(filePath)
+      const buffer = await fs.promises.readFile(realPath)
+      return { success: true, buffer: isBase64 ? buffer.toString('base64') : buffer }
+    } catch (err: any) {
+      return { success: false, message: err.message }
+    }
+  }
+
+  // List files in directory with names and extensions
+  async listDirectoryFiles(
+    dirPath: string
+  ): Promise<{
+    success: boolean
+    files?: Array<{ name: string; ext: string; isDirectory: boolean }>
+    message?: string
+  }> {
+    try {
+      const realPath = this.resolvePath(dirPath)
+      const entries = await fs.promises.readdir(realPath, { withFileTypes: true })
+
+      const files = entries.map((entry) => ({
+        name: entry.name,
+        ext: entry.isFile() ? path.extname(entry.name) : '',
+        isDirectory: entry.isDirectory()
+      }))
+
+      return { success: true, files }
+    } catch (err: any) {
+      return { success: false, message: err.message }
+    }
+  }
+
+  // Open dialog to select file or folder and return absolute path
+  async selectFileOrFolder(options?: {
+    title?: string
+    buttonLabel?: string
+    selectFolder?: boolean
+    selectFile?: boolean
+    multiSelections?: boolean
+  }): Promise<{
+    success: boolean
+    path?: string | string[]
+    canceled?: boolean
+    message?: string
+  }> {
+    try {
+      // Default options
+      const dialogOptions = {
+        title: options?.title || 'Select File or Folder',
+        buttonLabel: options?.buttonLabel || 'Select',
+        properties: [] as string[]
+      }
+
+      // Set properties based on options
+      if (options?.selectFolder) {
+        dialogOptions.properties.push('openDirectory')
+      }
+
+      if (options?.selectFile) {
+        dialogOptions.properties.push('openFile')
+      }
+
+      // If neither is specified, allow both
+      if (!options?.selectFolder && !options?.selectFile) {
+        dialogOptions.properties.push('openFile', 'openDirectory')
+      }
+
+      if (options?.multiSelections) {
+        dialogOptions.properties.push('multiSelections')
+      }
+
+      // Show the dialog
+      const result = await dialog.showOpenDialog(dialogOptions)
+
+      if (result.canceled) {
+        return { success: true, canceled: true }
+      }
+
+      // Return selected paths
+      if (options?.multiSelections) {
+        return { success: true, path: result.filePaths }
+      } else {
+        return { success: true, path: result.filePaths[0] }
+      }
     } catch (err: any) {
       return { success: false, message: err.message }
     }
