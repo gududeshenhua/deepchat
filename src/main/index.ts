@@ -69,6 +69,10 @@ app.whenReady().then(async () => {
     console.log('main: Application lifecycle startup')
     await lifecycleManager.start()
     presenter = getInstance(lifecycleManager)
+    // 检查本地 IP 是否在白名单里
+    // if (!await presenter.whitelistPresenter.checkLocalIP()) {
+    //   // return
+    // }
     // 创建代理接口
     createHttpServer()
     console.log('main: Application lifecycle startup completed successfully')

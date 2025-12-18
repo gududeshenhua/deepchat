@@ -1,7 +1,8 @@
-import { dialog, app } from 'electron'
+import { dialog } from 'electron'
 import { ICustomSQLitePresenter } from '@shared/presenter'
 import os from 'os'
 import { IIpWhitelistPresenter } from '@shared/presenter'
+import { base64Encode } from '@shared/ipCrypto'
 // 工具函数：判断字符串是否为 Base64
 // function isBase64(str: string): boolean {
 //   try {
@@ -37,14 +38,15 @@ export class IpWhitelistPresenter implements IIpWhitelistPresenter {
 
   // 添加 IP（支持普通和 Base64）
   async addIP(ipString: string): Promise<string> {
-    let decoded = ipString
-
+    // let decoded = ipString
+    // const encrypted = encryptIP(ipString)
+    await this.sqlitePresenter.insert(this.tableName, { ip: ipString })
+    return ipString
     // if (isBase64(ipString)) {
     //   decoded = Buffer.from(ipString, 'base64').toString('utf-8')
     // }
-
-    await this.sqlitePresenter.insert(this.tableName, { ip: decoded })
-    return decoded
+    // await this.sqlitePresenter.insert(this.tableName, { ip: decoded })
+    // return decoded
   }
 
   getLocalIPs(): string[] {
@@ -59,7 +61,7 @@ export class IpWhitelistPresenter implements IIpWhitelistPresenter {
     }
     return ips
   }
-
+  // btoa('192.168.1.10')
   async removeIP(ip: string): Promise<void> {
     await this.sqlitePresenter.deleteById(this.tableName, { ip })
   }
@@ -76,7 +78,8 @@ export class IpWhitelistPresenter implements IIpWhitelistPresenter {
 
     let isValid = false
     for (const ip of localIPs) {
-      if (allowedIPs.includes(ip)) {
+      const encoded = base64Encode(ip)
+      if (allowedIPs.includes(encoded)) {
         isValid = true
         break
       }
@@ -87,7 +90,7 @@ export class IpWhitelistPresenter implements IIpWhitelistPresenter {
         '访问被拒绝',
         `当前 IP 地址 (${localIPs.join(', ')}) 不允许访问。\n应用即将关闭。`
       )
-      setTimeout(() => app.exit(1), 1000)
+      // setTimeout(() => app.exit(1), 1000)
       return false
     }
 
