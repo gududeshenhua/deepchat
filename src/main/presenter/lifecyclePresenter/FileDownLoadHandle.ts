@@ -110,7 +110,7 @@ export async function handleFileDownload(_event, item, webContents) {
     }
   })
 
-  if (allSetUpData['prompt-save-dialog']) {
+  if (allSetUpData['prompt-save-dialog'] && !(webContents as any).__isHidden) {
     console.log('---- go in prompt save dialog ----')
     const defaultDownloadPath = path.join(
       allSetUpData['download-directory'] || os.homedir() + '/Downloads',
