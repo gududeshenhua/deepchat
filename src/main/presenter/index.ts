@@ -139,7 +139,7 @@ export class Presenter implements IPresenter {
     this.setupPresenter = new SetupPresenter()
     this.customSqlitePresenter = new CustomSqlitePresenter()
     this.hideWebConPresenter = new HiddenWebContentsPresenter(this.tabPresenter)
-    this.whitelistPresenter = new IpWhitelistPresenter(this.customSqlitePresenter)
+    this.whitelistPresenter = new IpWhitelistPresenter(this.setupPresenter)
     this.commonFilePresenter = new commonFileManager()
     this.excelPresenter = new excelPresenter()
 
@@ -208,7 +208,7 @@ export class Presenter implements IPresenter {
     this.initializeFloatingButton()
 
     // 初始化白名单处理器
-    // this.whitelistPresenter.init()
+    this.whitelistPresenter.init()
   }
 
   // 初始化悬浮按钮

@@ -500,7 +500,7 @@ export interface IIpWhitelistPresenter {
   checkLocalIP(): Promise<boolean>
 
   // 获取本机 IP 列表
-  // getLocalIPs(): string[]
+  getLocalIPs(): string[]
 
   // 销毁资源
   destroy(): void
@@ -2199,9 +2199,7 @@ export interface ICommonFilePresenter {
   /**
    * 读取目录下文件列表（文件名+文件类型）
    */
-  listDirectoryFiles(
-    dirPath: string
-  ): Promise<{
+  listDirectoryFiles(dirPath: string): Promise<{
     success: boolean
     files?: Array<{ name: string; ext: string; isDirectory: boolean }>
     message?: string

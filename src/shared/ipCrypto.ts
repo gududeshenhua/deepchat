@@ -22,3 +22,7 @@ export function decryptIP(encrypted: string): string {
 export function base64Encode(str: string): string {
   return Buffer.from(str, 'utf-8').toString('base64')
 }
+
+export function base64Decode(encodedStr: string): string {
+  return Buffer.from(encodedStr, 'base64').toString('utf-8')
+}

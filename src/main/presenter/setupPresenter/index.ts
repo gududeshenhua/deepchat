@@ -31,7 +31,8 @@ export class SetupPresenter implements ISetupPresenter {
           { label: '首页', icon: 'mdi:home-outline', url: 'home://chat', visible: true },
           { label: '设置', icon: 'mdi:cog-outline', url: 'home://setup', visible: true },
           { label: '脚本', icon: 'mdi:script-text-outline', url: 'home://script', visible: true }
-        ]
+        ],
+        'ip-white-list': []
       }
     })
 
