@@ -41,6 +41,15 @@ export class TabPresenter implements ITabPresenter {
   private windowPresenter: IWindowPresenter // 窗口管理器实例
 
   private scriptPresenter: IScriptPresenter
+
+  // 右侧工具栏宽度（常量）
+  private readonly RIGHT_SIDEBAR_WIDTH = 400
+
+  // 窗口 -> 是否显示右侧工具栏
+  private windowRightSidebarVisible: Map<number, boolean> = new Map()
+
+  // 窗口 -> 右侧工具栏视图
+  private windowRightSidebarView: Map<number, WebContentsView> = new Map()
   constructor(windowPresenter: IWindowPresenter, scriptPresenter: IScriptPresenter) {
     this.windowPresenter = windowPresenter // 注入窗口管理器
     this.scriptPresenter = scriptPresenter
@@ -87,6 +96,16 @@ export class TabPresenter implements ITabPresenter {
           }
         })
       }
+
+      const sidebarView = this.windowRightSidebarView.get(windowId)
+      // const window = BrowserWindow.fromId(windowId)
+
+      if (window && sidebarView) {
+        window.contentView.removeChildView(sidebarView)
+      }
+
+      this.windowRightSidebarView.delete(windowId)
+      this.windowRightSidebarVisible.delete(windowId)
     })
 
     // 语言设置改变，更新所有标签页右键菜单
@@ -108,6 +127,101 @@ export class TabPresenter implements ITabPresenter {
         }
       }
     })
+  }
+
+  async openRightSidebar(windowId: number, url: string): Promise<boolean> {
+    const window = BrowserWindow.fromId(windowId)
+    if (!window) return false
+
+    // 已存在则直接显示
+    if (this.windowRightSidebarVisible.get(windowId)) {
+      return true
+    }
+
+    let sidebarView = this.windowRightSidebarView.get(windowId)
+
+    // 第一次创建
+    if (!sidebarView) {
+      sidebarView = new WebContentsView({
+        webPreferences: {
+          preload: join(__dirname, '../preload/index.mjs'),
+          sandbox: false,
+          devTools: true
+        }
+      })
+
+      sidebarView.setBackgroundColor('#00000000')
+
+      // 加载内容
+      // if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+      //   sidebarView.webContents.loadURL(`${process.env['ELECTRON_RENDERER_URL']}#/${url}`)
+      // } else {
+      //   sidebarView.webContents.loadFile(join(__dirname, '../renderer/index.html'), {
+      //     hash: `/${url}`
+      //   })
+      // }
+      // 加载内容
+      if (url.startsWith('home://')) {
+        const viewType = url.replace('home://', '')
+        if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+          sidebarView.webContents.loadURL(`${process.env['ELECTRON_RENDERER_URL']}#/${viewType}`)
+        } else {
+          sidebarView.webContents.loadFile(join(__dirname, '../renderer/index.html'), {
+            hash: `/${viewType}`
+          })
+        }
+      } else {
+        sidebarView.webContents.loadURL(url)
+      }
+
+      this.windowRightSidebarView.set(windowId, sidebarView)
+    }
+
+    if (is.dev) {
+      sidebarView.webContents.openDevTools({ mode: 'detach' })
+    }
+
+    window.contentView.addChildView(sidebarView)
+    this.windowRightSidebarVisible.set(windowId, true)
+
+    // 关键：更新所有 Tab 布局
+    this.onWindowSizeChange(windowId)
+
+    sidebarView.webContents.setWindowOpenHandler(({ url }) => {
+      // 使用系统默认浏览器打开链接
+      // shell.openExternal(url)
+      // 在当前窗口加载URL
+      sidebarView.webContents.loadURL(url)
+      // this.createTab(windowId, url)
+      return { action: 'deny' }
+    })
+
+    return true
+  }
+
+  async closeRightSidebar(windowId: number): Promise<boolean> {
+    const window = BrowserWindow.fromId(windowId)
+    if (!window) return false
+
+    const sidebarView = this.windowRightSidebarView.get(windowId)
+    if (!sidebarView) return false
+
+    window.contentView.removeChildView(sidebarView)
+    this.windowRightSidebarVisible.set(windowId, false)
+
+    // 关键：更新所有 Tab 布局
+    this.onWindowSizeChange(windowId)
+
+    return true
+  }
+
+  async toggleRightSidebar(windowId: number, url: string): Promise<boolean> {
+    const visible = this.windowRightSidebarVisible.get(windowId)
+    if (visible) {
+      return this.closeRightSidebar(windowId)
+    } else {
+      return this.openRightSidebar(windowId, url)
+    }
   }
 
   /**
@@ -872,15 +986,31 @@ export class TabPresenter implements ITabPresenter {
     // 获取窗口尺寸
     const { width, height } = window.getContentBounds()
 
+    const windowId = window.id
+    const rightSidebarVisible = this.windowRightSidebarVisible.get(windowId)
+    const rightSidebarWidth = rightSidebarVisible ? this.RIGHT_SIDEBAR_WIDTH : 0
+
     // 设置视图位置大小（留出顶部标签栏空间）
     const TAB_BAR_HEIGHT = 72 // 标签栏高度，需要根据实际UI调整
     const MENU_WIDTH = 64 // 菜单栏宽度，需要根据实际UI调整
     view.setBounds({
       x: MENU_WIDTH,
       y: TAB_BAR_HEIGHT,
-      width: width - MENU_WIDTH,
+      width: width - MENU_WIDTH - rightSidebarWidth,
       height: height - TAB_BAR_HEIGHT
     })
+
+    if (rightSidebarVisible) {
+      const sidebarView = this.windowRightSidebarView.get(windowId)
+      if (sidebarView) {
+        sidebarView.setBounds({
+          x: width - rightSidebarWidth,
+          y: TAB_BAR_HEIGHT,
+          width: rightSidebarWidth,
+          height: height - TAB_BAR_HEIGHT
+        })
+      }
+    }
   }
 
   /**

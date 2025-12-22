@@ -80,6 +80,47 @@ class TabManager {
       return false
     }
   }
+
+  // 打开右侧边栏
+  async openRightSidebar(url) {
+    try {
+      const windowId = globalThis.api.getWindowId ? globalThis.api.getWindowId() : 1
+      const result = await globalThis.PresenterFactory.usePresenter(
+        'tabPresenter'
+      ).openRightSidebar(windowId, url)
+      return result
+    } catch (error) {
+      console.error('打开右侧边栏时发生错误:', error)
+      return false
+    }
+  }
+
+  // 关闭右侧边栏
+  async closeRightSidebar() {
+    try {
+      const windowId = globalThis.api.getWindowId ? globalThis.api.getWindowId() : 1
+      const result =
+        await globalThis.PresenterFactory.usePresenter('tabPresenter').closeRightSidebar(windowId)
+      return result
+    } catch (error) {
+      console.error('关闭右侧边栏时发生错误:', error)
+      return false
+    }
+  }
+
+  // 切换右侧边栏
+  async toggleRightSidebar(url) {
+    try {
+      const windowId = globalThis.api.getWindowId ? globalThis.api.getWindowId() : 1
+      const result = await globalThis.PresenterFactory.usePresenter(
+        'tabPresenter'
+      ).toggleRightSidebar(windowId, url)
+      return result
+    } catch (error) {
+      console.error('切换右侧边栏时发生错误:', error)
+      return false
+    }
+  }
 }
 
 export default TabManager

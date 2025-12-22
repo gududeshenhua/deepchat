@@ -153,6 +153,19 @@
       </div>
     </div>
 
+    <!-- 右侧边栏操作测试 -->
+    <div class="test-section">
+      <h2>右侧边栏操作测试</h2>
+      <div class="button-group">
+        <button onclick="openRightSidebar()">打开右侧边栏</button>
+        <button onclick="closeRightSidebar()">关闭右侧边栏</button>
+        <button onclick="toggleRightSidebar()">切换右侧边栏</button>
+      </div>
+      <div class="button-group">
+        <input type="text" id="sidebarUrl" placeholder="输入边栏URL" value="https://www.baidu.com" style="padding: 8px; width: 300px;">
+      </div>
+    </div>
+
     <!-- 标签页列表显示 -->
     <div class="test-section">
       <h2>标签页列表</h2>
@@ -444,6 +457,50 @@
       } catch (error) {
         updateResult(`关闭所有标签页失败: ${error.message}`, false)
         log(`关闭所有标签页失败: ${error.message}`, 'error')
+      }
+    }
+
+    // === 右侧边栏操作测试 ===
+    async function openRightSidebar() {
+      try {
+        const url = document.getElementById('sidebarUrl').value.trim()
+        if (!url) {
+          updateResult('请输入有效的URL', false)
+          return
+        }
+        const result = await TabManager.openRightSidebar(url)
+        updateResult(`打开右侧边栏${result ? '成功' : '失败'}`, result)
+        log(`打开右侧边栏: ${url}`, result ? 'success' : 'error')
+      } catch (error) {
+        updateResult(`打开右侧边栏失败: ${error.message}`, false)
+        log(`打开右侧边栏失败: ${error.message}`, 'error')
+      }
+    }
+
+    async function closeRightSidebar() {
+      try {
+        const result = await TabManager.closeRightSidebar()
+        updateResult(`关闭右侧边栏${result ? '成功' : '失败'}`, result)
+        log(`关闭右侧边栏`, result ? 'success' : 'error')
+      } catch (error) {
+        updateResult(`关闭右侧边栏失败: ${error.message}`, false)
+        log(`关闭右侧边栏失败: ${error.message}`, 'error')
+      }
+    }
+
+    async function toggleRightSidebar() {
+      try {
+        const url = document.getElementById('sidebarUrl').value.trim()
+        if (!url) {
+          updateResult('请输入有效的URL', false)
+          return
+        }
+        const result = await TabManager.toggleRightSidebar(url)
+        updateResult(`切换右侧边栏${result ? '成功' : '失败'}`, result)
+        log(`切换右侧边栏: ${url}`, result ? 'success' : 'error')
+      } catch (error) {
+        updateResult(`切换右侧边栏失败: ${error.message}`, false)
+        log(`切换右侧边栏失败: ${error.message}`, 'error')
       }
     }
 
