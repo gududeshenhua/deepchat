@@ -131,6 +131,18 @@ export class ScriptPresenter implements IScriptPresenter {
       throw err
     }
   }
+  readScriptContent(name: string): string {
+    const filePath = path.join(this.scriptsDirPath, name, 'index.js')
+    if (!fs.existsSync(filePath)) {
+      throw new Error('脚本文件不存在')
+    }
+    return fs.readFileSync(filePath, 'utf-8')
+  }
+
+  saveScriptContent(name: string, content: string) {
+    const filePath = path.join(this.scriptsDirPath, name, 'index.js')
+    fs.writeFileSync(filePath, content, 'utf-8')
+  }
 
   // registerIpc() {
   //   ipcMain.handle('scripts:get-all', () => {

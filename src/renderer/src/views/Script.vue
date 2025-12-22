@@ -66,11 +66,11 @@
                 编辑规则
               </Button>
 
-              <!-- Details -->
-              <!-- <Button variant="secondary" size="sm" @click="showDetail(s)">
-                <Icon icon="material-symbols:info-outline" class="w-4 h-4 mr-1" />
-                详情
-              </Button> -->
+              <!-- Edit Content -->
+              <Button variant="outline" size="sm" @click="editContent(s)">
+                <Icon icon="material-symbols:edit-document" class="w-4 h-4 mr-1" />
+                编辑内容
+              </Button>
 
               <!-- Delete -->
               <Button variant="destructive" size="sm" @click="remove(s)">
@@ -162,6 +162,28 @@
       </SheetContent>
     </Sheet>
 
+    <!-- 脚本内容编辑抽屉 -->
+    <Sheet :open="showEditContentDialog" @update:open="showEditContentDialog = $event">
+      <SheetContent class="flex flex-col h-[100vh]">
+        <SheetHeader>
+          <SheetTitle>编辑脚本内容</SheetTitle>
+          <SheetDescription>
+            编辑 "{{ currentEditingScript?.name }}" 脚本的内容
+          </SheetDescription>
+        </SheetHeader>
+        <div class="flex-1 h-[calc(100vh-160px)] mt-4" style="display: flex;align-items: center;">
+          <div 
+            ref="contentEditorRef"
+            class="w-full h-full"
+          ></div>
+        </div>
+        <SheetFooter class="mt-4">
+          <Button variant="outline" @click="cancelEditContent">取消</Button>
+          <Button @click="saveScriptContent">保存</Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+
     <!-- 删除确认对话框 -->
     <AlertDialog :open="showDeleteDialog" @update:open="showDeleteDialog = $event">
       <AlertDialogContent>
@@ -181,10 +203,29 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { Button } from '@shadcn/components/ui/button'
-import { toast } from '@/components/use-toast'
-
+// import { Input } from '@shadcn/components/ui/input'
+import { Label } from '@shadcn/components/ui/label'
+import { Textarea } from '@shadcn/components/ui/textarea'
+import {
+  Sheet,
+  // SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  // SheetTrigger
+} from '@shadcn/components/ui/sheet'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@shadcn/components/ui/dialog'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -195,28 +236,30 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@shadcn/components/ui/alert-dialog'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle
-} from '@shadcn/components/ui/sheet'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '@shadcn/components/ui/dialog'
-import { Label } from '@shadcn/components/ui/label'
-import { Textarea } from '@shadcn/components/ui/textarea'
 import { Icon } from '@iconify/vue'
 import draggable from 'vuedraggable'
 import { useScriptStore } from '@/stores/script'
+import { toast } from '@/components/use-toast'
+import { useMonaco } from 'stream-monaco'
 
 const scriptStore = useScriptStore()
+
+// Monaco Editor setup for script content editing
+const contentEditorRef = ref<any>(null)
+const { createEditor, updateCode, cleanupEditor } = useMonaco({
+  themes: ['github-dark', 'github-light'],
+  wordWrap: 'on',
+  wrappingIndent: 'same',
+  minimap: { enabled: false },
+  scrollBeyondLastLine: false,
+  fontSize: 14,
+  lineNumbers: 'on',
+  folding: true,
+  automaticLayout: true,
+  readOnly: false,
+  MAX_HEIGHT: 'calc(100vh - 160px)'
+  // height: 'calc(100vh - 160px)'
+})
 
 const scripts = ref<any>([])
 const fileInput = ref<any>(null)
@@ -225,14 +268,17 @@ const showDetailSheet = ref(false)
 const showDeleteDialog = ref(false)
 const showMatchDialog = ref(false)
 const showUploadMatchDialog = ref(false)
+const showEditContentDialog = ref(false)
 const currentScriptDetail = ref('')
 const scriptToDelete = ref<any>(null)
 const scriptToEdit = ref<any>(null)
+const currentEditingScript = ref<any>(null)
+const editingScriptContent = ref('')
 const matchRulesText = ref('')
 const uploadScriptName = ref('')
 const uploadMatchRulesText = ref('')
 const uploadScriptData = ref<any>(null)
-
+let editor:any = ""
 // 读取全部脚本
 onMounted(async () => {
   refresh()
@@ -393,7 +439,89 @@ const cancelEditMatch = () => {
 //   showDetailSheet.value = true
 // }
 
-// 删除
+// 编辑脚本内容
+const editContent = async (script: any) => {
+  currentEditingScript.value = script
+  // 从store中读取脚本内容
+  try {
+    const content = await scriptStore.readScriptContent(script.name)
+    editingScriptContent.value = content || ''
+    showEditContentDialog.value = true
+    
+    // 在下次 DOM 更新后初始化编辑器
+    editor = null
+    nextTick(async() => {
+      if (!editor) {
+        editor = await createEditor(
+          contentEditorRef.value,
+          editingScriptContent.value,
+          'javascript'
+        )
+        requestAnimationFrame(() => {
+          editor?.layout()
+          editor?.revealLine(1)
+        })
+        // editor.revealPosition(
+        //   { lineNumber: 1, column: 1 },
+        //   0 // ScrollType.Smooth = 0 / Immediate = 1
+        // )
+        // editor.setPosition(position)
+      } else {
+        updateCode(editingScriptContent.value,'javascript')
+      }
+      
+      
+    })
+    
+  } catch (error) {
+    console.error('Failed to read script content:', error)
+    toast({
+      title: '错误',
+      description: '无法读取脚本内容',
+      variant: 'destructive',
+      duration: 3000
+    })
+  }
+}
+
+// 保存脚本内容
+const saveScriptContent = async () => {
+  if (!currentEditingScript.value) return
+
+  try {
+    // 从 Monaco Editor 获取当前内容updateCode() || 
+    const editorValue = editor?.getValue() || editingScriptContent.value
+    await scriptStore.saveScriptContent(currentEditingScript.value.name, editorValue)
+    toast({
+      title: '成功',
+      description: '脚本内容已保存',
+      variant: 'default',
+      duration: 3000
+    })
+    showEditContentDialog.value = false
+    // 清理编辑器
+    cleanupEditor()
+    editor = null
+  } catch (error) {
+    console.error('Failed to save script content:', error)
+    toast({
+      title: '错误',
+      description: '无法保存脚本内容',
+      variant: 'destructive',
+      duration: 3000
+    })
+  }
+}
+
+// 取消编辑脚本内容
+const cancelEditContent = () => {
+  showEditContentDialog.value = false
+  currentEditingScript.value = null
+  editingScriptContent.value = ''
+  // 清理编辑器
+  cleanupEditor()
+  editor = null
+}
 const remove = async (script: any) => {
   scriptToDelete.value = script
   showDeleteDialog.value = true
@@ -417,10 +545,23 @@ const cancelDelete = () => {
   showDeleteDialog.value = false
   scriptToDelete.value = null
 }
+
+// 在组件卸载时清理编辑器
+import { onUnmounted } from 'vue'
+onUnmounted(() => {
+  cleanupEditor()
+})
 </script>
 
 <style>
 .drag-handle:hover {
   color: #666;
+}
+
+/* Monaco Editor 样式优化 */
+.monaco-editor-container {
+  border-radius: 0.375rem;
+  border: 1px solid hsl(var(--border));
+  overflow: hidden;
 }
 </style>

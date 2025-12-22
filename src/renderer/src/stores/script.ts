@@ -39,12 +39,24 @@ export const useScriptStore = defineStore('script', () => {
     tabPresenter.refreshInjectorScriptsTabs(windowId ?? 1, refreshAll ? true : false)
   }
 
+  /** 读取脚本内容 */
+  const readScriptContent = async (name: string) => {
+    return await scriptPresenter.readScriptContent(name)
+  }
+
+  /** 保存脚本内容 */
+  const saveScriptContent = async (name: string, content: string) => {
+    return await scriptPresenter.saveScriptContent(name, content)
+  }
+
   return {
     scriptList,
     getAllScripts,
     uploadScript,
     updateScript,
     deleteScript,
-    refreshWindowTabsScript
+    refreshWindowTabsScript,
+    readScriptContent,
+    saveScriptContent
   }
 })

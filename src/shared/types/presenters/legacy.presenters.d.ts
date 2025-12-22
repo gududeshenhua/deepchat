@@ -2079,6 +2079,10 @@ export interface IScriptPresenter {
   uploadScript(item: ScriptItem, content: string): void
   deleteScript(item: ScriptItem): void
   matchUrl(url: string, patterns: string[]): boolean
+  /** 读取脚本内容 */
+  readScriptContent(name: string): string
+  /** 保存脚本内容 */
+  saveScriptContent(name: string, content: string): void
 }
 
 export interface ISetupPresenter {

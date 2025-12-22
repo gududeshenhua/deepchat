@@ -41,7 +41,7 @@ async function injectButton() {
     border-radius: 6px;
     z-index: 999999;
   `;
-  btn.onclick = () => alert("准备开始导出！");
+  btn.onclick = () => alert("准备开始导出123！");
 
   document.body.appendChild(btn);
 }
