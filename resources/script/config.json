@@ -6,13 +6,5 @@
       "*://*/*"
     ],
     "entry": "export-news2 - 副本/index.js"
-  },
-  {
-    "name": "alpha-独立-量化交易3.4.4v1.0.31",
-    "enabled": true,
-    "match": [
-      "*://*/*"
-    ],
-    "entry": "alpha-独立-量化交易3.4.4v1.0.31/index.js"
   }
 ]

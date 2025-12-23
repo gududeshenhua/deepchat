@@ -163,8 +163,8 @@
     </Sheet>
 
     <!-- 脚本内容编辑抽屉 -->
-    <Sheet :open="showEditContentDialog" @update:open="showEditContentDialog = $event">
-      <SheetContent class="flex flex-col h-[100vh]">
+    <Sheet  :open="showEditContentDialog" @update:open="showEditContentDialog = $event">
+      <SheetContent style="max-width: 100vw !important;">
         <SheetHeader>
           <SheetTitle>编辑脚本内容</SheetTitle>
           <SheetDescription>
@@ -178,8 +178,10 @@
           ></div>
         </div>
         <SheetFooter class="mt-4">
-          <Button variant="outline" @click="cancelEditContent">取消</Button>
-          <Button @click="saveScriptContent">保存</Button>
+          <div style="margin: 0 auto;">
+            <Button style="margin-right: 10px;" variant="outline" @click="cancelEditContent">取消</Button>
+            <Button @click="saveScriptContent">保存</Button>
+          </div>  
         </SheetFooter>
       </SheetContent>
     </Sheet>

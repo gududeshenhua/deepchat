@@ -1,7 +1,8 @@
 import ElectronStore from 'electron-store'
-import { app, dialog, shell } from 'electron'
+import { app, dialog, shell, Menu, BrowserWindow } from 'electron'
 import path from 'path'
 import fs from 'fs'
+
 import { ISetupPresenter } from '@shared/presenter'
 // Define setup settings interface
 interface ISetupSettings {
@@ -32,7 +33,8 @@ export class SetupPresenter implements ISetupPresenter {
           { label: '设置', icon: 'mdi:cog-outline', url: 'home://setup', visible: true },
           { label: '脚本', icon: 'mdi:script-text-outline', url: 'home://script', visible: true }
         ],
-        'ip-white-list': []
+        'ip-white-list': [],
+        'collect-list': []
       }
     })
 
@@ -195,5 +197,58 @@ export class SetupPresenter implements ISetupPresenter {
    */
   getStorePath(): string {
     return path.join(this.userDataPath, 'setup.json')
+  }
+
+  /**
+   * Show collect list as native context menu
+   * @param collectList Array of collected URLs with titles
+   */
+  async showCollectListMenu(collectList: { url: string; title: string }[]): Promise<void> {
+    // Get the currently focused window
+    const focusedWindow = BrowserWindow.getFocusedWindow()
+    if (!focusedWindow) {
+      console.error('[Setup] No focused window found to show collect list menu')
+      return
+    }
+
+    // Create menu template from collect list
+    const menuTemplate =
+      collectList.length > 0
+        ? collectList.map((item) => ({
+            label:
+              item.title +
+              '(' +
+              (item.url.length > 25 ? item.url.substring(0, 25) + '...' : item.url) +
+              ')',
+            click: () => {
+              // Send URL to renderer process to navigate
+              focusedWindow.webContents.send('collect-item-clicked', item.url)
+            }
+          }))
+        : [{ label: '暂无收藏', enabled: false }]
+
+    // Add separator and remove all option if there are items
+    // if (collectList.length > 0) {
+    //   menuTemplate.push(
+    //     { type: 'separator' },
+    //     // {
+    //     //   label: '清空收藏列表',
+    //     //   click: async () => {
+    //     //     this.setValue('collect-list', [])
+    //     //     // Optionally notify renderer that list was cleared
+    //     //     focusedWindow.webContents.send('collect-list-cleared')
+    //     //   }
+    //     // }
+    //   )
+    // }
+
+    const menu = Menu.buildFromTemplate(menuTemplate)
+
+    // Show the context menu at current mouse position
+    menu.popup({
+      window: focusedWindow,
+      x: undefined, // Use current mouse position
+      y: undefined // Use current mouse position
+    })
   }
 }
