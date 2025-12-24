@@ -3,6 +3,7 @@ import { LifecycleManager, registerCoreHooks } from './presenter/lifecyclePresen
 import { getInstance, Presenter } from './presenter'
 import { electronApp } from '@electron-toolkit/utils'
 import { createHttpServer } from './proxy'
+import { httpApiService } from './api'
 // Set application command line arguments
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required') // Allow video autoplay
 app.commandLine.appendSwitch('webrtc-max-cpu-consumption-percentage', '100') // Set WebRTC max CPU usage
@@ -75,6 +76,15 @@ app.whenReady().then(async () => {
     }
     // 创建代理接口
     createHttpServer()
+
+    // 启动HTTP API服务
+    try {
+      await httpApiService.start()
+      console.log('main: HTTP API service started successfully')
+    } catch (error) {
+      console.error('main: Failed to start HTTP API service:', error)
+    }
+
     console.log('main: Application lifecycle startup completed successfully')
   } catch (error) {
     console.error('main: Application lifecycle startup failed:', error)
