@@ -161,29 +161,28 @@ export class TabPresenter implements ITabPresenter {
       //   })
       // }
       // 加载内容
-      if (url.startsWith('home://')) {
-        const viewType = url.replace('home://', '')
-        if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-          sidebarView.webContents.loadURL(`${process.env['ELECTRON_RENDERER_URL']}#/${viewType}`)
-        } else {
-          sidebarView.webContents.loadFile(join(__dirname, '../renderer/index.html'), {
-            hash: `/${viewType}`
-          })
-        }
-      } else {
-        sidebarView.webContents.loadURL(url)
-      }
 
       this.windowRightSidebarView.set(windowId, sidebarView)
     }
 
-    if (is.dev) {
-      sidebarView.webContents.openDevTools({ mode: 'detach' })
+    if (url.startsWith('home://')) {
+      const viewType = url.replace('home://', '')
+      if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+        sidebarView.webContents.loadURL(`${process.env['ELECTRON_RENDERER_URL']}#/${viewType}`)
+      } else {
+        sidebarView.webContents.loadFile(join(__dirname, '../renderer/index.html'), {
+          hash: `/${viewType}`
+        })
+      }
+    } else {
+      sidebarView.webContents.loadURL(url)
     }
-
     window.contentView.addChildView(sidebarView)
     this.windowRightSidebarVisible.set(windowId, true)
 
+    if (is.dev) {
+      sidebarView.webContents.openDevTools({ mode: 'detach' })
+    }
     // 关键：更新所有 Tab 布局
     this.onWindowSizeChange(windowId)
 
@@ -417,14 +416,14 @@ export class TabPresenter implements ITabPresenter {
           if (args.url.startsWith('home://')) {
             const viewType = args.url.replace('home://', '')
             if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-              await view.webContents.loadURL(`${process.env['ELECTRON_RENDERER_URL']}#/${viewType}`)
+              view.webContents.loadURL(`${process.env['ELECTRON_RENDERER_URL']}#/${viewType}`)
             } else {
-              await view.webContents.loadFile(join(__dirname, '../renderer/index.html'), {
+              view.webContents.loadFile(join(__dirname, '../renderer/index.html'), {
                 hash: `/${viewType}`
               })
             }
           } else {
-            await view.webContents.loadURL(args.url)
+            view.webContents.loadURL(args.url)
           }
           break
 
