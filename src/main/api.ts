@@ -1,6 +1,8 @@
 // import { app, ipcMain, IpcMainInvokeEvent } from 'electron'
 // import { Server } from 'http'
 // import { createServer } from 'https'
+import { createServer } from 'http'
+
 // import * as fs from 'fs'
 // import * as path from 'path'
 import { URL } from 'url'
@@ -33,7 +35,7 @@ export class HttpApiService {
   async start(): Promise<void> {
     return new Promise((resolve, reject) => {
       // 创建HTTP服务器
-      this.server = require('http').createServer(this.handleRequest.bind(this))
+      this.server = createServer(this.handleRequest.bind(this))
 
       this.server.on('error', (err: NodeJS.ErrnoException) => {
         console.error('[HTTP API] Server error:', err)

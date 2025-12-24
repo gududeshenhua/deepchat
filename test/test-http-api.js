@@ -1,7 +1,8 @@
 // 示例：外部应用如何使用HTTP API调用本应用的方法
 // 使用 Node.js 示例
 
-const http = require('http')
+// const http = require('http')
+import http from 'http'
 
 // 调用HTTP API的通用函数
 async function callHttpApi(presenterName, methodName, args = []) {
