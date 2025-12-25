@@ -171,10 +171,10 @@
             编辑 "{{ currentEditingScript?.name }}" 脚本的内容
           </SheetDescription>
         </SheetHeader>
-        <div class="flex-1 h-[calc(100vh-160px)] mt-4" style="display: flex;align-items: center;">
+        <div class="flex-1 h-[calc(100vh-160px)] mt-4" style="display: flex;align-items: center; flex-direction: column;">
           <div 
             ref="contentEditorRef"
-            class="w-full h-full"
+            class="flex-1 w-full h-full"
           ></div>
         </div>
         <SheetFooter class="mt-4">
