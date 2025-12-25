@@ -99,4 +99,4 @@ linux:
 npmRebuild: true
 publish:
   provider: generic
-  url: https://cdn.deepchatai.cn/upgrade/
+  url: https://baidu.com/upgrade/
