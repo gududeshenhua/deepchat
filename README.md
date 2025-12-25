@@ -315,18 +315,6 @@ DeepChat is an active open-source community project, and we welcome various form
 
 Check the [Contribution Guidelines](./CONTRIBUTING.md) to learn more about ways to participate in the project.
 
-## ⭐ Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=ThinkInAIXYZ/deepchat&type=Timeline)](https://www.star-history.com/#ThinkInAIXYZ/deepchat&Timeline)
-
-## 👨‍💻 Contributors
-
-Thank you for considering contributing to deepchat! The contribution guide can be found in the [Contribution Guidelines](./CONTRIBUTING.md).
-
-<a href="https://openomy.com/thinkinaixyz/deepchat" target="_blank" style="display: block; width: 100%;" align="center">
-  <img src="https://openomy.com/svg?repo=thinkinaixyz/deepchat&chart=bubble&latestMonth=3" target="_blank" alt="Contribution Leaderboard" style="display: block; width: 100%;" />
-</a>
-
 ## 🙏🏻 Thanks
 
 This project is built with the help of these awesome libraries:
