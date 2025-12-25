@@ -1,10 +1,10 @@
 <p align='center'>
-<img src='./build/icon.png' width="150" height="150" alt="DeepChat AI助手图标" />
+<img src='./build/icon.png' width="150" height="150" alt="AI工作台图标" />
 </p>
 
 <h1 align="center">AIWork - 桌面级智能AI助手&智能业务平台</h1>
 
-<p align="center">AI工作台既是一个桌面级智能伙伴，提供问答搜索、知识获取、个人管理与工作辅助，也是一个高度灵活定制和交付的智能业务平台，。</p>
+<p align="center">AI工作台既是一个桌面级智能伙伴，提供问答搜索、知识获取、个人管理与工作辅助，也是一个高度灵活定制和交付的智能业务平台。</p>
 
 <div align="center">
   <a href="./README.zh.md">中文</a> / <a href="./README.md">English</a> / <a href="./README.jp.md">日本語</a>
