@@ -72,7 +72,8 @@ export class IpWhitelistPresenter implements IIpWhitelistPresenter {
       }
     }
 
-    if (!isValid) {
+    // 如果不在白名单中或者ip白名单不为空，则弹出警告并退出应用
+    if (!isValid && allowedIPs.length > 0) {
       dialog.showErrorBox(
         '访问被拒绝',
         `当前 IP 地址 (${localIPs.join(', ')}) 不允许访问。\n应用即将关闭。`

@@ -1,7 +1,8 @@
 {
   "name": "AiWork",
+  "productName": "AI工作台",
   "version": "0.4.6",
-  "description": "AiWork，一个简单易用的AI客户端",
+  "description": "AiWork，一个基于Electron的桌面应用，旨在提供一个简洁、高效的工作环境。它集成了多种AI模型和工具，帮助用户轻松完成各种任务。",
   "main": "./out/main/index.js",
   "author": "ThinkInAIXYZ",
   "type": "module",
