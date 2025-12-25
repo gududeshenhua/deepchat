@@ -21,3 +21,4 @@ resources/tempFile/*
 .env
 .env.local
 .npmrc
+resources/model-db/providers.json
