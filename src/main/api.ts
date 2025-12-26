@@ -191,6 +191,14 @@ export class HttpApiService {
     methodName: string,
     args: any[]
   ): Promise<any> {
+    let finalArgs: any[] = []
+
+    if (Array.isArray(args)) {
+      finalArgs = args
+    } else {
+      finalArgs = [args]
+    }
+    console.log('finalArgs', finalArgs)
     // 通过名称获取对应的Presenter实例
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const calledPresenter: any = presenter[presenterName as keyof typeof presenter]
@@ -198,11 +206,12 @@ export class HttpApiService {
     if (!calledPresenter) {
       throw new Error(`Presenter "${presenterName}" not found`)
     }
-
+    console.log(`[HTTP API] Call endpoint: ${presenterName}.${methodName}`)
+    console.log(...finalArgs)
     // 检查方法是否存在且为函数
     if (typeof calledPresenter[methodName] === 'function') {
       // 调用方法并返回结果
-      return await calledPresenter[methodName](...args)
+      return await calledPresenter[methodName](...finalArgs)
     } else {
       throw new Error(`Method "${methodName}" not found or not a function on "${presenterName}"`)
     }

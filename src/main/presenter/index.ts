@@ -30,7 +30,8 @@ import {
   ILoggerPresenter,
   IIpWhitelistPresenter,
   ICommonFilePresenter,
-  IExcelPresenter
+  IExcelPresenter,
+  IApiPresenter
 } from '@shared/presenter'
 import { eventBus } from '@/eventbus'
 import { LLMProviderPresenter } from './llmProviderPresenter'
@@ -56,6 +57,7 @@ import { LoggerPresenter } from './loggerPresenter'
 import { IpWhitelistPresenter } from './whitelistPresenter'
 import { commonFileManager } from './commonFilePresenter'
 import { excelPresenter } from './excelPresenter'
+import { ApiPresenter } from './apiPresenter'
 // IPC调用上下文接口
 interface IPCCallContext {
   tabId?: number
@@ -103,6 +105,7 @@ export class Presenter implements IPresenter {
   whitelistPresenter: IIpWhitelistPresenter
   commonFilePresenter: ICommonFilePresenter
   excelPresenter: IExcelPresenter
+  apiPresenter: IApiPresenter
 
   private constructor(lifecycleManager: ILifecycleManager) {
     // Store lifecycle manager reference for component access
@@ -142,6 +145,7 @@ export class Presenter implements IPresenter {
     this.whitelistPresenter = new IpWhitelistPresenter(this.setupPresenter)
     this.commonFilePresenter = new commonFileManager()
     this.excelPresenter = new excelPresenter()
+    this.apiPresenter = new ApiPresenter()
 
     // Define dbDir for knowledge presenter
     const dbDir = path.join(app.getPath('userData'), 'app_db')
@@ -281,8 +285,8 @@ ipcMain.handle(
       const webContentsId = event.sender.id
       const tabId = presenter.tabPresenter.getTabIdByWebContentsId(webContentsId)
       const windowId = presenter.tabPresenter.getWindowIdByWebContentsId(webContentsId)
-      // console.log('-------')
-      // console.log(name,method,payloads)
+      console.log('-------presenter:call -----')
+      console.log(payloads)
       const context: IPCCallContext = {
         tabId,
         windowId,

@@ -131,6 +131,8 @@ app.on('second-instance', (_, argv) => {
         // 等待所有Promise完成
         await Promise.all(setPromises)
       }
+      console.log('last oper')
+      console.log(params.page)
       presenter.tabPresenter.createTab(targetWindow.id, params.page)
     }
   })

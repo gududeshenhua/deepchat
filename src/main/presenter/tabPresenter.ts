@@ -290,6 +290,7 @@ export class TabPresenter implements ITabPresenter {
     // 创建新的WebContentsView
     const view = new WebContentsView({
       webPreferences: {
+        // session: window.webContents.session
         preload: join(__dirname, '../preload/index.mjs'),
         sandbox: false,
         // contextIsolation: false,

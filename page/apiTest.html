@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .api-form {
+            margin: 15px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .success {
+            border-left-color: #28a745;
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .btn-group {
+            margin: 10px 0;
+        }
+        .btn-group button {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HTTP API 测试页面</h1>
+        
+        <div class="api-form">
+            <h3>通用 API 调用</h3>
+            <label>Presenter 名称:</label>
+            <input type="text" id="presenterName" placeholder="例如: setupPresenter">
+            
+            <label>方法名称:</label>
+            <input type="text" id="methodName" placeholder="例如: getValue">
+            
+            <label>参数 (JSON 格式):</label>
+            <textarea id="args" rows="3" placeholder='例如: ["key"] 或 ["key", "value"]'></textarea>
+            
+            <button onclick="callApi()">调用 API</button>
+        </div>
+        
+        <div class="api-form">
+            <h3>预设测试方法</h3>
+            <div class="btn-group">
+                <button onclick="testApiStatus()">测试 API 状态</button>
+                <button onclick="testGetValue()">获取下载目录</button>
+                <button onclick="testSetValue()">设置测试值</button>
+                <button onclick="testCookie()">测试设置 Cookie</button>
+            </div>
+        </div>
+        
+        <div id="result" class="result" style="display:none;"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:9000';
+        
+        // 通用 API 调用函数
+        async function callApi() {
+            const presenterName = document.getElementById('presenterName').value;
+            const methodName = document.getElementById('methodName').value;
+            const argsInput = document.getElementById('args').value;
+            
+            if (!presenterName || !methodName) {
+                showResult('请填写 Presenter 名称和方法名称', 'error');
+                return;
+            }
+            
+            let args = [];
+            if (argsInput.trim()) {
+                try {
+                    args = JSON.parse(argsInput);
+                } catch (e) {
+                    showResult('参数格式错误: ' + e.message, 'error');
+                    return;
+                }
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName,
+                        methodName,
+                        args
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('API 调用成功:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('API 调用失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 测试 API 状态
+        async function testApiStatus() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/status`);
+                const result = await response.json();
+                showResult('API 状态:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('获取 API 状态失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 测试获取值
+        async function testGetValue() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'setupPresenter',
+                        methodName: 'getValue',
+                        args: [
+                          'download-directory'
+                        ]
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('获取下载目录结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('获取下载目录失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 测试设置值
+        async function testSetValue() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'setupPresenter',
+                        methodName: 'setValue',
+                        args: ['test-key', 'test-value']
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('设置值结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('设置值失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 测试设置 Cookie
+        async function testCookie() {
+            const cookieData = "W3siZG9tYWluIjoiIiwiZXhwaXJhdGlvbkRhdGUiOjE3OTgxOTUxODQuNjYyOTgzLCJob3N0T25seSI6dHJ1ZSwiaHR0cE9ubHkiOmZhbHNlLCJuYW1lIjoiYmNlLWF1dGgtdHlwZSIsInBhdGgiOiIvIiwic2FtZVNpdGUiOiJsYXgiLCJzZWN1cmUiOmZhbHNlLCJzZXNzaW9uIjpmYWxzZSwic3RvcmVJZCI6bnVsbCwidmFsdWUiOiJCQ0lBIn0seyJkb21haW4iOiIiLCJleHBpcmF0aW9uRGF0ZSI6MTc5ODE5NTE4NC42NjI5MTgsImhvc3RPbmx5Ijp0cnVlLCJodHRwT25seSI6dHJ1ZSwibmFtZSI6ImJjZS1zZXNzaW9uaWQiLCJwYXRoIjoiLyIsInNhbWVTaXRlIjoibGF4Iiwic2VjdXJlIjpmYWxzZSwic2Vzc2lvbiI6ZmFsc2UsInN0b3JlSWQiOm51bGwsInZhbHVlIjoiOTgyYTJkZWQwNDIwNDJjMTlmN2U0MzdlYjlkZjYyNjEifSx7ImRvbWFpbiI6IiIsImV4cGlyYXRpb25EYXRlIjoxNzk4MTk1MTQ2LjY2Mjg1NywiaG9zdE9ubHkiOnRydWUsImh0dHBPbmx5IjpmYWxzZSwibmFtZSI6ImlkYWFzLWRlZmF1bHQtdXJsIiwicGF0aCI6Ii8iLCJzYW1lU2l0ZSI6ImxheCIsInNlY3VyZSI6ZmFsc2UsInNlc3Npb24iOmZhbHNlLCJzdG9yZUlkIjpudWxsLCJ2YWx1ZSI6IlwiaHR0cDovLzEwLjkyLjExNS4yMzM6ODA4MFwiIn0seyJkb21haW4iOiIiLCJleHBpcmF0aW9uRGF0ZSI6MTc5ODE5NTE4NC42NjI3MzMsImhvc3RPbmx5Ijp0cnVlLCJodHRwT25seSI6ZmFsc2UsIm5hbWUiOiJpZGFhcy1jc3JmdG9rZW4iLCJwYXRoIjoiLyIsInNhbWVTaXRlIjoibGF4Iiwic2VjdXJlIjpmYWxzZSwic2Vzc2lvbiI6ZmFsc2UsInN0b3JlSWQiOm51bGwsInZhbHVlIjoiODU5NWY4NDExNzRiNGM4OWFmNmY1YmI0Zjg4OTgxOWYifSx7ImRvbWFpbiI6IiIsImV4cGlyYXRpb25EYXRlIjoxNzk4MTk1MTg0LjY2MzEwNCwiaG9zdE9ubHkiOnRydWUsImh0dHBPbmx5IjpmYWxzZSwibmFtZSI6ImJjZS1sb2dpbi1kaXNwbGF5LW5hbWUiLCJwYXRoIjoiLyIsInNhbWVTaXRlIjoibGF4Iiwic2VjdXJlIjpmYWxzZSwic2Vzc2lvbiI6ZmFsc2UsInN0b3JlSWQiOm51bGwsInZhbHVlIjoiYWRtaW4ifSx7ImRvbGFpbiI6IiIsImV4cGlyYXRpb25EYXRlIjoxNzk4MTk1MTg0LjY2MjYwMSwiaG9zdE9ubHkiOnRydWUsImh0dHBPbmx5IjpmYWxzZSwibmFtZSI6ImlkYWFzLXByb2plY3QtaWQiLCJwYXRoIjoiLyIsInNhbWVTaXRlIjoibGF4Iiwic2VjdXJlIjpmYWxzZSwic2Vzc2lvbiI6ZmFsc2UsInN0b3JlSWQiOm51bGwsInZhbHVlIjoiMTQ4ZGJiMTAwMDVlMTFlYTkzOWM3ZGY4OTkxYWQwZTcifSx7ImRvbWFpbiI6IiIsImV4cGlyYXRpb25EYXRlIjoxNzk4MTk1MTg0LjY2Mjc5NSwiaG9zdE9ubHkiOnRydWUsImh0dHBPbmx5IjpmYWxzZSwibmFtZSI6ImlkYWFzLXByb2plY3QtbmFtZSIsInBhdGgiOiIvIiwic2FtZVNpdGUiOiJsYXgiLCJzZWN1cmUiOmZhbHNlLCJzZXNzaW9uIjpmYWxzZSwic3RvcmVJZCI6bnVsbCwidmFsdWUiOiJkZW5nIn0seyJkb21haW4iOiIiLCJleHBpcmF0aW9uRGF0ZSI6MTc5ODE5NTE4NC42NjI2NjEsImhvc3RPbmx5Ijp0cnVlLCJodHRwT25seSI6dHJ1ZSwibmFtZSI6ImlkYWFzLXNlc3Npb25pZCIsInBhdGgiOiIvIiwic2FtZVNpdGUiOiJsYXgiLCJzZWN1cmUiOmZhbHNlLCJzZXNzaW9uIjpmYWxzZSwic3RvcmVJZCI6bnVsbCwidmFsdWUiOiI5ODJhMmRlZDA0MjA0MmMxOWY3ZTQzN2ViOWRmNjI2MSJ9XQ==";
+            const targetUrl = "https://www.baidu.com";
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'apiPresenter',
+                        methodName: 'setCookie',
+                        args: [cookieData, targetUrl]
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('设置 Cookie 结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('设置 Cookie 失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 显示结果
+        function showResult(message, type = 'success') {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.className = `result ${type}`;
+            resultDiv.style.display = 'block';
+        }
+        
+        // 回车键支持
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
+                callApi();
+            }
+        });
+    </script>
+</body>
+</html>

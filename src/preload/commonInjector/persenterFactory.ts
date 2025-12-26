@@ -49,13 +49,16 @@ function createPresenterProxy(presenterName: string) {
     {
       get(_, functionName: string) {
         return (...args) => {
+          // console.log('beforerawPayloads', args)
           const rawPayloads: any = args.map((arg) => safeSerialize(toRaw(arg)))
+          // console.log('rawPayloads', rawPayloads)
           const webContentsId: number | null = getWebContentsId()
           if (process.env.VITE_LOG_IPC_CALL === '1') {
             console.log(
               `[Renderer IPC] WebContents: ${webContentsId || 'unknown'} -> ${presenterName}.${functionName}`
             )
           }
+
           return ipcRenderer
             .invoke('presenter:call', presenterName, functionName, ...rawPayloads)
             .catch((e) => {

@@ -82,20 +82,28 @@ async function example() {
     const status = await getApiStatus()
     console.log('API状态:', status)
 
-    // 调用setupPresenter的getValue方法
-    console.log('\n调用 getValue 方法...')
-    const result = await callHttpApi('setupPresenter', 'getValue', ['download-directory'])
-    console.log('获取下载目录:', result)
+    // // 调用setupPresenter的getValue方法
+    // console.log('\n调用 getValue 方法...')
+    // const result = await callHttpApi('setupPresenter', 'getValue', ['download-directory'])
+    // console.log('获取下载目录:', result)
 
-    // 调用setupPresenter的setValue方法
-    console.log('\n调用 setValue 方法...')
-    const setResult = await callHttpApi('setupPresenter', 'setValue', ['test-key', 'test-value'])
-    console.log('设置值结果:', setResult)
+    // // 调用setupPresenter的setValue方法
+    // console.log('\n调用 setValue 方法...')
+    // const setResult = await callHttpApi('setupPresenter', 'setValue', ['test-key', 'test-value'])
+    // console.log('设置值结果:', setResult)
 
-    // 再次获取值以验证
-    console.log('\n再次获取测试值...')
-    const getResult = await callHttpApi('setupPresenter', 'getValue', ['test-key'])
-    console.log('获取测试值:', getResult)
+    // // 再次获取值以验证
+    // console.log('\n再次获取测试值...')
+    // const getResult = await callHttpApi('setupPresenter', 'getValue', ['test-key'])
+    // console.log('获取测试值:', getResult)
+
+    // 测试设置Cookie
+    console.log('\n测试设置 Cookie...')
+    const cookieData =
+      'W3siZG9tYWluIjoiIiwiZXhwaXJhdGlvbkRhdGUiOjE3OTgxOTUxODQuNjYyOTgzLCJob3N0T25seSI6dHJ1ZSwiaHR0cE9ubHkiOmZhbHNlLCJuYW1lIjoiYmNlLWF1dGgtdHlwZSIsInBhdGgiOiIvIiwic2FtZVNpdGUiOiJsYXgiLCJzZWN1cmUiOmZhbHNlLCJzZXNzaW9uIjpmYWxzZSwic3RvcmVJZCI6bnVsbCwidmFsdWUiOiJCQ0lBIn0seyJkb21haW4iOiIiLCJleHBpcmF0aW9uRGF0ZSI6MTc5ODE5NTE4NC42NjI5MTgsImhvc3RPbmx5Ijp0cnVlLCJodHRwT25seSI6dHJ1ZSwibmFtZSI6ImJjZS1zZXNzaW9uaWQiLCJwYXRoIjoiLyIsInNhbWVTaXRlIjoibGF4Iiwic2VjdXJlIjpmYWxzZSwic2Vzc2lvbiI6ZmFsc2UsInN0b3JlSWQiOm51bGwsInZhbHVlIjoiOTgyYTJkZWQwNDIwNDJjMTlmN2U0MzdlYjlkZjYyNjEifSx7ImRvbWFpbiI6IiIsImV4cGlyYXRpb25EYXRlIjoxNzk4MTk1MTQ2LjY2Mjg1NywiaG9zdE9ubHkiOnRydWUsImh0dHBPbmx5IjpmYWxzZSwibmFtZSI6ImlkYWFzLWRlZmF1bHQtdXJsIiwicGF0aCI6Ii8iLCJzYW1lU2l0ZSI6ImxheCIsInNlY3VyZSI6ZmFsc2UsInNlc3Npb24iOmZhbHNlLCJzdG9yZUlkIjpudWxsLCJ2YWx1ZSI6IlwiaHR0cDovLzEwLjkyLjExNS4yMzM6ODA4MFwiIn0seyJkb21haW4iOiIiLCJleHBpcmF0aW9uRGF0ZSI6MTc5ODE5NTE4NC42NjI3MzMsImhvc3RPbmx5Ijp0cnVlLCJodHRwT25seSI6ZmFsc2UsIm5hbWUiOiJpZGFhcy1jc3JmdG9rZW4iLCJwYXRoIjoiLyIsInNhbWVTaXRlIjoibGF4Iiwic2VjdXJlIjpmYWxzZSwic2Vzc2lvbiI6ZmFsc2UsInN0b3JlSWQiOm51bGwsInZhbHVlIjoiODU5NWY4NDExNzRiNGM4OWFmNmY1YmI0Zjg4OTgxOWYifSx7ImRvbWFpbiI6IiIsImV4cGlyYXRpb25EYXRlIjoxNzk4MTk1MTg0LjY2MzEwNCwiaG9zdE9ubHkiOnRydWUsImh0dHBPbmx5IjpmYWxzZSwibmFtZSI6ImJjZS1sb2dpbi1kaXNwbGF5LW5hbWUiLCJwYXRoIjoiLyIsInNhbWVTaXRlIjoibGF4Iiwic2VjdXJlIjpmYWxzZSwic2Vzc2lvbiI6ZmFsc2UsInN0b3JlSWQiOm51bGwsInZhbHVlIjoiYWRtaW4ifSx7ImRvbWFpbiI6IiIsImV4cGlyYXRpb25EYXRlIjoxNzk4MTk1MTg0LjY2MjYwMSwiaG9zdE9ubHkiOnRydWUsImh0dHBPbmx5IjpmYWxzZSwibmFtZSI6ImlkYWFzLXByb2plY3QtaWQiLCJwYXRoIjoiLyIsInNhbWVTaXRlIjoibGF4Iiwic2VjdXJlIjpmYWxzZSwic2Vzc2lvbiI6ZmFsc2UsInN0b3JlSWQiOm51bGwsInZhbHVlIjoiMTQ4ZGJiMTAwMDVlMTFlYTkzOWM3ZGY4OTkxYWQwZTcifSx7ImRvbWFpbiI6IiIsImV4cGlyYXRpb25EYXRlIjoxNzk4MTk1MTg0LjY2Mjc5NSwiaG9zdE9ubHkiOnRydWUsImh0dHBPbmx5IjpmYWxzZSwibmFtZSI6ImlkYWFzLXByb2plY3QtbmFtZSIsInBhdGgiOiIvIiwic2FtZVNpdGUiOiJsYXgiLCJzZWN1cmUiOmZhbHNlLCJzZXNzaW9uIjpmYWxzZSwic3RvcmVJZCI6bnVsbCwidmFsdWUiOiJkZW5nIn0seyJkb21haW4iOiIiLCJleHBpcmF0aW9uRGF0ZSI6MTc5ODE5NTE4NC42NjI2NjEsImhvc3RPbmx5Ijp0cnVlLCJodHRwT25seSI6dHJ1ZSwibmFtZSI6ImlkYWFzLXNlc3Npb25pZCIsInBhdGgiOiIvIiwic2FtZVNpdGUiOiJsYXgiLCJzZWN1cmUiOmZhbHNlLCJzZXNzaW9uIjpmYWxzZSwic3RvcmVJZCI6bnVsbCwidmFsdWUiOiI5ODJhMmRlZDA0MjA0MmMxOWY3ZTQzN2ViOWRmNjI2MSJ9XQ=='
+    const targetUrl = 'https://www.baidu.com'
+    const setCookieResult = await callHttpApi('apiPresenter', 'setCookie', [cookieData, targetUrl])
+    console.log('设置 Cookie 结果:', setCookieResult)
   } catch (error) {
     console.error('错误:', error.message)
   }

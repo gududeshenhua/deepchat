@@ -2233,3 +2233,16 @@ export interface ICommonFilePresenter {
    */
   ensureBaseDir(): Promise<void>
 }
+
+/**
+ * API Presenter interface
+ * 用于处理API相关的功能，包括Cookie设置等
+ */
+export interface IApiPresenter {
+  /**
+   * 设置 Cookie
+   * @param cookieData - Base64编码的Cookie数据
+   * @param targetPage - 目标页面URL
+   */
+  setCookie(cookieData: string, targetPage: string): Promise<void>
+}
