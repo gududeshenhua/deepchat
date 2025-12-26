@@ -1,19 +1,10 @@
 <p align='center'>
-<img src='./build/icon.png' width="150" height="150" alt="DeepChat AI助手图标" />
+<img src='./build/icon.png' width="150" height="150" alt="AI工作台图标" />
 </p>
 
-<h1 align="center">DeepChat - 强大的开源多模型AI聊天平台</h1>
+<h1 align="center">AIWork - 桌面级智能AI助手&智能业务平台</h1>
 
-<p align="center">DeepChat是一个功能丰富的开源AI聊天平台，支持多种云端和本地大语言模型，提供强大的搜索增强和工具调用能力。</p>
-
-<p align="center">
-  <a href="https://github.com/ThinkInAIXYZ/deepchat/stargazers"><img src="https://img.shields.io/github/stars/ThinkInAIXYZ/deepchat" alt="Stars Badge"/></a>
-  <a href="https://github.com/ThinkInAIXYZ/deepchat/network/members"><img src="https://img.shields.io/github/forks/ThinkInAIXYZ/deepchat" alt="Forks Badge"/></a>
-  <a href="https://github.com/ThinkInAIXYZ/deepchat/pulls"><img src="https://img.shields.io/github/issues-pr/ThinkInAIXYZ/deepchat" alt="Pull Requests Badge"/></a>
-  <a href="https://github.com/ThinkInAIXYZ/deepchat/issues"><img src="https://img.shields.io/github/issues/ThinkInAIXYZ/deepchat" alt="Issues Badge"/></a>
-  <a href="https://github.com/ThinkInAIXYZ/deepchat/blob/main/LICENSE"><img src="https://img.shields.io/github/license/ThinkInAIXYZ/deepchat" alt="License Badge"/></a>
-  <a href="https://deepwiki.com/ThinkInAIXYZ/deepchat"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
-</p>
+<p align="center">AI工作台既是一个桌面级智能伙伴，提供问答搜索、知识获取、个人管理与工作辅助，也是一个高度灵活定制和交付的智能业务平台。</p>
 
 <div align="center">
   <a href="./README.zh.md">中文</a> / <a href="./README.md">English</a> / <a href="./README.jp.md">日本語</a>
@@ -23,11 +14,13 @@
 
 - [📑 目录](#-目录)
 - [🚀 项目简介](#-项目简介)
-- [💡 为什么选择DeepChat](#-为什么选择deepchat)
+- [💡 为什么选择AI工作台](#-为什么选择ai工作台)
 - [🔥 主要功能](#-主要功能)
 - [🤖 支持的模型提供商](#-支持的模型提供商)
   - [兼容任何OpenAI/Gemini/Anthropic API格式的模型提供商](#兼容任何openaigeminianthropic-api格式的模型提供商)
 - [🔍 使用场景](#-使用场景)
+  - [💡 个人助手](#-个人助手)
+  - [💼 企业应用](#-企业应用)
 - [📦 快速开始](#-快速开始)
   - [下载安装](#下载安装)
   - [配置模型](#配置模型)
@@ -36,16 +29,13 @@
   - [安装依赖](#安装依赖)
   - [开始开发](#开始开发)
   - [构建](#构建)
-- [👥 社区与贡献](#-社区与贡献)
-- [⭐ Star历史](#-star历史)
-- [👨‍💻 贡献者](#-贡献者)
-- [📃 许可证](#-许可证)
+- [🙏🏻 致谢](#-致谢)
 
 ## 🚀 项目简介
 
-DeepChat是一个功能强大的开源AI聊天平台，为用户提供与多种大语言模型交互的统一界面。无论是云端API如OpenAI、Gemini、Anthropic，还是本地部署的Ollama模型，DeepChat都能提供流畅的用户体验。
+AI工作台一方面是以AI对话问答客户端为基础的智能办公工具，支持多种大模型和多平台的，原生对接和集成国网人工智能平台和光明大模型，内置超级智能体作为个人办公和业务智能伙伴，提供知识获取、个人管理与工作辅助等多种能力，以及MCP工具调用、本地文件整理、智能问答搜索和办公超级助理等丰富功能；
 
-作为一个跨平台的AI助手应用，DeepChat不仅支持基础的聊天功能，还提供了搜索增强、工具调用、多模态交互等高级特性，让AI能力的应用更加便捷和高效。
+另一方面是以AI浏览器为基础的桌面级AI应用工具台，内置自动化引擎、定制化引擎、智能化引擎和智能取数引擎等，支持自助化模式和全服务模式两种应用开发方式，实现高效开发和运行包括业务流程自动化、数据报表编制、业务场景智能体和个性化工作面板等智能工具应用，在不触碰原有系统架构的前提下，实现业务场景应用的快速构建。结合AI工作台的智能办公工具和桌面级AI应用工具台，最终打造为AI 智能助理和高效生产力平台。
 
 <table align="center">
   <tr>
@@ -60,9 +50,9 @@ DeepChat是一个功能强大的开源AI聊天平台，为用户提供与多种�
   </tr>
 </table>
 
-## 💡 为什么选择DeepChat
+## 💡 为什么选择AI工作台
 
-与其他AI工具相比，DeepChat具有以下独特优势：
+与其他AI工具相比，AI工作台具有以下独特优势：
 
 - **多模型统一管理**：一个应用支持几乎所有主流LLM，无需在多个应用间切换
 - **本地模型无缝集成**：内置Ollama支持，无需命令行操作即可管理和使用本地模型
@@ -221,13 +211,23 @@ DeepChat是一个功能强大的开源AI聊天平台，为用户提供与多种�
 
 ## 🔍 使用场景
 
-DeepChat适用于多种AI应用场景：
+AI工作台适用于多种AI应用场景：
+
+### 💡 个人助手
 
 - **日常助手**：回答问题、提供建议、辅助写作和创作
 - **开发辅助**：代码生成、调试、技术问题解答
 - **学习工具**：概念解释、知识探索、学习辅导
 - **内容创作**：文案撰写、创意激发、内容优化
 - **数据分析**：数据解读、图表生成、报告撰写
+
+### 💼 企业应用
+
+- **客户服务**：智能客服、问题解答
+- **业务流程自动化**：流程优化、任务分配
+- **知识管理**：文档生成、信息检索
+- **市场分析**：趋势预测、竞品分析
+- **合规性检查**：政策解读、法律咨询
 
 ## 📦 快速开始
 
@@ -241,7 +241,7 @@ DeepChat适用于多种AI应用场景：
 
 ### 配置模型
 
-1. 启动DeepChat应用
+1. 启动AIWork应用
 2. 点击设置图标
 3. 选择"模型提供商"选项卡
 4. 添加您的API密钥或配置本地Ollama
@@ -297,30 +297,6 @@ $ pnpm run build:linux:x64
 $ pnpm run build:linux:arm64
 ```
 
-## 👥 社区与贡献
-
-DeepChat是一个活跃的开源社区项目，我们欢迎各种形式的贡献：
-
-- 🐛 [报告问题](https://github.com/ThinkInAIXYZ/deepchat/issues)
-- 💡 [提交功能建议](https://github.com/ThinkInAIXYZ/deepchat/issues)
-- 🔧 [提交代码改进](https://github.com/ThinkInAIXYZ/deepchat/pulls)
-- 📚 [完善文档](https://github.com/ThinkInAIXYZ/deepchat/wiki)
-- 🌍 [帮助翻译](https://github.com/ThinkInAIXYZ/deepchat/tree/main/locales)
-
-查看[贡献指南](./CONTRIBUTING.md)了解更多参与项目的方式。
-
-## ⭐ Star历史
-
-[![Star History Chart](https://api.star-history.com/svg?repos=ThinkInAIXYZ/deepchat&type=Timeline)](https://www.star-history.com/#ThinkInAIXYZ/deepchat&Timeline)
-
-## 👨‍💻 贡献者
-
-感谢您考虑为deepchat做出贡献！贡献指南可以在[贡献指南](./CONTRIBUTING.md)中找到。
-
-<a href="https://openomy.com/thinkinaixyz/deepchat" target="_blank" style="display: block; width: 100%;" align="center">
-  <img src="https://openomy.com/svg?repo=thinkinaixyz/deepchat&chart=bubble&latestMonth=3" target="_blank" alt="Contribution Leaderboard" style="display: block; width: 100%;" />
-</a>
-
 ## 🙏🏻 致谢
 
 本项目的构建得益于这些优秀的开源库：
@@ -329,7 +305,3 @@ DeepChat是一个活跃的开源社区项目，我们欢迎各种形式的贡献
 - [Electron](https://www.electronjs.org/)
 - [Electron-Vite](https://electron-vite.org/)
 - [oxlint](https://github.com/oxc-project/oxc)
-
-## 📃 许可证
-
-[LICENSE](./LICENSE)

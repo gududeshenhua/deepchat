@@ -1,5 +1,5 @@
 appId: com.wefonk.AiWork
-productName: AiWork
+productName: AI工作台
 directories:
   buildResources: build
 files:
@@ -75,10 +75,10 @@ afterPack: scripts/afterPack.js
 mac:
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
-    - NSCameraUsageDescription: Application requests access to the device's camera.
-    - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
-    - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
-    - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
+    NSCameraUsageDescription: Application requests access to the device's camera.
+    NSMicrophoneUsageDescription: Application requests access to the device's microphone.
+    NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
+    NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
   gatekeeperAssess: false
   category: public.app-category.utilities
   target:
@@ -99,4 +99,4 @@ linux:
 npmRebuild: true
 publish:
   provider: generic
-  url: https://cdn.deepchatai.cn/upgrade/
+  url: https://baidu.com/upgrade/
