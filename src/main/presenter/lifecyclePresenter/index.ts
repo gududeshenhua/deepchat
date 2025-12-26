@@ -34,6 +34,7 @@ export class LifecycleManager implements ILifecycleManager {
   private splashManager: ISplashWindowManager
   private lifecycleContext: LifecycleContext
   private isUpdateInProgress = false
+  public initialTabUrl = 'home://chat'
 
   constructor() {
     this.state = {
