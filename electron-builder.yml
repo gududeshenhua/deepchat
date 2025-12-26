@@ -1,5 +1,8 @@
 appId: com.wefonk.AiWork
-productName: AI工作台
+productName: AiWork
+protocols:
+  - name: aiwork
+    schemes: [aiwork]
 directories:
   buildResources: build
 files:
@@ -69,6 +72,7 @@ nsis:
   createDesktopShortcut: always
   allowToChangeInstallationDirectory: true
   oneClick: false
+  perMachine: true          # ← 新增：必须 true 才能写 HKLM
   include: build/nsis-installer.nsh
 afterSign: scripts/notarize.js
 afterPack: scripts/afterPack.js

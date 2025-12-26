@@ -23,10 +23,11 @@ export const windowCreationHook: LifecycleHook = {
     // If no windows exist, create main window (first app startup)
     if (presenter.windowPresenter.getAllWindows().length === 0) {
       console.log('windowCreationHook: Creating initial shell window on app startup')
+      console.log('[Protocol] url:', _context.manager.initialTabUrl)
       try {
         const windowId = await presenter.windowPresenter.createShellWindow({
           initialTab: {
-            url: 'home://chat'
+            url: _context.manager.initialTabUrl
           }
         })
         if (windowId) {

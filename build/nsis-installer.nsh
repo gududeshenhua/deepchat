@@ -156,3 +156,12 @@
     Pop $1
     Pop $0
 !macroend
+
+; ****** 新增：等用户目录确定后再写协议 ******
+!macro customInstall
+  ; 必须先删再写，防止重复
+  DeleteRegKey HKLM "Software\Classes\aiwork"
+  WriteRegStr HKLM "Software\Classes\aiwork" "" "URL:AiWork Protocol"
+  WriteRegStr HKLM "Software\Classes\aiwork" "URL Protocol" ""
+  WriteRegStr HKLM "Software\Classes\aiwork\shell\open\command" "" '"$INSTDIR\AiWork.exe" "%1"'
+!macroend

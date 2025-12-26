@@ -2059,6 +2059,9 @@ export interface ILifecycleManager {
 
   // Context management
   getLifecycleContext(): LifecycleContext
+
+  // initial Url
+  initialTabUrl: string
 }
 
 export interface ISplashWindowManager {

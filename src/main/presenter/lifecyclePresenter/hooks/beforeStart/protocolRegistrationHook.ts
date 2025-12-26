@@ -33,12 +33,13 @@ function registerCustomProtocol(protocolName, options: any = {}) {
         .replace(/\/+$/, '') // 去掉结尾多余斜杠
       console.log('filePath-------------------', filePath)
       let absolutePath = path.join(basePath, filePath)
-      console.log('absolutePath-------------------', absolutePath)
       // fallback to resources/app
       if (!fs.existsSync(absolutePath)) {
         const externalPath = path.join(process.resourcesPath, 'page', filePath)
+        console.log('externalPath-------------------', externalPath)
         if (fs.existsSync(externalPath)) absolutePath = externalPath
       }
+      console.log('absolutePath-------------------', absolutePath)
 
       // 404 fallback
       if (!fs.existsSync(absolutePath)) {
