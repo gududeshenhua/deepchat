@@ -20,7 +20,7 @@ export class TrayPresenter {
     if (process.platform === 'darwin') {
       // macOS 平台
       image = nativeImage.createFromPath(path.join(this.iconPath, 'macTrayTemplate.png'))
-      image = image.resize({ width: 24, height: 24 })
+      // image = image.resize({ width: 16, height: 16 })
       image.setTemplateImage(true)
     } else if (process.platform === 'win32') {
       // Windows 平台
