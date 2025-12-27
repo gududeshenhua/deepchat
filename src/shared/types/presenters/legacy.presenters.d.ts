@@ -182,6 +182,7 @@ export interface IWindowPresenter {
     x?: number
     y?: number
   }): Promise<number | null>
+  getWindowById(windowId: number): BrowserWindow | undefined
   mainWindow: BrowserWindow | undefined
   previewFile(filePath: string): void
   minimize(windowId: number): void
@@ -2245,4 +2246,11 @@ export interface IApiPresenter {
    * @param targetPage - 目标页面URL
    */
   setCookie(cookieData: string, targetPage: string): Promise<void>
+
+  /**
+   * 执行JavaScript代码注入
+   * @param script - 要执行的JavaScript代码
+   * @param windowId - 窗口ID，如果未指定则使用当前激活的窗口
+   */
+  executeJavaScript(script: string, windowId?: number): Promise<any>
 }

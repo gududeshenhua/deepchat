@@ -177,6 +177,9 @@ export class WindowPresenter implements IWindowPresenter {
       this.setApplicationQuitting(data.isQuitting)
     })
   }
+  getWindowById(id: number): BrowserWindow | undefined {
+    return this.windows.get(id)
+  }
 
   /**
    * @deprecated Use openOrFocusSettingsWindow() instead. Settings is now an independent window.

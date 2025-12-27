@@ -104,6 +104,13 @@ async function example() {
     const targetUrl = 'https://www.baidu.com'
     const setCookieResult = await callHttpApi('apiPresenter', 'setCookie', [cookieData, targetUrl])
     console.log('设置 Cookie 结果:', setCookieResult)
+
+    // 测试执行JavaScript
+    console.log('\n测试执行 JavaScript...')
+    const jsCode = 'document.title'
+    // const windowId = null; // 使用当前激活窗口
+    const jsResult = await callHttpApi('apiPresenter', 'executeJavaScript', [jsCode])
+    console.log('执行 JavaScript 结果:', jsResult)
   } catch (error) {
     console.error('错误:', error.message)
   }
