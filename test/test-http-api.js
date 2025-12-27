@@ -111,6 +111,21 @@ async function example() {
     // const windowId = null; // 使用当前激活窗口
     const jsResult = await callHttpApi('apiPresenter', 'executeJavaScript', [jsCode])
     console.log('执行 JavaScript 结果:', jsResult)
+
+    // 测试注入脚本
+    console.log('\n测试注入脚本...')
+    const scriptItem = {
+      name: 'test-script',
+      enabled: true,
+      match: ['*://*.baidu.com/*'],
+      entry: 'test-script/index.js'
+    }
+    const scriptContent = 'console.log("Hello from injected script!");'
+    const uploadScriptResult = await callHttpApi('scriptPresenter', 'uploadScript', [
+      scriptItem,
+      scriptContent
+    ])
+    console.log('注入脚本结果:', uploadScriptResult)
   } catch (error) {
     console.error('错误:', error.message)
   }

@@ -17,8 +17,10 @@ build/winarm.json
 build/winx64.json
 runtime/**/*
 resources/tempFile/*
+resources/script/*
 .eslintcache
 .env
 .env.local
 .npmrc
 resources/model-db/providers.json
+

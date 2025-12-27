@@ -100,6 +100,8 @@
                 <button onclick="testGetValue()">获取下载目录</button>
                 <button onclick="testSetValue()">设置测试值</button>
                 <button onclick="testCookie()">测试设置 Cookie</button>
+                <button onclick="testExecuteJavaScript()">测试执行 JavaScript</button>
+                <button onclick="testUploadScript()">测试注入脚本</button>
             </div>
         </div>
         
@@ -231,6 +233,62 @@
                 showResult('设置 Cookie 结果:\n' + JSON.stringify(result, null, 2), 'success');
             } catch (error) {
                 showResult('设置 Cookie 失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 测试执行 JavaScript
+        async function testExecuteJavaScript() {
+            const jsCode = 'document.title';
+            // const windowId = null; // 使用当前激活窗口
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'apiPresenter',
+                        methodName: 'executeJavaScript',
+                        args: [jsCode]
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('执行 JavaScript 结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('执行 JavaScript 失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 测试注入脚本
+        async function testUploadScript() {
+            const scriptItem = {
+                name: 'test-script',
+                enabled: true,
+                match: ['*://www.baidu.com/*'],
+                entry: 'test-script/index.js'
+            };
+            
+            const scriptContent = 'alert("Hello from injected script!");';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'scriptPresenter',
+                        methodName: 'uploadScript',
+                        args: [scriptItem, scriptContent]
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('注入脚本结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('注入脚本失败: ' + error.message, 'error');
             }
         }
         
