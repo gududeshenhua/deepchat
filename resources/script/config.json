@@ -6,13 +6,5 @@
       "*://*/*"
     ],
     "entry": "export-news2 - 副本/index.js"
-  },
-  {
-    "name": "test-script",
-    "enabled": true,
-    "match": [
-      "*://www.baidu.com/*"
-    ],
-    "entry": "test-script/index.js"
   }
 ]

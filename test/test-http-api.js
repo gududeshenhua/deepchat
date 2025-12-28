@@ -126,6 +126,24 @@ async function example() {
       scriptContent
     ])
     console.log('注入脚本结果:', uploadScriptResult)
+
+    // 测试删除脚本
+    console.log('\n测试删除脚本...')
+    const deleteScriptResult = await callHttpApi('scriptPresenter', 'deleteScript', [scriptItem])
+    console.log('删除脚本结果:', deleteScriptResult)
+
+    // 测试条件执行JavaScript  该方法只能服务端调用可用，页面端一跳转接口就会刷新掉
+    console.log('\n测试条件执行JavaScript...')
+    const whenUrlJsCode = 'document.title'
+    // const targetUrl = 'https://www.baidu.com'
+    const timeout = 30000 // 30秒超时
+    const whenUrlResult = await callHttpApi('apiPresenter', 'executeJavaScriptWhenUrl', [
+      whenUrlJsCode,
+      targetUrl,
+      undefined, // windowId，使用当前激活窗口
+      timeout
+    ])
+    console.log('条件执行JavaScript结果:', whenUrlResult)
   } catch (error) {
     console.error('错误:', error.message)
   }

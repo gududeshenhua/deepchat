@@ -102,6 +102,7 @@
                 <button onclick="testCookie()">测试设置 Cookie</button>
                 <button onclick="testExecuteJavaScript()">测试执行 JavaScript</button>
                 <button onclick="testUploadScript()">测试注入脚本</button>
+                <button onclick="testDeleteScript()">测试删除脚本</button>
             </div>
         </div>
         
@@ -236,30 +237,6 @@
             }
         }
         
-        // 测试执行 JavaScript
-        async function testExecuteJavaScript() {
-            const jsCode = 'document.title';
-            // const windowId = null; // 使用当前激活窗口
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/call`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        presenterName: 'apiPresenter',
-                        methodName: 'executeJavaScript',
-                        args: [jsCode]
-                    })
-                });
-                
-                const result = await response.json();
-                showResult('执行 JavaScript 结果:\n' + JSON.stringify(result, null, 2), 'success');
-            } catch (error) {
-                showResult('执行 JavaScript 失败: ' + error.message, 'error');
-            }
-        }
         
         // 测试注入脚本
         async function testUploadScript() {
@@ -291,6 +268,37 @@
                 showResult('注入脚本失败: ' + error.message, 'error');
             }
         }
+        
+        // 测试删除脚本
+        async function testDeleteScript() {
+            const scriptItem = {
+                name: 'test-script',
+                enabled: true,
+                match: ['*://www.baidu.com/*'],
+                entry: 'test-script/index.js'
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'scriptPresenter',
+                        methodName: 'deleteScript',
+                        args: [scriptItem]
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('删除脚本结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('删除脚本失败: ' + error.message, 'error');
+            }
+        }
+        
+       
         
         // 显示结果
         function showResult(message, type = 'success') {
