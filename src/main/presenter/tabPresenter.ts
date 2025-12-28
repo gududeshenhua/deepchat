@@ -737,6 +737,7 @@ export class TabPresenter implements ITabPresenter {
    * 获取窗口的所有标签数据
    */
   async getWindowTabsData(windowId: number): Promise<TabData[]> {
+    console.log(`TabPresenter: getWindowTabsData for window ${windowId}`)
     const tabsInWindow = this.windowTabs.get(windowId) || []
     return tabsInWindow.map((tabId) => {
       const state = this.tabState.get(tabId) || ({} as TabData)

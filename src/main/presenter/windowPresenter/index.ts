@@ -204,6 +204,10 @@ export class WindowPresenter implements IWindowPresenter {
     return allWindows.length > 0 && !allWindows[0].isDestroyed() ? allWindows[0] : undefined
   }
 
+  getMainWindowId(): number | undefined {
+    return this.mainWindow?.id
+  }
+
   /**
    * 预览文件。macOS 使用 Quick Look，其他平台使用系统默认应用打开。
    * @param filePath 文件路径。

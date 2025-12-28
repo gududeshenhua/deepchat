@@ -103,6 +103,16 @@
                 <button onclick="testExecuteJavaScript()">测试执行 JavaScript</button>
                 <button onclick="testUploadScript()">测试注入脚本</button>
                 <button onclick="testDeleteScript()">测试删除脚本</button>
+                <button onclick="testGetActiveTabId()">测试获取活动标签ID</button>
+                <button onclick="testGetWindowTabsData()">测试获取窗口标签数据</button>
+                <button onclick="testGetMainWindow()">测试获取主窗口</button>
+                <button onclick="testCreateTab()">测试创建标签页</button>
+                <button onclick="testCloseTab()">测试关闭标签页</button>
+                <button onclick="testSwitchTab()">测试切换标签页</button>
+                <button onclick="testActionTabReload()">测试标签页重载</button>
+                <button onclick="testActionTabNavigate()">测试标签页导航</button>
+                <button onclick="testActionTabGoBack()">测试标签页后退</button>
+                <button onclick="testActionTabGoForward()">测试标签页前进</button>
             </div>
         </div>
         
@@ -298,7 +308,560 @@
             }
         }
         
-       
+        // 测试获取活动标签ID
+        async function testGetActiveTabId() {
+            try {
+                // 先获取主窗口ID
+                const mainWindowResponse = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'windowPresenter',
+                        methodName: 'getMainWindowId',
+                        args: []
+                    })
+                });
+                
+                const mainWindowResult = await mainWindowResponse.json();
+                const windowId = mainWindowResult.result; // 从结果中获取窗口ID
+                
+                // 然后使用获取到的窗口ID调用getActiveTabId
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'tabPresenter',
+                        methodName: 'getActiveTabId',
+                        args: [windowId]
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('获取活动标签ID结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('获取活动标签ID失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 测试获取窗口标签数据
+        async function testGetWindowTabsData() {
+            try {
+                // 先获取主窗口ID
+                const mainWindowResponse = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'windowPresenter',
+                        methodName: 'getMainWindowId',
+                        args: []
+                    })
+                });
+                
+                const mainWindowResult = await mainWindowResponse.json();
+                const windowId = mainWindowResult.result; // 从结果中获取窗口ID
+                
+                // 然后使用获取到的窗口ID调用getWindowTabsData
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'tabPresenter',
+                        methodName: 'getWindowTabsData',
+                        args: [windowId]
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('获取窗口标签数据结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('获取窗口标签数据失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 测试获取主窗口
+        async function testGetMainWindow() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'windowPresenter',
+                        methodName: 'getMainWindowId',
+                        args: []
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('获取主窗口结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('获取主窗口失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 条件执行 JavaScript
+        async function testExecuteJavaScript() {
+            const jsCode = 'document.title';
+            // const targetUrl = 'https://www.baidu.com';
+            const windowId = undefined; // 没传使用当前激活窗口
+            const tabId = undefined; // 没传使用当前活动标签页
+            // const timeout = 30000; // 30秒超时
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'apiPresenter',
+                        methodName: 'executeJavaScript',
+                        args: [jsCode, windowId, tabId]
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('条件执行 JavaScript 结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('条件执行 JavaScript 失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 测试创建标签页
+        async function testCreateTab() {
+            try {
+                // 先获取主窗口ID
+                const mainWindowResponse = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'windowPresenter',
+                        methodName: 'getMainWindowId',
+                        args: []
+                    })
+                });
+                
+                const mainWindowResult = await mainWindowResponse.json();
+                const windowId = mainWindowResult.result; // 从结果中获取窗口ID
+                
+                const url = 'https://www.example.com';
+                const options = { active: true };
+                
+                // 调用createTab方法
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'tabPresenter',
+                        methodName: 'createTab',
+                        args: [windowId, url, options]
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('创建标签页结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('创建标签页失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 测试关闭标签页
+        async function testCloseTab() {
+            try {
+                // 先获取主窗口ID
+                const mainWindowResponse = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'windowPresenter',
+                        methodName: 'getMainWindowId',
+                        args: []
+                    })
+                });
+                
+                const mainWindowResult = await mainWindowResponse.json();
+                const windowId = mainWindowResult.result; // 从结果中获取窗口ID
+                
+                // 获取活动标签ID
+                const activeTabResponse = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'tabPresenter',
+                        methodName: 'getActiveTabId',
+                        args: [windowId]
+                    })
+                });
+                
+                const activeTabResult = await activeTabResponse.json();
+                const tabId = activeTabResult.result; // 从结果中获取活动标签ID
+                
+                if (!tabId) {
+                    showResult('没有找到活动标签页', 'error');
+                    return;
+                }
+                
+                // 调用closeTab方法
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'tabPresenter',
+                        methodName: 'closeTab',
+                        args: [tabId]
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('关闭标签页结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('关闭标签页失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 测试切换标签页
+        async function testSwitchTab() {
+            try {
+                // 先获取主窗口ID
+                const mainWindowResponse = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'windowPresenter',
+                        methodName: 'getMainWindowId',
+                        args: []
+                    })
+                });
+                
+                const mainWindowResult = await mainWindowResponse.json();
+                const windowId = mainWindowResult.result; // 从结果中获取窗口ID
+                
+                // 获取窗口标签数据
+                const tabsDataResponse = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'tabPresenter',
+                        methodName: 'getWindowTabsData',
+                        args: [windowId]
+                    })
+                });
+                
+                const tabsDataResult = await tabsDataResponse.json();
+                const tabsData = tabsDataResult.result; // 从结果中获取窗口标签数据
+                
+                if (!tabsData || tabsData.length < 2) {
+                    showResult('窗口中至少需要有两个标签页才能测试切换功能', 'error');
+                    return;
+                }
+                
+                // 选择第一个非活动标签页
+                const activeTabId = tabsData.find(tab => tab.isActive)?.id;
+                const targetTabId = tabsData.find(tab => !tab.isActive)?.id;
+                
+                if (!targetTabId) {
+                    showResult('没有找到可切换的标签页', 'error');
+                    return;
+                }
+                
+                // 调用switchTab方法
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'tabPresenter',
+                        methodName: 'switchTab',
+                        args: [targetTabId]
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('切换标签页结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('切换标签页失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 测试标签页操作 - reload
+        async function testActionTabReload() {
+            try {
+                // 先获取主窗口ID
+                const mainWindowResponse = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'windowPresenter',
+                        methodName: 'getMainWindowId',
+                        args: []
+                    })
+                });
+                
+                const mainWindowResult = await mainWindowResponse.json();
+                const windowId = mainWindowResult.result; // 从结果中获取窗口ID
+                
+                // 获取活动标签ID
+                const activeTabResponse = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'tabPresenter',
+                        methodName: 'getActiveTabId',
+                        args: [windowId]
+                    })
+                });
+                
+                const activeTabResult = await activeTabResponse.json();
+                const tabId = activeTabResult.result; // 从结果中获取活动标签ID
+                
+                if (!tabId) {
+                    showResult('没有找到活动标签页', 'error');
+                    return;
+                }
+                
+                // 定义测试操作（reload操作）
+                const action = 'reload';
+                const args = {};
+                
+                // 调用actionTab方法
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'tabPresenter',
+                        methodName: 'actionTab',
+                        args: [tabId, action, args]
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('标签页reload操作结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('标签页reload操作失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 测试标签页操作 - navigate
+        async function testActionTabNavigate() {
+            try {
+                // 先获取主窗口ID
+                const mainWindowResponse = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'windowPresenter',
+                        methodName: 'getMainWindowId',
+                        args: []
+                    })
+                });
+                
+                const mainWindowResult = await mainWindowResponse.json();
+                const windowId = mainWindowResult.result; // 从结果中获取窗口ID
+                
+                // 获取活动标签ID
+                const activeTabResponse = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'tabPresenter',
+                        methodName: 'getActiveTabId',
+                        args: [windowId]
+                    })
+                });
+                
+                const activeTabResult = await activeTabResponse.json();
+                const tabId = activeTabResult.result; // 从结果中获取活动标签ID
+                
+                if (!tabId) {
+                    showResult('没有找到活动标签页', 'error');
+                    return;
+                }
+                
+                // 定义测试操作（navigate操作）
+                const action = 'navigate';
+                const args = { url: 'https://www.example.com' };
+                
+                // 调用actionTab方法
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'tabPresenter',
+                        methodName: 'actionTab',
+                        args: [tabId, action, args]
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('标签页navigate操作结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('标签页navigate操作失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 测试标签页操作 - goBack
+        async function testActionTabGoBack() {
+            try {
+                // 先获取主窗口ID
+                const mainWindowResponse = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'windowPresenter',
+                        methodName: 'getMainWindowId',
+                        args: []
+                    })
+                });
+                
+                const mainWindowResult = await mainWindowResponse.json();
+                const windowId = mainWindowResult.result; // 从结果中获取窗口ID
+                
+                // 获取活动标签ID
+                const activeTabResponse = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'tabPresenter',
+                        methodName: 'getActiveTabId',
+                        args: [windowId]
+                    })
+                });
+                
+                const activeTabResult = await activeTabResponse.json();
+                const tabId = activeTabResult.result; // 从结果中获取活动标签ID
+                
+                if (!tabId) {
+                    showResult('没有找到活动标签页', 'error');
+                    return;
+                }
+                
+                // 定义测试操作（goBack操作）
+                const action = 'goBack';
+                const args = {};
+                
+                // 调用actionTab方法
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'tabPresenter',
+                        methodName: 'actionTab',
+                        args: [tabId, action, args]
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('标签页goBack操作结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('标签页goBack操作失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 测试标签页操作 - goForward
+        async function testActionTabGoForward() {
+            try {
+                // 先获取主窗口ID
+                const mainWindowResponse = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'windowPresenter',
+                        methodName: 'getMainWindowId',
+                        args: []
+                    })
+                });
+                
+                const mainWindowResult = await mainWindowResponse.json();
+                const windowId = mainWindowResult.result; // 从结果中获取窗口ID
+                
+                // 获取活动标签ID
+                const activeTabResponse = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'tabPresenter',
+                        methodName: 'getActiveTabId',
+                        args: [windowId]
+                    })
+                });
+                
+                const activeTabResult = await activeTabResponse.json();
+                const tabId = activeTabResult.result; // 从结果中获取活动标签ID
+                
+                if (!tabId) {
+                    showResult('没有找到活动标签页', 'error');
+                    return;
+                }
+                
+                // 定义测试操作（goForward操作）
+                const action = 'goForward';
+                const args = {};
+                
+                // 调用actionTab方法
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'tabPresenter',
+                        methodName: 'actionTab',
+                        args: [tabId, action, args]
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('标签页goForward操作结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('标签页goForward操作失败: ' + error.message, 'error');
+            }
+        }
         
         // 显示结果
         function showResult(message, type = 'success') {

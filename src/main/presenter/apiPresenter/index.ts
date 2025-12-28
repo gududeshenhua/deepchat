@@ -58,7 +58,7 @@ export class ApiPresenter implements IApiPresenter {
    * @param script - 要执行的JavaScript代码
    * @param windowId - 窗口ID，如果未指定则使用当前激活的窗口
    */
-  async executeJavaScript(script: string, windowId?: number): Promise<any> {
+  async executeJavaScript(script: string, windowId?: number, tabId?: number): Promise<any> {
     try {
       console.log(
         '[API JS] Executing JavaScript:',
@@ -80,22 +80,28 @@ export class ApiPresenter implements IApiPresenter {
 
       // 获取当前窗口的激活标签页ID (参考 eventbus.ts 第155-157行)
       const windowIdToUse = Number(targetWindow.id)
-      const activeTabId = await presenter.tabPresenter.getActiveTabId(windowIdToUse)
+      let targetTabId
+      if (tabId) {
+        targetTabId = tabId
+      } else {
+        const activeTabId = await presenter.tabPresenter.getActiveTabId(windowIdToUse)
+        targetTabId = activeTabId
+      }
 
-      if (activeTabId === null) {
+      if (targetTabId === null) {
         throw new Error(`No active tab found in window ${windowIdToUse}`)
       }
 
       // 获取标签页对应的view (参考 eventbus.ts 第129-131行)
-      const tabView = await presenter.tabPresenter.getTab(activeTabId || 1)
+      const tabView = await presenter.tabPresenter.getTab(targetTabId || 1)
 
       if (!tabView) {
-        throw new Error(`Tab with ID ${activeTabId} not found`)
+        throw new Error(`Tab with ID ${targetTabId} not found`)
       }
 
       // 检查webContents是否已销毁
       if (tabView.webContents.isDestroyed()) {
-        throw new Error(`WebContents for tab ${activeTabId} is destroyed`)
+        throw new Error(`WebContents for tab ${targetTabId} is destroyed`)
       }
 
       // 执行JavaScript代码
