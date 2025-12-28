@@ -114,6 +114,7 @@
                 <button onclick="testActionTabGoBack()">测试标签页后退</button>
                 <button onclick="testActionTabGoForward()">测试标签页前进</button>
                 <button onclick="testCreateTabWithOptions()">测试创建标签页</button>
+                <button onclick="testQuit()">测试退出应用</button>
             </div>
         </div>
         
@@ -519,6 +520,28 @@
                 showResult('创建home标签页结果:\n' + JSON.stringify(result, null, 2), 'success');
             } catch (error) {
                 showResult('创建home标签页失败: ' + error.message, 'error');
+            }
+        }
+
+        // 测试退出应用
+        async function testQuit() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'apiPresenter',
+                        methodName: 'quit',
+                        args: []
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('退出应用结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('退出应用失败: ' + error.message, 'error');
             }
         }
         

@@ -1,6 +1,7 @@
 import { IApiPresenter } from '@shared/presenter'
 import { presenter } from '@/presenter'
 import { base64DecodeUnicode, getBaseUrl } from '@shared/utils'
+import { app } from 'electron'
 
 export class ApiPresenter implements IApiPresenter {
   /**
@@ -226,6 +227,19 @@ export class ApiPresenter implements IApiPresenter {
       })
     } catch (error) {
       console.error('[API JS] Failed to execute JavaScript when URL:', error)
+      throw error
+    }
+  }
+
+  /**
+   * 退出应用程序
+   */
+  async quit(): Promise<void> {
+    try {
+      console.log('[API] Quitting application')
+      app.quit()
+    } catch (error) {
+      console.error('[API] Failed to quit application:', error)
       throw error
     }
   }
