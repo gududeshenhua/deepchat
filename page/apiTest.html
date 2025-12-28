@@ -113,6 +113,7 @@
                 <button onclick="testActionTabNavigate()">测试标签页导航</button>
                 <button onclick="testActionTabGoBack()">测试标签页后退</button>
                 <button onclick="testActionTabGoForward()">测试标签页前进</button>
+                <button onclick="testCreateTabWithOptions()">测试创建标签页</button>
             </div>
         </div>
         
@@ -475,6 +476,49 @@
                 showResult('创建标签页结果:\n' + JSON.stringify(result, null, 2), 'success');
             } catch (error) {
                 showResult('创建标签页失败: ' + error.message, 'error');
+            }
+        }
+
+        // 测试创建标签页(带选项)
+        async function testCreateTabWithOptions() {
+            try {
+                // 先获取主窗口ID
+                const mainWindowResponse = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'windowPresenter',
+                        methodName: 'getMainWindowId',
+                        args: []
+                    })
+                });
+                
+                const mainWindowResult = await mainWindowResponse.json();
+                const windowId = mainWindowResult.result; // 从结果中获取窗口ID
+                
+                // 测试创建home类型的标签页
+                const homeUrl = 'home://chat';
+                // const homeOptions = { active: true, position: 0 };
+                
+                // 调用createTab方法创建home标签页
+                const response = await fetch(`${API_BASE_URL}/api/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        presenterName: 'tabPresenter',
+                        methodName: 'createTab',
+                        args: [windowId, homeUrl]
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('创建home标签页结果:\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('创建home标签页失败: ' + error.message, 'error');
             }
         }
         
