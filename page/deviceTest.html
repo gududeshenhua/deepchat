@@ -94,6 +94,13 @@
       <div id="restartAppStatus"></div>
       <div id="restartAppLog" class="log"></div>
     </div>
+
+    <div class="test-section">
+      <h3>2. 退出应用测试</h3>
+      <button onclick="testExitApp()">退出应用</button>
+      <div id="exitAppStatus"></div>
+      <div id="exitAppLog" class="log"></div>
+    </div>
   </div>
 
   <!-- <script src="local://page/common/persenterFactory.js"></script> -->
@@ -134,6 +141,28 @@
 
       } catch (error) {
         updateStatus(statusId, `重启应用失败: ${error.message}`, 'error');
+        logToElement(logId, `错误: ${error.message}`, 'error');
+      }
+    }
+
+    // 2. 退出应用测试
+    async function testExitApp() {
+      const logId = 'exitAppLog';
+      const statusId = 'exitAppStatus';
+      
+      try {
+        updateStatus(statusId, '开始退出应用...', 'info');
+        logToElement(logId, '=== 开始退出应用 ===');
+
+        logToElement(logId, '调用 DeviceManager.exitApp() 方法...');
+        // 调用设备管理器的退出方法
+        window.DeviceManager.exitApp();
+
+        updateStatus(statusId, '退出命令已发送！', 'success');
+        logToElement(logId, '=== 退出命令已发送 ===');
+
+      } catch (error) {
+        updateStatus(statusId, `退出应用失败: ${error.message}`, 'error');
         logToElement(logId, `错误: ${error.message}`, 'error');
       }
     }
