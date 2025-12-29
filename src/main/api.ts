@@ -19,7 +19,7 @@ interface HTTPCallContext {
 // HTTP API 服务类
 export class HttpApiService {
   private server: any = null
-  private port: number = 9000 // 默认端口
+  private port: number = 49000 // 默认端口
   private readonly allowedOrigins: string[] = ['*'] // 可以配置CORS
   private readonly maxPayloadSize: number = 10 * 1024 * 1024 // 10MB
 
