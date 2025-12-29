@@ -82,12 +82,12 @@ class TabManager {
   }
 
   // 打开右侧边栏
-  async openRightSidebar(url) {
+  async openRightSidebar(url, options?: { openDevTools?: boolean }) {
     try {
       const windowId = globalThis.api.getWindowId ? globalThis.api.getWindowId() : 1
       const result = await globalThis.PresenterFactory.usePresenter(
         'tabPresenter'
-      ).openRightSidebar(windowId, url)
+      ).openRightSidebar(windowId, url, options)
       return result
     } catch (error) {
       console.error('打开右侧边栏时发生错误:', error)
@@ -118,6 +118,34 @@ class TabManager {
       return result
     } catch (error) {
       console.error('切换右侧边栏时发生错误:', error)
+      return false
+    }
+  }
+
+  // 向指定窗口的右侧边栏发送消息
+  async sendMessageToSidebar(payload) {
+    try {
+      const windowId = globalThis.api.getWindowId ? globalThis.api.getWindowId() : 1
+      const result = await globalThis.PresenterFactory.usePresenter(
+        'tabPresenter'
+      ).sendMessageToSidebar(windowId, payload)
+      return result
+    } catch (error) {
+      console.error('向右侧边栏发送消息时发生错误:', error)
+      return false
+    }
+  }
+
+  // 向所有右侧边栏发送消息
+  async sendMessageToAllSidebar(payload) {
+    try {
+      const result =
+        await globalThis.PresenterFactory.usePresenter('tabPresenter').sendMessageToAllSidebar(
+          payload
+        )
+      return result
+    } catch (error) {
+      console.error('向所有右侧边栏发送消息时发生错误:', error)
       return false
     }
   }

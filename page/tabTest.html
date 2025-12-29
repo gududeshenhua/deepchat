@@ -160,9 +160,14 @@
         <button onclick="openRightSidebar()">打开右侧边栏</button>
         <button onclick="closeRightSidebar()">关闭右侧边栏</button>
         <button onclick="toggleRightSidebar()">切换右侧边栏</button>
+        <button onclick="sendMessageToSidebarTest()">向当前边栏发送消息</button>
+        <button onclick="sendMessageToAllSidebarTest()">向所有边栏发送消息</button>
       </div>
       <div class="button-group">
-        <input type="text" id="sidebarUrl" placeholder="输入边栏URL" value="https://www.baidu.com" style="padding: 8px; width: 300px;">
+        <input type="text" id="sidebarUrl" placeholder="输入边栏URL" value="local://page/messageCenterTest.html" style="padding: 8px; width: 300px;">
+      </div>
+      <div class="button-group">
+        <input type="text" id="sidebarMessage" placeholder="输入要发送的消息" value="hello sidebar" style="padding: 8px; width: 300px;">
       </div>
     </div>
 
@@ -468,7 +473,7 @@
           updateResult('请输入有效的URL', false)
           return
         }
-        const result = await TabManager.openRightSidebar(url)
+        const result = await TabManager.openRightSidebar(url, { openDevTools: true })
         updateResult(`打开右侧边栏${result ? '成功' : '失败'}`, result)
         log(`打开右侧边栏: ${url}`, result ? 'success' : 'error')
       } catch (error) {
@@ -501,6 +506,41 @@
       } catch (error) {
         updateResult(`切换右侧边栏失败: ${error.message}`, false)
         log(`切换右侧边栏失败: ${error.message}`, 'error')
+      }
+    }
+
+    async function sendMessageToSidebarTest() {
+      try {
+        const messageInput = document.getElementById('sidebarMessage').value.trim()
+        if (!messageInput) {
+          updateResult('请输入要发送的消息', false)
+          return
+        }
+        const payload = messageInput
+        const result = await TabManager.sendMessageToSidebar(payload)
+        debugger
+        updateResult(`向当前边栏发送消息${result ? '成功' : '失败'}`, result)
+        log(`向当前边栏发送消息: ${JSON.stringify(payload)}`, result ? 'success' : 'error')
+      } catch (error) {
+        updateResult(`向当前边栏发送消息失败: ${error.message}`, false)
+        log(`向当前边栏发送消息失败: ${error.message}`, 'error')
+      }
+    }
+
+    async function sendMessageToAllSidebarTest() {
+      try {
+        const messageInput = document.getElementById('sidebarMessage').value.trim()
+        if (!messageInput) {
+          updateResult('请输入要发送的消息', false)
+          return
+        }
+        const payload = messageInput
+        const result = await TabManager.sendMessageToAllSidebar(payload)
+        updateResult(`向所有边栏发送消息${result ? '成功' : '失败'}`, result)
+        log(`向所有边栏发送消息: ${JSON.stringify(payload)}`, result ? 'success' : 'error')
+      } catch (error) {
+        updateResult(`向所有边栏发送消息失败: ${error.message}`, false)
+        log(`向所有边栏发送消息失败: ${error.message}`, 'error')
       }
     }
 

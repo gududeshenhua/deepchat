@@ -557,6 +557,7 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
       const tabId = this.tabPresenter.getTabIdByWebContentsId(targetWebContentsId)
       if (!tabId) {
         const hiddenId = this.hiddenWebContents.get(targetWebContentsId)?.webContents.id
+        // const sidebarViews = this.tabPresenter.getAllRightSidebarViews()
         if (hiddenId) {
           eventBus.sendToHiddenWebCon(hiddenId, this.COMMUNICATION_EVENTS.RECEIVE_MESSAGE, {
             // fromWebContentsId: targetWebContentsId,

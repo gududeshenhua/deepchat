@@ -129,7 +129,53 @@ export class TabPresenter implements ITabPresenter {
     })
   }
 
-  async openRightSidebar(windowId: number, url: string): Promise<boolean> {
+  sendMessageToSidebar(windowId: number, payload: any) {
+    try {
+      const sidebarView = this.getRightSidebarView(windowId)
+      if (sidebarView && !sidebarView.webContents.isDestroyed()) {
+        sidebarView.webContents.send('webcontents-receive-message', {
+          // fromWebContentsId: targetWebContentsId,
+          payload,
+          timestamp: Date.now()
+        })
+      }
+      return true
+    } catch (error) {
+      return false
+    }
+  }
+
+  sendMessageToAllSidebar(payload: any) {
+    try {
+      const sidebarViews = this.getAllRightSidebarViews()
+      sidebarViews.forEach((view) => {
+        if (!view.webContents.isDestroyed()) {
+          view.webContents.send('webcontents-receive-message', {
+            // fromWebContentsId: targetWebContentsId,
+            payload,
+            timestamp: Date.now()
+          })
+        }
+      })
+      return true
+    } catch (error) {
+      return false
+    }
+  }
+
+  getRightSidebarView(windowId: number): WebContentsView | undefined {
+    return this.windowRightSidebarView.get(windowId)
+  }
+
+  getAllRightSidebarViews(): WebContentsView[] {
+    return Array.from(this.windowRightSidebarView.values())
+  }
+
+  async openRightSidebar(
+    windowId: number,
+    url: string,
+    options?: { openDevTools?: boolean }
+  ): Promise<boolean> {
     const window = BrowserWindow.fromId(windowId)
     if (!window) return false
 
@@ -180,7 +226,10 @@ export class TabPresenter implements ITabPresenter {
     window.contentView.addChildView(sidebarView)
     this.windowRightSidebarVisible.set(windowId, true)
 
-    if (is.dev) {
+    // if (is.dev) {
+    //   sidebarView.webContents.openDevTools({ mode: 'detach' })
+    // }
+    if (options?.openDevTools || is.dev) {
       sidebarView.webContents.openDevTools({ mode: 'detach' })
     }
     // 关键：更新所有 Tab 布局
