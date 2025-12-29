@@ -69,15 +69,13 @@ app.on('second-instance', (_, argv) => {
       const targetWindow = presenter.windowPresenter.getFocusedWindow() || allWindows[0]
       console.log('[Protocol] windowId:', targetWindow.id)
 
-      const cookies = JSON.parse(base64DecodeUnicode(params.cookie))
-      console.log('[Cookie] setCookie:', cookies)
-      const headers = JSON.parse(base64DecodeUnicode(params.header))
-      console.log('[Header] replaceHeader:', headers)
-      const targetURL = getBaseUrl(params.page)
+      const targetURL = getBaseUrl(params.page) || ''
       console.log('[Cookie&Header] url:', getBaseUrl(params.page))
 
       // 处理 headers（如果存在）
-      if (params.header) {
+      if (params.header && targetURL) {
+        const headers = JSON.parse(base64DecodeUnicode(params.header))
+        console.log('[Header] replaceHeader:', headers)
         try {
           // 拦截请求头
           targetWindow.webContents.session.webRequest.onBeforeSendHeaders(
@@ -114,10 +112,12 @@ app.on('second-instance', (_, argv) => {
       }
 
       /* ===== 设置 cookie  ===== */
-      if (params.cookie) {
+      if (params.cookie && targetURL) {
+        const cookies = JSON.parse(base64DecodeUnicode(params.cookie))
+        console.log('[Cookie] setCookie:', cookies)
         const setPromises = cookies.map((cookie) =>
           targetWindow.webContents.session.cookies.set({
-            url: targetURL || '',
+            url: targetURL,
             name: cookie.name,
             value: cookie.value,
             domain: cookie.domain,
