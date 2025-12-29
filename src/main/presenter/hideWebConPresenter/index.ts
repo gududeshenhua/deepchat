@@ -2,7 +2,9 @@
 import { WebContentsView, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 // import { is } from '@electron-toolkit/utils'
-import { eventBus } from '@/eventbus'
+// import { eventBus } from '@/eventbus'
+import { eventBus, SendTarget } from '@/eventbus'
+
 import { HIDDEN_WEB_CONTENTS_EVENTS } from '@/events'
 import {
   HiddenWebContentsData,
@@ -238,6 +240,33 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
   }
 
   /**
+   * 获取所有隐藏的WebContentsView实例（完整视图对象）
+   */
+  getAllHiddenWebContentsViews(): WebContentsView[] {
+    return Array.from(this.hiddenWebContents.values())
+  }
+
+  /**
+   * 根据窗口ID获取该窗口下的隐藏WebContents数据
+   * 注意：hiddenWindows是按webContentsID存储的，不是按窗口ID存储的
+   * 这个方法遍历所有隐藏WebContents并返回有效数据
+   */
+  async getWindowHiddenWebContentsData(): Promise<{ webContents: Electron.WebContents }[]> {
+    const result: { webContents: Electron.WebContents }[] = []
+
+    // 遍历所有隐藏的WebContentsView
+    for (const view of this.hiddenWebContents.values()) {
+      if (view && view.webContents && !view.webContents.isDestroyed()) {
+        result.push({
+          webContents: view.webContents
+        })
+      }
+    }
+
+    return result
+  }
+
+  /**
    * 获取所有隐藏WebContents的状态数据
    */
   getAllHiddenWebContentsData(): HiddenWebContentsData[] {
@@ -290,6 +319,20 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
       this.hiddenWebContents.delete(id)
       this.hiddenWebContentsState.delete(id)
     })
+
+    // 导航完成
+    webContents.on('did-navigate-in-page', (_event, url) => {
+      eventBus.sendToRenderer('scripts:reload-now', SendTarget.ALL_WINDOWS, {
+        originUrl: url,
+        id
+      })
+    })
+    webContents.on('did-navigate', (_event, url) => {
+      eventBus.sendToRenderer('scripts:reload-now', SendTarget.ALL_WINDOWS, {
+        originUrl: url,
+        id
+      })
+    })
   }
 
   /**
@@ -300,6 +343,8 @@ export class HiddenWebContentsPresenter implements IHiddenWebContentsPresenter {
     webContents.removeAllListeners('did-finish-load')
     webContents.removeAllListeners('did-fail-load')
     webContents.removeAllListeners('destroyed')
+    webContents.removeAllListeners('did-navigate-in-page')
+    webContents.removeAllListeners('did-navigate')
   }
 
   // ========== DOM操作相关方法 ==========

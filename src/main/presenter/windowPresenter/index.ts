@@ -13,7 +13,7 @@ import { SHORTCUT_EVENTS } from '@/events' // Shortcut event constants
 // TrayPresenter is globally managed in main/index.ts, this Presenter is not responsible for its lifecycle
 import { TabPresenter } from '../tabPresenter' // TabPresenter type
 import { FloatingChatWindow } from './FloatingChatWindow' // Floating chat window
-
+import { HiddenWebContentsPresenter } from '../hideWebConPresenter'
 /**
  * Window Presenter, responsible for managing all BrowserWindow instances and their lifecycles.
  * Including creation, destruction, minimization, maximization, hiding, showing, focus management, and interaction with tabs.
@@ -530,6 +530,16 @@ export class WindowPresenter implements IWindowPresenter {
               if (tab && !tab.webContents.isDestroyed()) {
                 tab.webContents.send(channel, ...args)
               }
+            }
+          }
+
+          const hideWebContentsPresenterInstance =
+            presenter.hideWebConPresenter as HiddenWebContentsPresenter
+          const hiddenWebContentsData =
+            await hideWebContentsPresenterInstance.getWindowHiddenWebContentsData()
+          if (hiddenWebContentsData && hiddenWebContentsData.length > 0) {
+            for (const hiddenWebContents of hiddenWebContentsData) {
+              hiddenWebContents.webContents.send(channel, ...args)
             }
           }
         } catch (error) {
