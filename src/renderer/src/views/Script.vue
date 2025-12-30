@@ -49,11 +49,11 @@
 
             <!-- Script details -->
             <div class="space-y-2">
-              <div class="text-xs text-gray-500">
-                <span class="font-medium">匹配规则：</span>{{ s.match.join(', ') }}
+              <div class="text-xs text-gray-500 whitespace-normal break-all">
+                <span class="font-medium">匹配规则：</span><span>{{ s.match.join(', ') }}</span>
               </div>
 
-              <div class="text-xs text-gray-500">
+              <div class="text-xs text-gray-500 whitespace-normal break-all">
                 <span class="font-medium">入口文件：</span>{{ s.entry }}
               </div>
             </div>
@@ -74,7 +74,7 @@
 
               <!-- Delete -->
               <Button variant="destructive" size="sm" @click="remove(s)">
-                <Icon icon="mdi:delete-outline" class="w-4 h-4" />
+                <Icon icon="mdi:delete" class="w-4 h-4" />
               </Button>
             </div>
           </div>
