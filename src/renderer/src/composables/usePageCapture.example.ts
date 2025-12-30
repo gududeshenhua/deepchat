@@ -22,7 +22,7 @@ export function useMessageCapture() {
     isDark,
     version: appVersion.value,
     texts: {
-      brand: 'DeepChat',
+      brand: 'AiWork',
       tip: t('common.watermarkTip'),
       model: modelName,
       provider: providerName

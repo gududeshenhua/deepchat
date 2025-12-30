@@ -51,7 +51,7 @@ describe('useArtifactExport', () => {
     const ok = await api.copyAsImage(mkArtifact('text/plain', 'content'), {
       isDark: false,
       version: '1.0.0',
-      texts: { brand: 'DeepChat', tip: 'tip' }
+      texts: { brand: 'Aiwork', tip: 'tip' }
     })
     expect(ok).toBe(true)
     expect(capture).toHaveBeenCalled()
