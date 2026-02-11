@@ -6,12 +6,12 @@ function isLinux(targets) {
   return !!targets.find((target) => re.test(target.name))
 }
 
-async function afterPack({ targets, appOutDir }) {
+async function afterPack({ packager, targets, appOutDir }) {
   console.info('afterPack', targets, appOutDir)
 
   
   // 项目根目录（最重要）
-  const projectDir = context.packager.info.projectDir
+  const projectDir = packager.info.projectDir
   const scriptsDir = path.join(projectDir, 'scripts')
 
   console.info('==== afterPack debug start ====')
