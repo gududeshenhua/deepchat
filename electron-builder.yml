@@ -4,7 +4,7 @@ protocols:
   - name: aiwork
     schemes: [aiwork]
 directories:
-  app: ./
+  # app: ./
   buildResources: build
 files:
   - '!**/.vscode/*'
@@ -75,7 +75,7 @@ nsis:
   oneClick: false
   perMachine: true          # ← 新增：必须 true 才能写 HKLM
   include: build/nsis-installer.nsh
-# afterSign: scripts/notarize.js
+afterSign: scripts/notarize.js
 afterPack: scripts/afterPack.js
 mac:
   entitlementsInherit: build/entitlements.mac.plist
