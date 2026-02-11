@@ -1,6 +1,7 @@
 appId: com.wefonk.AiWork
 productName: AiWork
 directories:
+  app: ./
   buildResources: build
 files:
   - '!**/.vscode/*'

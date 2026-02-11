@@ -4,7 +4,7 @@ protocols:
   - name: aiwork
     schemes: [aiwork]
 directories:
-  app: .
+  app: ./
   buildResources: build
 files:
   - '!**/.vscode/*'
