@@ -1,6 +1,6 @@
-import { notarize } from '@electron/notarize'
+const { notarize } = require('@electron/notarize')
 
-export default async function notarizing(context) {
+module.exports = async function notarizing(context) {
   const { electronPlatformName, appOutDir } = context
   const releaseFlag = process.env.build_for_release
   console.info('releaseFlag', releaseFlag)
@@ -27,7 +27,7 @@ export default async function notarizing(context) {
   } else {
     return await notarize({
       appPath: `${appOutDir}/AiWork.app`,
-      keychainProfile: 'AiWork' // replace with your keychain
+      keychainProfile: 'DeepChat' // replace with your keychain
     })
   }
 }
