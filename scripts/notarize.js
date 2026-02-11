@@ -19,15 +19,15 @@ export default async function notarizing(context) {
     const appleIdPassword = process.env.DEEPCHAT_APPLE_NOTARY_PASSWORD
 
     return await notarize({
-      appPath: `${appOutDir}/DeepChat.app`,
+      appPath: `${appOutDir}/AiWork.app`,
       appleId,
       appleIdPassword,
       teamId
     })
   } else {
     return await notarize({
-      appPath: `${appOutDir}/DeepChat.app`,
-      keychainProfile: 'DeepChat' // replace with your keychain
+      appPath: `${appOutDir}/AiWork.app`,
+      keychainProfile: 'AiWork' // replace with your keychain
     })
   }
 }
