@@ -1,6 +1,6 @@
-const { notarize } = require('@electron/notarize')
+import { notarize } from '@electron/notarize'
 
-module.exports = async function notarizing(context) {
+export default async function notarizing(context) {
   const { electronPlatformName, appOutDir } = context
   const releaseFlag = process.env.build_for_release
   console.info('releaseFlag', releaseFlag)
@@ -19,14 +19,14 @@ module.exports = async function notarizing(context) {
     const appleIdPassword = process.env.DEEPCHAT_APPLE_NOTARY_PASSWORD
 
     return await notarize({
-      appPath: `${appOutDir}/AiWork.app`,
+      appPath: `${appOutDir}/DeepChat.app`,
       appleId,
       appleIdPassword,
       teamId
     })
   } else {
     return await notarize({
-      appPath: `${appOutDir}/AiWork.app`,
+      appPath: `${appOutDir}/DeepChat.app`,
       keychainProfile: 'DeepChat' // replace with your keychain
     })
   }
