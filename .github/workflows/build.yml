@@ -168,8 +168,8 @@ jobs:
       - name: Build Mac
         run: pnpm run build:mac:${{ matrix.arch }}
         env:
-          CSC_LINK: '' ##${{ secrets.DEEPCHAT_CSC_LINK }}
-          CSC_KEY_PASSWORD: '' ##${{ secrets.DEEPCHAT_CSC_KEY_PASS }}
+          CSC_LINK: ''
+          CSC_KEY_PASSWORD: '' 
           DEEPCHAT_APPLE_NOTARY_USERNAME: ${{ secrets.DEEPCHAT_APPLE_NOTARY_USERNAME }}
           DEEPCHAT_APPLE_NOTARY_TEAM_ID: ${{ secrets.DEEPCHAT_APPLE_NOTARY_TEAM_ID }}
           DEEPCHAT_APPLE_NOTARY_PASSWORD: ${{ secrets.DEEPCHAT_APPLE_NOTARY_PASSWORD }}
