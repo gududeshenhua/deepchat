@@ -13,7 +13,7 @@ files:
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.app.json}'
   - '!keys/*'
-  # - '!scripts/*'
+  - '!scripts/*'
   - '!.github/*'
   - '!electron-builder.yml'
   - '!electron-builder-macx64.yml'
@@ -39,7 +39,7 @@ extraResources:
     to: app.asar.unpacked/resources/vc_redist.arm64.exe
   - from: ./resources/vc_redist.x86.exe
     to: app.asar.unpacked/resources/vc_redist.x86.exe
-afterSign: scripts/notarize.js
+# afterSign: scripts/notarize.js
 afterPack: scripts/afterPack.js
 electronLanguages:
   - zh-CN
